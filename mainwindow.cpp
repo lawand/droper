@@ -108,6 +108,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     case Dropbox::METADATA:
         handleDirectoryListing(networkReply);
         break;
+
+    case Dropbox::FILEOPS_CREATEFOLDER:
+        handleFolderCreation(networkReply);
+        break;
     }
 }
 
@@ -349,6 +353,51 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
     file.close();
 }
 
+void MainWindow::requestFolderCreation(QString path)
+{
+    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
+
+    QString query = oAuth->consumerKeyParameter() + "&" +
+                    oAuth->userTokenParameter(userData) + "&" +
+                    oAuth->timestampAndNonceParameters() + "&" +
+                    oAuth->signatureMethodParameter() + "&" +
+                    QString("path=%1").arg(path) + "&" +
+                    QString("root=%1").arg("dropbox");
+
+    QString signatureParameter = oAuth->signatureParameter(
+            userData,
+            "GET",
+            url,
+            query
+            );
+
+    query = query + "&" + signatureParameter;
+
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+}
+
+void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
+{
+    networkReply->deleteLater();
+
+    if(networkReply->error() != QNetworkReply::NoError)
+    {
+        QMessageBox::information(this,
+                                 "Error",
+                                 networkReply->errorString()
+                                 );
+
+        QMessageBox::information(this,
+                                 "Reply",
+                                 networkReply->readAll()
+                                 );
+
+        return;
+    }
+
+    refreshCurrentDirectory();
+}
+
 void MainWindow::about()
 {
     QMessageBox qMessageBox(this);
@@ -404,4 +453,14 @@ void MainWindow::on_upPushButton_clicked()
 void MainWindow::on_refreshPushButton_clicked()
 {
     refreshCurrentDirectory();
+}
+
+void MainWindow::on_createFolderPushButton_clicked()
+{
+    QString folderName = QInputDialog::getText(this,
+                          "Create Folder",
+                          "Folder Name"
+                          );
+
+    requestFolderCreation(currentDirectory + folderName);
 }

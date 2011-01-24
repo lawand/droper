@@ -75,11 +75,14 @@ private slots:
     void handleDirectoryListing(QNetworkReply* networkReply);
     void requestFile(QString path);
     void handleFile(QNetworkReply* networkReply);
+    void requestFolderCreation(QString path);
+    void handleFolderCreation(QNetworkReply* networkReply);
     void about();
     void refreshCurrentDirectory();
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem* item);
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();
+    void on_createFolderPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
