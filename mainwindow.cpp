@@ -48,7 +48,8 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
                        Dropbox* dropbox,
                        QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    currentDirectory("/")
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -73,9 +74,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
             SIGNAL(triggered()),
             qApp,
             SLOT(aboutQt()));
-
-    //start at the root
-    currentDirectory = "/";
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);

@@ -59,15 +59,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString currentDirectory;
 
 public:
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;
     Dropbox* dropbox;
-
-private:
-    QString currentDirectory;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
