@@ -340,10 +340,6 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
             (path.length() - path.lastIndexOf("/")) - 1
              );
 
-    QMessageBox::information(this,
-                             "",
-                             fileName);
-
     QFile file(fileSystemPath + "/" + fileName);
 
     file.open(QFile::WriteOnly);
