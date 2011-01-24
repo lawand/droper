@@ -80,11 +80,37 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
             QTreeWidgetItem::ShowIndicator
             );
     ui->filesAndFoldersTreeWidget->addTopLevelItem(root);
+
+    connect(this->networkAccessManager,
+            SIGNAL(finished(QNetworkReply*)),
+            this,
+            SLOT(handleNetworkReply(QNetworkReply*))
+            );
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
+{
+    Dropbox::Api api = dropbox->urlStringToApi(networkReply->url().toString());
+
+    switch(api)
+    {
+    case Dropbox::ACCOUNT_INFO:
+        handleAccountInformation(networkReply);
+        break;
+
+    case Dropbox::FILES:
+        handleFile(networkReply);
+        break;
+
+    case Dropbox::METADATA:
+        handleDirectoryListing(networkReply);
+        break;
+    }
 }
 
 void MainWindow::requestAccountInformation()
@@ -106,22 +132,10 @@ void MainWindow::requestAccountInformation()
     query += "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
-
-    connect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleAccountInformation(QNetworkReply*))
-            );
 }
 
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 {
-    disconnect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleAccountInformation(QNetworkReply*))
-            );
-
     networkReply->deleteLater();
 
     if(networkReply->error() != QNetworkReply::NoError)
@@ -203,23 +217,11 @@ void MainWindow::requestDirectoryListing(QTreeWidgetItem* item)
     query = query + "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
-
-    connect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleDirectoryListing(QNetworkReply*))
-            );
 }
 
 void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 {
     ui->statusbar->clearMessage();
-
-    disconnect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleDirectoryListing(QNetworkReply*))
-            );
 
     networkReply->deleteLater();
 
@@ -336,22 +338,10 @@ void MainWindow::requestFile(QTreeWidgetItem* item)
     query = query + "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
-
-    connect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleFile(QNetworkReply*))
-            );
 }
 
 void MainWindow::handleFile(QNetworkReply* networkReply)
 {
-    disconnect(this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleFile(QNetworkReply*))
-            );
-
     networkReply->deleteLater();
 
     if(networkReply->error() != QNetworkReply::NoError)

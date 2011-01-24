@@ -68,6 +68,7 @@ public:
     Dropbox* dropbox;
 
 private slots:
+    void handleNetworkReply(QNetworkReply* networkReply);
     void requestAccountInformation();
     void handleAccountInformation(QNetworkReply* networkReply);
     void requestDirectoryListing(QTreeWidgetItem* item);
