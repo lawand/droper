@@ -156,7 +156,7 @@ Dropbox::Api Dropbox::urlStringToApi(QString urlString)
     }
 }
 
-QString Dropbox::urlStringToMetaDataPath(QString urlString)
+QString Dropbox::extractMetaDataPath(QString urlString)
 {
     urlString.remove(
             QString(
@@ -167,7 +167,7 @@ QString Dropbox::urlStringToMetaDataPath(QString urlString)
     return urlString;
 }
 
-QString Dropbox::urlStringToFilePath(QString urlString)
+QString Dropbox::extractFilePath(QString urlString)
 {
     urlString.remove(
             QString(

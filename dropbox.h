@@ -52,8 +52,8 @@ public:
     QString apiToUrlString(Dropbox::Api api);
     Dropbox::Api urlStringToApi(QString urlString);
 
-    QString urlStringToMetaDataPath(QString urlString);
-    QString urlStringToFilePath(QString urlString);
+    QString extractMetaDataPath(QString urlString);
+    QString extractFilePath(QString urlString);
 
 private:
     int apiVersion;

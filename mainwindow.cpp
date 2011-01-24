@@ -242,7 +242,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         ui->filesAndFoldersListWidget->clear();
 
         QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
-        currentDirectory = dropbox->urlStringToMetaDataPath(urlString);
+        currentDirectory = dropbox->extractMetaDataPath(urlString);
 
         ui->currentDirectoryLineEdit->setText(currentDirectory);
 
@@ -336,7 +336,7 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
                                                      );
 
     QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
-    QString path = dropbox->urlStringToFilePath(urlString);
+    QString path = dropbox->extractFilePath(urlString);
 
     QString fileName = path.right(
             (path.length() - path.lastIndexOf("/")) - 1
