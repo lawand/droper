@@ -369,6 +369,11 @@ void MainWindow::about()
     qMessageBox.exec();
 }
 
+void MainWindow::refreshCurrentDirectory()
+{
+    requestDirectoryListing(currentDirectory);
+}
+
 void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
@@ -398,5 +403,5 @@ void MainWindow::on_upPushButton_clicked()
 
 void MainWindow::on_refreshPushButton_clicked()
 {
-    requestDirectoryListing(currentDirectory);
+    refreshCurrentDirectory();
 }

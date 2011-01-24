@@ -76,6 +76,7 @@ private slots:
     void requestFile(QString path);
     void handleFile(QNetworkReply* networkReply);
     void about();
+    void refreshCurrentDirectory();
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem* item);
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();
