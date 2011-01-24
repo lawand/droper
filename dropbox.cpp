@@ -94,5 +94,63 @@ QString Dropbox::apiToUrlString(Dropbox::Api api)
                 ).arg(apiVersion);
         break;
     }
+}
 
+Dropbox::Api Dropbox::urlStringToApi(QString urlString)
+{
+
+    if(urlString.startsWith("https://api.dropbox.com/"))
+    {
+        urlString.remove("https://api.dropbox.com/");
+
+        if(urlString.startsWith(QString("%1").arg(apiVersion) + "/"))
+        {
+            urlString.remove(QString("%1").arg(apiVersion) + "/");
+
+            if(urlString.startsWith("token"))
+                return Dropbox::TOKEN;
+
+            if(urlString.startsWith("account/info"))
+                return Dropbox::ACCOUNT_INFO;
+
+            if(urlString.startsWith("account"))
+                return Dropbox::ACCOUNT;
+
+            if(urlString.startsWith("metadata/dropbox"))
+                return Dropbox::METADATA;
+
+            if(urlString.startsWith("fileops/"))
+            {
+                urlString.remove("fileops/");
+
+                if(urlString.startsWith("copy"))
+                    return Dropbox::FILEOPS_COPY;
+
+                if(urlString.startsWith("create_folder"))
+                    return Dropbox::FILEOPS_CREATEFOLDER;
+
+                if(urlString.startsWith("delete"))
+                    return Dropbox::FILEOPS_DELETE;
+
+                if(urlString.startsWith("move"))
+                    return Dropbox::FILEOPS_MOVE;
+            }
+        }
+    }
+
+    if(urlString.startsWith("https://api-content.dropbox.com/"))
+    {
+        urlString.remove("https://api-content.dropbox.com/");
+
+        if(urlString.startsWith(QString("%1").arg(apiVersion) + "/"))
+        {
+            urlString.remove(QString("%1").arg(apiVersion) + "/");
+
+            if(urlString.startsWith("files/dropbox"))
+                return Dropbox::FILES;
+
+            if(urlString.startsWith("thumbnails/dropbox"))
+                return Dropbox::THUMBNAILS;
+        }
+    }
 }

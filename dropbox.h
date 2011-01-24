@@ -50,6 +50,7 @@ public:
     Dropbox(int apiVersion = 0);
 
     QString apiToUrlString(Dropbox::Api api);
+    Dropbox::Api urlStringToApi(QString urlString);
 
 private:
     int apiVersion;
