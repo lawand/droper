@@ -40,6 +40,7 @@
 #include <QNetworkReply>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QInputDialog>
 #include "json.h"
 
 MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
