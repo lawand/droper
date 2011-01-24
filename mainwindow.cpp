@@ -239,9 +239,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     //prepare to change current directory
         ui->filesAndFoldersListWidget->clear();
 
+        //update currentDirectory and ui->currentDirectoryLineEdit
         QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
         currentDirectory = dropbox->extractMetaDataPath(urlString);
-
         ui->currentDirectoryLineEdit->setText(currentDirectory);
 
         if(currentDirectory == "/")
