@@ -57,7 +57,7 @@ public:
 private:
     Ui::AuthenticationDialog *ui;
 
-public:
+public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;

@@ -52,7 +52,7 @@ private:
     //this calculates a HMAC-SHA1 checksum
     QString hmacSha1(QString base, QString key);
 
-public:
+public: //shared objects
     ConsumerData* consumerData;
 };
 

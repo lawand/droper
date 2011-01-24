@@ -61,7 +61,7 @@ private:
     Ui::MainWindow *ui;
     QString currentDirectory;
 
-public:
+public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;
