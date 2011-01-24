@@ -267,8 +267,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
 
             QString subDirPath = subDir["path"].toString();
-            QStringList pathParts = subDirPath.split("/");
-            QString name = pathParts.last();
+            QString name = subDirPath.right(
+                    (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
+                     );
 
             subDirItem->setText(0, name + "/");
 
@@ -291,8 +292,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
 
             QString subDirPath = subDir["path"].toString();
-            QStringList pathParts = subDirPath.split("/");
-            QString name = pathParts.last();
+            QString name = subDirPath.right(
+                    (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
+                     );
 
             subDirItem->setText(0, name);
 
