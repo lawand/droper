@@ -23,6 +23,9 @@
 **
 ****************************************************************************/
 
+//corresponding header file(s)
+#include "oauth.h"
+
 //data member(s)
 #include "consumerdata.h"
 
@@ -32,9 +35,6 @@
 #include <QDateTime>
 #include <QStringList>
 #include "userdata.h"
-
-//corresponding header file(s)
-#include "oauth.h"
 
 OAuth::OAuth(ConsumerData* consumerData)
 {

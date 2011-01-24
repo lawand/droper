@@ -23,6 +23,10 @@
 **
 ****************************************************************************/
 
+//corresponding header file(s)
+#include "authenticationdialog.h"
+#include "ui_authenticationdialog.h"
+
 //data member(s)
 #include <QNetworkAccessManager>
 #include "oauth.h"
@@ -35,10 +39,6 @@
 #include <QNetworkReply>
 #include <QMessageBox>
 #include "json.h"
-
-//corresponding header file(s)
-#include "authenticationdialog.h"
-#include "ui_authenticationdialog.h"
 
 AuthenticationDialog::AuthenticationDialog(
         QNetworkAccessManager* networkAccessManager,

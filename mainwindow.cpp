@@ -23,24 +23,24 @@
 **
 ****************************************************************************/
 
+//corresponding header file(s)
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
 //data member(s)
 #include <QNetworkAccessManager>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
 
+//member-function(s)-related forward declaration(s)
+#include <QListWidgetItem>
+
 //implementation-specific data type(s)
 #include <QNetworkReply>
-#include <QDateTime>
-#include <QCryptographicHash>
 #include <QMessageBox>
-#include <QTimer>
 #include <QFileDialog>
 #include "json.h"
-
-//corresponding header file(s)
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
                        OAuth* oAuth,
@@ -74,13 +74,13 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
             qApp,
             SLOT(aboutQt()));
 
-    QTreeWidgetItem* root = new QTreeWidgetItem();
-    root->setText(0, "/");
-    root->setChildIndicatorPolicy(
-            QTreeWidgetItem::ShowIndicator
-            );
-    ui->filesAndFoldersTreeWidget->addTopLevelItem(root);
+    //start at the root
+    currentDirectory = "/";
 
+    //initial directory listing
+    requestDirectoryListing(currentDirectory);
+
+    //connect the networkAccessManager with the handler
     connect(this->networkAccessManager,
             SIGNAL(finished(QNetworkReply*)),
             this,
@@ -184,22 +184,11 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                              accountInfo);
 }
 
-void MainWindow::requestDirectoryListing(QTreeWidgetItem* item)
+void MainWindow::requestDirectoryListing(QString directory)
 {
     ui->statusbar->showMessage("Loading...");
 
-    //find the path of the directory
-    QString path = item->text(0);
-    QTreeWidgetItem* iterator = item->parent();
-    while(iterator != 0)
-    {
-        path.prepend(iterator->text(0));
-        iterator = iterator->parent();
-    }
-
-    ui->filesAndFoldersTreeWidget->setCurrentItem(item);
-
-    QString url = dropbox->apiToUrlString(Dropbox::METADATA) + path;
+    QString url = dropbox->apiToUrlString(Dropbox::METADATA) + directory;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
@@ -227,8 +216,6 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
     if(networkReply->error() != QNetworkReply::NoError)
     {
-        ui->filesAndFoldersTreeWidget->currentItem()->setExpanded(false);
-
         QMessageBox::information(this,
                                  "Error",
                                  "There was an error, try again later."
@@ -251,10 +238,18 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         return;
     }
 
-    //this removes the child indicator if no children
-    ui->filesAndFoldersTreeWidget->currentItem()->setChildIndicatorPolicy(
-            QTreeWidgetItem::DontShowIndicatorWhenChildless
-            );
+    //prepare to change current directory
+        ui->filesAndFoldersListWidget->clear();
+
+        QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
+        currentDirectory = dropbox->urlStringToMetaDataPath(urlString);
+
+        ui->currentDirectoryLineEdit->setText(currentDirectory);
+
+        if(currentDirectory == "/")
+            ui->upPushButton->setEnabled(false);
+        else
+            ui->upPushButton->setEnabled(true);
 
     //add folders
     foreach(const QVariant &subDirJson, jsonResult["contents"].toList())
@@ -263,9 +258,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
         if(subDir["is_dir"] == true)
         {
-            QTreeWidgetItem *subDirItem;
-            subDirItem = new QTreeWidgetItem(
-                    ui->filesAndFoldersTreeWidget->currentItem()
+            QListWidgetItem* subDirItem;
+            subDirItem = new QListWidgetItem(
+                    ui->filesAndFoldersListWidget
                     );
 
             QString subDirPath = subDir["path"].toString();
@@ -273,11 +268,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
-            subDirItem->setText(0, name + "/");
-
-            subDirItem->setChildIndicatorPolicy(
-                    QTreeWidgetItem::ShowIndicator
-                    );
+            subDirItem->setText(name + "/");
         }
     }
 
@@ -286,11 +277,11 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     {
         QVariantMap subDir = subDirJson.toMap();
 
-        if(subDir["is_dir"] != true)
+        if(subDir["is_dir"] == false)
         {
-            QTreeWidgetItem *subDirItem;
-            subDirItem = new QTreeWidgetItem(
-                    ui->filesAndFoldersTreeWidget->currentItem()
+            QListWidgetItem* subDirItem;
+            subDirItem = new QListWidgetItem(
+                    ui->filesAndFoldersListWidget
                     );
 
             QString subDirPath = subDir["path"].toString();
@@ -298,29 +289,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
-            subDirItem->setText(0, name);
-
-            subDirItem->setText(
-                    1,
-                    subDir["size"].toString()
-                    );
+            subDirItem->setText(name);
         }
     }
 }
 
-void MainWindow::requestFile(QTreeWidgetItem* item)
+void MainWindow::requestFile(QString path)
 {
-    //find the path of the directory that contains the file
-    QString path = item->text(0);
-    QTreeWidgetItem* iterator = item->parent();
-    while(iterator != 0)
-    {
-        path.prepend(iterator->text(0));
-        iterator = iterator->parent();
-    }
-
-    ui->filesAndFoldersTreeWidget->setCurrentItem(item);
-
     QString url = dropbox->apiToUrlString(Dropbox::FILES) + path;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
@@ -356,13 +331,22 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
 
     QByteArray fileContents = networkReply->readAll();
 
-    QString path = QFileDialog::getExistingDirectory(this,
+    QString fileSystemPath = QFileDialog::getExistingDirectory(this,
                                                      "Select a directory"
                                                      );
 
-    QString fileName = ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+    QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
+    QString path = dropbox->urlStringToFilePath(urlString);
 
-    QFile file(path + "/" + fileName);
+    QString fileName = path.right(
+            (path.length() - path.lastIndexOf("/")) - 1
+             );
+
+    QMessageBox::information(this,
+                             "",
+                             fileName);
+
+    QFile file(fileSystemPath + "/" + fileName);
 
     file.open(QFile::WriteOnly);
 
@@ -391,27 +375,34 @@ void MainWindow::about()
     qMessageBox.exec();
 }
 
-void MainWindow::on_filesAndFoldersTreeWidget_itemExpanded(
-        QTreeWidgetItem* item
+void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
+        QListWidgetItem* item
         )
 {
-    //don't re-request listing if the item's directory is already listed
-    if(item->childIndicatorPolicy() == QTreeWidgetItem::ShowIndicator)
-        requestDirectoryListing(item);
-}
+    QString lastCharacter = item->text().at(item->text().length() - 1);
 
-void MainWindow::on_filesAndFoldersTreeWidget_currentItemChanged(
-        QTreeWidgetItem* current
-        )
-{
-    QString last = current->text(0).at(current->text(0).length() - 1);
-    if( last != "/" ) //if not a directory
-        ui->downloadFilePushButton->setEnabled(true);
+    //if the item is a directory
+    if(lastCharacter == "/")
+        //navigate to that sub directory
+        requestDirectoryListing(currentDirectory + item->text());
     else
-        ui->downloadFilePushButton->setEnabled(false);
+        //download the file
+        requestFile(currentDirectory + item->text());
 }
 
-void MainWindow::on_downloadFilePushButton_clicked()
+void MainWindow::on_upPushButton_clicked()
 {
-    requestFile(ui->filesAndFoldersTreeWidget->currentItem());
+    //generate new directory
+        QStringList parts = currentDirectory.split("/");
+        //remove last part knowing that there are two empty parts, one at the
+        //beginning and one at the end
+        parts.removeAt(parts.length() - 2);
+        QString newDirectory = parts.join("/");
+
+    requestDirectoryListing(newDirectory);
+}
+
+void MainWindow::on_refreshPushButton_clicked()
+{
+    requestDirectoryListing(currentDirectory);
 }

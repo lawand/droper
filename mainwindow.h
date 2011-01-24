@@ -37,10 +37,9 @@ class Dropbox;
 
 //member-function(s)-related forward declaration(s)
 class QNetworkReply;
-class QTreeWidgetItem;
+class QListWidgetItem;
 
 //member-function(s)-related includes
-#include <QModelIndex>
 
 namespace Ui {
     class MainWindow;
@@ -67,22 +66,21 @@ public:
     UserData* userData;
     Dropbox* dropbox;
 
+private:
+    QString currentDirectory;
+
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
     void requestAccountInformation();
     void handleAccountInformation(QNetworkReply* networkReply);
-    void requestDirectoryListing(QTreeWidgetItem* item);
+    void requestDirectoryListing(QString directory);
     void handleDirectoryListing(QNetworkReply* networkReply);
-    void requestFile(QTreeWidgetItem* item);
+    void requestFile(QString path);
     void handleFile(QNetworkReply* networkReply);
     void about();
-    void on_filesAndFoldersTreeWidget_itemExpanded(
-            QTreeWidgetItem* item
-            );
-    void on_filesAndFoldersTreeWidget_currentItemChanged(
-            QTreeWidgetItem* current
-            );
-    void on_downloadFilePushButton_clicked();
+    void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem* item);
+    void on_upPushButton_clicked();
+    void on_refreshPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

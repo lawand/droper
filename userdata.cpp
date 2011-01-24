@@ -23,6 +23,7 @@
 **
 ****************************************************************************/
 
+//corresponding header file(s)
 #include "userdata.h"
 
 UserData::UserData(QString token, QString secret, QString email)

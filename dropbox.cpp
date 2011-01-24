@@ -23,6 +23,7 @@
 **
 ****************************************************************************/
 
+//corresponding header file(s)
 #include "dropbox.h"
 
 Dropbox::Dropbox(int apiVersion)
@@ -153,4 +154,26 @@ Dropbox::Api Dropbox::urlStringToApi(QString urlString)
                 return Dropbox::THUMBNAILS;
         }
     }
+}
+
+QString Dropbox::urlStringToMetaDataPath(QString urlString)
+{
+    urlString.remove(
+            QString(
+                    "https://api.dropbox.com/%1/metadata/dropbox"
+                    ).arg(apiVersion)
+            );
+
+    return urlString;
+}
+
+QString Dropbox::urlStringToFilePath(QString urlString)
+{
+    urlString.remove(
+            QString(
+                    "https://api-content.dropbox.com/%1/files/dropbox"
+                    ).arg(apiVersion)
+            );
+
+    return urlString;
 }
