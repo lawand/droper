@@ -69,6 +69,14 @@ QString OAuth::signatureParameter(UserData* userData,
     QByteArray percentEncodedUrl = url.toAscii().toPercentEncoding();
 
     QStringList queryParts = query.split("&");
+
+    for(int i = 0; i < queryParts.length(); ++i)
+    {
+        QStringList partParts = queryParts[i].split("=");
+        partParts[1] = partParts[1].toAscii().toPercentEncoding();
+        queryParts[i] = partParts.join("=");
+    }
+
     queryParts.sort();
     QString sortedQuery = queryParts.join("&");
     QByteArray percentEncodedAndSortedQuery =
