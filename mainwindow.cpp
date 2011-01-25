@@ -94,6 +94,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
+    ui->statusbar->clearMessage();
+
     if(networkReply->error() != QNetworkReply::NoError)
     {
         QMessageBox::information(this,
@@ -145,6 +147,8 @@ void MainWindow::requestAccountInformation()
     query += "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+
+    ui->statusbar->showMessage("Loading...");
 }
 
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
@@ -189,8 +193,6 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
 void MainWindow::requestDirectoryListing(QString directory)
 {
-    ui->statusbar->showMessage("Loading...");
-
     QString url = dropbox->apiToUrlString(Dropbox::METADATA) + directory;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
@@ -209,12 +211,12 @@ void MainWindow::requestDirectoryListing(QString directory)
     query = query + "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+
+    ui->statusbar->showMessage("Loading...");
 }
 
 void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 {
-    ui->statusbar->clearMessage();
-
     networkReply->deleteLater();
 
     QString dirJson = networkReply->readAll();
@@ -306,6 +308,8 @@ void MainWindow::requestFile(QString path)
     query = query + "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+
+    ui->statusbar->showMessage("Loading...");
 }
 
 void MainWindow::handleFile(QNetworkReply* networkReply)
@@ -355,6 +359,8 @@ void MainWindow::requestFolderCreation(QString path)
     query = query + "&" + signatureParameter;
 
     networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+
+    ui->statusbar->showMessage("Loading...");
 }
 
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
