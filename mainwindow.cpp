@@ -94,6 +94,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
+    if(networkReply->error() != QNetworkReply::NoError)
+    {
+        QMessageBox::information(this,
+                                 "Error",
+                                 "There was an error, try again later."
+                                 );
+
+        return;
+    }
+
     Dropbox::Api api = dropbox->urlStringToApi(networkReply->url().toString());
 
     switch(api)
@@ -140,16 +150,6 @@ void MainWindow::requestAccountInformation()
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 {
     networkReply->deleteLater();
-
-    if(networkReply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
-
-        return;
-    }
 
     //read data from reply
     QString jsonData = networkReply->readAll();
@@ -216,16 +216,6 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     ui->statusbar->clearMessage();
 
     networkReply->deleteLater();
-
-    if(networkReply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
-
-        return;
-    }
 
     QString dirJson = networkReply->readAll();
 
@@ -322,16 +312,6 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
 {
     networkReply->deleteLater();
 
-    if(networkReply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
-
-        return;
-    }
-
     QByteArray fileContents = networkReply->readAll();
 
     QString fileSystemPath = QFileDialog::getExistingDirectory(this,
@@ -380,16 +360,6 @@ void MainWindow::requestFolderCreation(QString path)
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
 {
     networkReply->deleteLater();
-
-    if(networkReply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
-
-        return;
-    }
 
     refreshCurrentDirectory();
 }
