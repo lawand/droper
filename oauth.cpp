@@ -70,6 +70,7 @@ QString OAuth::signatureParameter(UserData* userData,
 
     QStringList queryParts = query.split("&");
 
+    //query values need to be percent encoded twice
     for(int i = 0; i < queryParts.length(); ++i)
     {
         QStringList partParts = queryParts[i].split("=");
