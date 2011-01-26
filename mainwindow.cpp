@@ -100,7 +100,12 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     {
         QMessageBox::information(this,
                                  "Error",
-                                 "There was an error, try again later."
+                                 networkReply->errorString()
+                                 );
+
+        QMessageBox::information(this,
+                                 "Reply",
+                                 networkReply->readAll()
                                  );
 
         return;
@@ -520,7 +525,8 @@ void MainWindow::on_cutPushButton_clicked()
         shouldPreserveClipboardContents = false;
 
         //fill the clipboard
-        clipboard = ui->filesAndFoldersListWidget->currentItem()->text();
+        clipboard = currentDirectory +
+                    ui->filesAndFoldersListWidget->currentItem()->text();
     }
 }
 
@@ -533,7 +539,8 @@ void MainWindow::on_copyPushButton_clicked()
         shouldPreserveClipboardContents = true;
 
         //fill the clipboard
-        clipboard = ui->filesAndFoldersListWidget->currentItem()->text();
+        clipboard = currentDirectory +
+                    ui->filesAndFoldersListWidget->currentItem()->text();
     }
 }
 
