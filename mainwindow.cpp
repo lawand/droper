@@ -133,6 +133,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     case Dropbox::FILEOPS_MOVE:
         handleMoving(networkReply);
         break;
+
+    case Dropbox::FILEOPS_DELETE:
+        handleDeleting(networkReply);
+        break;
     }
 }
 
@@ -412,6 +416,38 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
     refreshCurrentDirectory();
 }
 
+void MainWindow::requestDeleting(QString path)
+{
+    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_DELETE);
+
+    QString query = oAuth->consumerKeyParameter() + "&" +
+                    oAuth->userTokenParameter(userData) + "&" +
+                    oAuth->timestampAndNonceParameters() + "&" +
+                    oAuth->signatureMethodParameter() + "&" +
+                    QString("path=%1").arg(path) + "&" +
+                    QString("root=%1").arg("dropbox");
+
+    QString signatureParameter = oAuth->signatureParameter(
+            userData,
+            "GET",
+            url,
+            query
+            );
+
+    query = query + "&" + signatureParameter;
+
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+
+    ui->statusbar->showMessage("Loading...");
+}
+
+void MainWindow::handleDeleting(QNetworkReply* networkReply)
+{
+    networkReply->deleteLater();
+
+    refreshCurrentDirectory();
+}
+
 void MainWindow::requestFolderCreation(QString path)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
@@ -558,6 +594,29 @@ void MainWindow::on_pastePushButton_clicked()
             requestMoving(clipboard, currentDirectory + fileName);
 
             clipboard.clear();
+        }
+    }
+}
+
+void MainWindow::on_deletePushButton_clicked()
+{
+    //check whether some item is selected
+    if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+    {
+        QMessageBox::StandardButton response = QMessageBox::question(
+                this,
+                "Are you sure?",
+                "Are you sure you want to delete the file/folder?",
+                QMessageBox::No|QMessageBox::Yes,
+                QMessageBox::No
+                );
+
+        if(response == QMessageBox::Yes)
+        {
+            requestDeleting(
+                    currentDirectory +
+                    ui->filesAndFoldersListWidget->currentItem()->text()
+                    );
         }
     }
 }

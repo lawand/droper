@@ -81,6 +81,8 @@ private slots:
     void handleCopying(QNetworkReply* networkReply);
     void requestMoving(QString source, QString destination);
     void handleMoving(QNetworkReply* networkReply);
+    void requestDeleting(QString path);
+    void handleDeleting(QNetworkReply* networkReply);
     void requestFolderCreation(QString path);
     void handleFolderCreation(QNetworkReply* networkReply);
     void about();
@@ -92,6 +94,7 @@ private slots:
     void on_cutPushButton_clicked();
     void on_copyPushButton_clicked();
     void on_pastePushButton_clicked();
+    void on_deletePushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
