@@ -60,6 +60,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QString currentDirectory;
+    QString clipboard;
 
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
@@ -75,6 +76,8 @@ private slots:
     void handleDirectoryListing(QNetworkReply* networkReply);
     void requestFile(QString path);
     void handleFile(QNetworkReply* networkReply);
+    void requestCopying(QString source, QString destination);
+    void handleCopying(QNetworkReply* networkReply);
     void requestFolderCreation(QString path);
     void handleFolderCreation(QNetworkReply* networkReply);
     void about();
@@ -83,6 +86,8 @@ private slots:
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();
     void on_createFolderPushButton_clicked();
+    void on_copyPushButton_clicked();
+    void on_pastePushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

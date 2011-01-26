@@ -69,6 +69,20 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="copyPushButton">
+        <property name="text">
+         <string>Copy</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pastePushButton">
+        <property name="text">
+         <string>Paste</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="createFolderPushButton">
         <property name="text">
          <string>Create Folder</string>

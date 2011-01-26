@@ -125,6 +125,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     case Dropbox::FILEOPS_CREATEFOLDER:
         handleFolderCreation(networkReply);
         break;
+
+    case Dropbox::FILEOPS_COPY:
+        handleCopying(networkReply);
+        break;
     }
 }
 
@@ -338,6 +342,39 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
     file.close();
 }
 
+void MainWindow::requestCopying(QString source, QString destination)
+{
+    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_COPY);
+
+    QString query = oAuth->consumerKeyParameter() + "&" +
+                    oAuth->userTokenParameter(userData) + "&" +
+                    oAuth->timestampAndNonceParameters() + "&" +
+                    oAuth->signatureMethodParameter() + "&" +
+                    QString("root=%1").arg("dropbox") + "&" +
+                    QString("from_path=%1").arg(source) + "&" +
+                    QString("to_path=%1").arg(destination);
+
+    QString signatureParameter = oAuth->signatureParameter(
+            userData,
+            "GET",
+            url,
+            query
+            );
+
+    query = query + "&" + signatureParameter;
+
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+
+    ui->statusbar->showMessage("Loading...");
+}
+
+void MainWindow::handleCopying(QNetworkReply* networkReply)
+{
+    networkReply->deleteLater();
+
+    refreshCurrentDirectory();
+}
+
 void MainWindow::requestFolderCreation(QString path)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
@@ -435,4 +472,21 @@ void MainWindow::on_createFolderPushButton_clicked()
                           );
 
     requestFolderCreation(currentDirectory + folderName);
+}
+
+void MainWindow::on_copyPushButton_clicked()
+{
+    if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+    {
+        clipboard = ui->filesAndFoldersListWidget->currentItem()->text();
+    }
+}
+
+void MainWindow::on_pastePushButton_clicked()
+{
+    QString fileName = clipboard.right(
+            (clipboard.length() - clipboard.lastIndexOf("/")) - 1
+             );
+
+    requestCopying(clipboard, currentDirectory + fileName);
 }
