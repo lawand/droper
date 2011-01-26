@@ -129,6 +129,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     case Dropbox::FILEOPS_COPY:
         handleCopying(networkReply);
         break;
+
+    case Dropbox::FILEOPS_MOVE:
+        handleMoving(networkReply);
+        break;
     }
 }
 
@@ -375,6 +379,39 @@ void MainWindow::handleCopying(QNetworkReply* networkReply)
     refreshCurrentDirectory();
 }
 
+void MainWindow::requestMoving(QString source, QString destination)
+{
+    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_MOVE);
+
+    QString query = oAuth->consumerKeyParameter() + "&" +
+                    oAuth->userTokenParameter(userData) + "&" +
+                    oAuth->timestampAndNonceParameters() + "&" +
+                    oAuth->signatureMethodParameter() + "&" +
+                    QString("root=%1").arg("dropbox") + "&" +
+                    QString("from_path=%1").arg(source) + "&" +
+                    QString("to_path=%1").arg(destination);
+
+    QString signatureParameter = oAuth->signatureParameter(
+            userData,
+            "GET",
+            url,
+            query
+            );
+
+    query = query + "&" + signatureParameter;
+
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+
+    ui->statusbar->showMessage("Loading...");
+}
+
+void MainWindow::handleMoving(QNetworkReply* networkReply)
+{
+    networkReply->deleteLater();
+
+    refreshCurrentDirectory();
+}
+
 void MainWindow::requestFolderCreation(QString path)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
@@ -474,10 +511,28 @@ void MainWindow::on_createFolderPushButton_clicked()
     requestFolderCreation(currentDirectory + folderName);
 }
 
-void MainWindow::on_copyPushButton_clicked()
+void MainWindow::on_cutPushButton_clicked()
 {
+    //check whether some item is selected
     if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
     {
+        //mark the operation as a cut operation
+        shouldPreserveClipboardContents = false;
+
+        //fill the clipboard
+        clipboard = ui->filesAndFoldersListWidget->currentItem()->text();
+    }
+}
+
+void MainWindow::on_copyPushButton_clicked()
+{
+    //check whether some item is selected
+    if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+    {
+        //mark the operation as a copy operation
+        shouldPreserveClipboardContents = true;
+
+        //fill the clipboard
         clipboard = ui->filesAndFoldersListWidget->currentItem()->text();
     }
 }
@@ -488,5 +543,15 @@ void MainWindow::on_pastePushButton_clicked()
             (clipboard.length() - clipboard.lastIndexOf("/")) - 1
              );
 
-    requestCopying(clipboard, currentDirectory + fileName);
+    //check whether this is a cut or copy operation
+    if(shouldPreserveClipboardContents)
+    {
+        requestCopying(clipboard, currentDirectory + fileName);
+    }
+    else
+    {
+        requestMoving(clipboard, currentDirectory + fileName);
+
+        clipboard.clear();
+    }
 }
