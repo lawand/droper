@@ -100,12 +100,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     {
         QMessageBox::information(this,
                                  "Error",
-                                 networkReply->errorString()
-                                 );
-
-        QMessageBox::information(this,
-                                 "Reply",
-                                 networkReply->readAll()
+                                 "There was an error, try again later."
                                  );
 
         return;
