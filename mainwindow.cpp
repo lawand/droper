@@ -539,19 +539,23 @@ void MainWindow::on_copyPushButton_clicked()
 
 void MainWindow::on_pastePushButton_clicked()
 {
-    QString fileName = clipboard.right(
-            (clipboard.length() - clipboard.lastIndexOf("/")) - 1
-             );
-
-    //check whether this is a cut or copy operation
-    if(shouldPreserveClipboardContents)
+    //check whether the clipboard contains something
+    if(!clipboard.isEmpty())
     {
-        requestCopying(clipboard, currentDirectory + fileName);
-    }
-    else
-    {
-        requestMoving(clipboard, currentDirectory + fileName);
+        QString fileName = clipboard.right(
+                (clipboard.length() - clipboard.lastIndexOf("/")) - 1
+                 );
 
-        clipboard.clear();
+        //check whether this is a cut or copy operation
+        if(shouldPreserveClipboardContents)
+        {
+            requestCopying(clipboard, currentDirectory + fileName);
+        }
+        else
+        {
+            requestMoving(clipboard, currentDirectory + fileName);
+
+            clipboard.clear();
+        }
     }
 }
