@@ -191,9 +191,9 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                              accountInfo);
 }
 
-void MainWindow::requestDirectoryListing(QString directory)
+void MainWindow::requestDirectoryListing(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::METADATA) + directory;
+    QString url = dropbox->apiToUrlString(Dropbox::METADATA) + path;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +

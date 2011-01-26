@@ -71,7 +71,7 @@ private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
     void requestAccountInformation();
     void handleAccountInformation(QNetworkReply* networkReply);
-    void requestDirectoryListing(QString directory);
+    void requestDirectoryListing(QString path);
     void handleDirectoryListing(QNetworkReply* networkReply);
     void requestFile(QString path);
     void handleFile(QNetworkReply* networkReply);
