@@ -146,7 +146,7 @@ void MainWindow::requestAccountInformation()
 
     query += "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -210,7 +210,7 @@ void MainWindow::requestDirectoryListing(QString path)
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -307,7 +307,7 @@ void MainWindow::requestFile(QString path)
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query ) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
