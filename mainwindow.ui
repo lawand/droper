@@ -44,13 +44,23 @@
      </layout>
     </item>
     <item>
-     <widget class="QListWidget" name="filesAndFoldersListWidget">
+     <widget class="QTreeWidget" name="filesAndFoldersTreeWidget">
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
-      <property name="wordWrap">
-       <bool>true</bool>
+      <property name="indentation">
+       <number>0</number>
       </property>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Size</string>
+       </property>
+      </column>
      </widget>
     </item>
     <item>

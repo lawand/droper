@@ -37,7 +37,7 @@ class Dropbox;
 
 //member-function(s)-related forward declaration(s)
 class QNetworkReply;
-class QListWidgetItem;
+class QTreeWidgetItem;
 
 //member-function(s)-related includes
 
@@ -87,7 +87,9 @@ private slots:
     void handleFolderCreation(QNetworkReply* networkReply);
     void about();
     void refreshCurrentDirectory();
-    void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem* item);
+    void on_filesAndFoldersTreeWidget_itemDoubleClicked(
+            QTreeWidgetItem* item
+            );
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();
     void on_createFolderPushButton_clicked();
