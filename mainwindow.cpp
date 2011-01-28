@@ -546,7 +546,8 @@ void MainWindow::on_createFolderPushButton_clicked()
                           "Folder Name"
                           );
 
-    requestFolderCreation(currentDirectory + folderName);
+    if(! folderName.isEmpty() )
+        requestFolderCreation(currentDirectory + folderName);
 }
 
 void MainWindow::on_cutPushButton_clicked()
