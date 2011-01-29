@@ -601,6 +601,60 @@ void MainWindow::on_pastePushButton_clicked()
     }
 }
 
+void MainWindow::on_renamePushButton_clicked()
+{
+    //if no item is selected, do nothing
+    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+        return;
+
+    QString oldName = ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+
+    //check to know whether this is a directory or a file
+    bool isDir;
+    if(oldName.at(oldName.length() - 1) == '/')
+        isDir = true;
+    else
+        isDir = false;
+
+    if(isDir)
+    {
+        //this removes the last character which should be '/'
+        oldName.chop(1);
+    }
+
+    QString newName = QInputDialog::getText(
+            this,
+            "Rename",
+            "Enter a new name:",
+            QLineEdit::Normal,
+            oldName
+            );
+
+    //if no new value was entered, do nothing
+    if(newName == "")
+        return;
+
+    //if the new name is the same as the old name, do nothing
+    if(newName == oldName)
+        return;
+
+    //perform the rename
+    if(isDir)
+    {
+        requestMoving(
+                currentDirectory + oldName + "/",
+                currentDirectory + newName + "/"
+                );
+    }
+    else
+    {
+        requestMoving(
+                currentDirectory + oldName,
+                currentDirectory + newName
+                );
+    }
+}
+
 void MainWindow::on_deletePushButton_clicked()
 {
     //check whether some item is selected

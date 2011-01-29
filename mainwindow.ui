@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
-    <height>355</height>
+    <width>626</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,6 +100,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="renamePushButton">
+        <property name="text">
+         <string>Rename</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="deletePushButton">
         <property name="text">
          <string>Delete</string>
@@ -135,7 +142,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>563</width>
+     <width>626</width>
      <height>27</height>
     </rect>
    </property>
