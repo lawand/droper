@@ -543,7 +543,7 @@ void MainWindow::on_createFolderPushButton_clicked()
 {
     QString folderName = QInputDialog::getText(this,
                           "Create Folder",
-                          "Folder Name"
+                          "Enter the folder's name:"
                           );
 
     if(! folderName.isEmpty() )
