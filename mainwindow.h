@@ -92,12 +92,12 @@ private slots:
             );
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();
-    void on_createFolderPushButton_clicked();
     void on_cutPushButton_clicked();
     void on_copyPushButton_clicked();
     void on_pastePushButton_clicked();
     void on_renamePushButton_clicked();
     void on_deletePushButton_clicked();
+    void on_createFolderPushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

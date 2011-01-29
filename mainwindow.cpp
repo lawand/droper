@@ -550,20 +550,6 @@ void MainWindow::on_createFolderPushButton_clicked()
         requestFolderCreation(currentDirectory + folderName);
 }
 
-void MainWindow::on_cutPushButton_clicked()
-{
-    //check whether some item is selected
-    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
-    {
-        //mark the operation as a cut operation
-        shouldPreserveClipboardContents = false;
-
-        //fill the clipboard
-        clipboard = currentDirectory +
-                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
-    }
-}
-
 void MainWindow::on_copyPushButton_clicked()
 {
     //check whether some item is selected
@@ -675,5 +661,19 @@ void MainWindow::on_deletePushButton_clicked()
                     ui->filesAndFoldersTreeWidget->currentItem()->text(0)
                     );
         }
+    }
+}
+
+void MainWindow::on_cutPushButton_clicked()
+{
+    //check whether some item is selected
+    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    {
+        //mark the operation as a cut operation
+        shouldPreserveClipboardContents = false;
+
+        //fill the clipboard
+        clipboard = currentDirectory +
+                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
     }
 }
