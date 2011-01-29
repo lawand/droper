@@ -539,15 +539,18 @@ void MainWindow::on_refreshPushButton_clicked()
     refreshCurrentDirectory();
 }
 
-void MainWindow::on_createFolderPushButton_clicked()
+void MainWindow::on_cutPushButton_clicked()
 {
-    QString folderName = QInputDialog::getText(this,
-                          "Create Folder",
-                          "Enter the folder's name:"
-                          );
+    //check whether some item is selected
+    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    {
+        //mark the operation as a cut operation
+        shouldPreserveClipboardContents = false;
 
-    if(! folderName.isEmpty() )
-        requestFolderCreation(currentDirectory + folderName);
+        //fill the clipboard
+        clipboard = currentDirectory +
+                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+    }
 }
 
 void MainWindow::on_copyPushButton_clicked()
@@ -664,16 +667,13 @@ void MainWindow::on_deletePushButton_clicked()
     }
 }
 
-void MainWindow::on_cutPushButton_clicked()
+void MainWindow::on_createFolderPushButton_clicked()
 {
-    //check whether some item is selected
-    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
-    {
-        //mark the operation as a cut operation
-        shouldPreserveClipboardContents = false;
+    QString folderName = QInputDialog::getText(this,
+                          "Create Folder",
+                          "Enter the folder's name:"
+                          );
 
-        //fill the clipboard
-        clipboard = currentDirectory +
-                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
-    }
+    if(! folderName.isEmpty() )
+        requestFolderCreation(currentDirectory + folderName);
 }
