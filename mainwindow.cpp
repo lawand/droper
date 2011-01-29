@@ -541,37 +541,39 @@ void MainWindow::on_refreshPushButton_clicked()
 
 void MainWindow::on_cutPushButton_clicked()
 {
-    //check whether some item is selected
-    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
-    {
-        //mark the operation as a cut operation
-        shouldPreserveClipboardContents = false;
+    //if no item is selected, do nothing
+    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+        return;
 
-        //fill the clipboard
-        clipboard = currentDirectory +
-                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
-    }
+    //mark the operation as a cut operation
+    shouldPreserveClipboardContents = false;
+
+    //fill the clipboard
+    clipboard = currentDirectory +
+                ui->filesAndFoldersTreeWidget->currentItem()->text(0);
 }
 
 void MainWindow::on_copyPushButton_clicked()
 {
-    //check whether some item is selected
-    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
-    {
-        //mark the operation as a copy operation
-        shouldPreserveClipboardContents = true;
+    //if no item is selected, do nothing
+    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+        return;
 
-        //fill the clipboard
-        clipboard = currentDirectory +
-                    ui->filesAndFoldersTreeWidget->currentItem()->text(0);
-    }
+    //mark the operation as a copy operation
+    shouldPreserveClipboardContents = true;
+
+    //fill the clipboard
+    clipboard = currentDirectory +
+                ui->filesAndFoldersTreeWidget->currentItem()->text(0);
 }
 
 void MainWindow::on_pastePushButton_clicked()
 {
-    //check whether the clipboard contains something
-    if(!clipboard.isEmpty())
-    {
+    //if the clipboard is empty, do nothing
+    if(clipboard.isEmpty())
+        return;
+
+    //perform the paste operation
         QString fileName = clipboard.right(
                 (clipboard.length() - clipboard.lastIndexOf("/")) - 1
                  );
@@ -587,7 +589,6 @@ void MainWindow::on_pastePushButton_clicked()
 
             clipboard.clear();
         }
-    }
 }
 
 void MainWindow::on_renamePushButton_clicked()
@@ -620,14 +621,14 @@ void MainWindow::on_renamePushButton_clicked()
             );
 
     //if no new value was entered, do nothing
-    if(newName == "")
+    if(newName.isEmpty())
         return;
 
     //if the new name is the same as the old name, do nothing
     if(newName == oldName)
         return;
 
-    //perform the rename
+    //perform the rename operation
     if(isDir)
     {
         requestMoving(
@@ -646,9 +647,11 @@ void MainWindow::on_renamePushButton_clicked()
 
 void MainWindow::on_deletePushButton_clicked()
 {
-    //check whether some item is selected
-    if(! ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
-    {
+    //if no item is selected, do nothing
+    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+        return;
+
+    //perform the delete operation
         QMessageBox::StandardButton response = QMessageBox::question(
                 this,
                 "Are you sure?",
@@ -664,7 +667,6 @@ void MainWindow::on_deletePushButton_clicked()
                     ui->filesAndFoldersTreeWidget->currentItem()->text(0)
                     );
         }
-    }
 }
 
 void MainWindow::on_createFolderPushButton_clicked()
@@ -674,6 +676,10 @@ void MainWindow::on_createFolderPushButton_clicked()
                           "Enter the folder's name:"
                           );
 
-    if(! folderName.isEmpty() )
+    //if no folderName was entered, do nothing
+    if( folderName.isEmpty() )
+        return;
+
+    //perform the folder creation operation
         requestFolderCreation(currentDirectory + folderName);
 }
