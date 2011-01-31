@@ -64,9 +64,19 @@ QString OAuth::signatureMethodParameter()
 QString OAuth::signatureParameter(UserData* userData,
                                   QString method,
                                   QString url,
+                                  QString urlPath,
                                   QString query)
 {
-    QByteArray percentEncodedUrl = url.toAscii().toPercentEncoding();
+    //url path needs to be UTF-8 encoded and percent encoded
+    QStringList urlPathParts = urlPath.split("/");
+    for(int i = 0; i < urlPathParts.length(); ++i)
+    {
+        urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
+    }
+    urlPath = urlPathParts.join("/");
+
+    QByteArray percentEncodedUrlAndPath =
+            (url+urlPath).toAscii().toPercentEncoding();
 
     QStringList queryParts = query.split("&");
 
@@ -85,7 +95,7 @@ QString OAuth::signatureParameter(UserData* userData,
 
     QString base = method+
                    "&"+
-                   percentEncodedUrl+
+                   percentEncodedUrlAndPath+
                    "&"+
                    percentEncodedAndSortedQuery;
 

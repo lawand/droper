@@ -45,6 +45,7 @@ public:
     QString signatureParameter(UserData* userData,
                                QString method,
                                QString url,
+                               QString urlPath,
                                QString query);
     QString userTokenParameter(UserData* userData);
 
