@@ -37,19 +37,19 @@ QString Dropbox::apiToUrlString(Dropbox::Api api)
     {
     case Dropbox::TOKEN:
         return QString(
-                "https://api.dropbox.com/%1/token"
+                "https://api.dropbox.com/%1/token/"
                 ).arg(apiVersion);
         break;
 
     case Dropbox::ACCOUNT_INFO:
         return QString(
-                "https://api.dropbox.com/%1/account/info"
+                "https://api.dropbox.com/%1/account/info/"
                 ).arg(apiVersion);
         break;
 
     case Dropbox::ACCOUNT:
         return QString(
-                "https://api.dropbox.com/%1/account"
+                "https://api.dropbox.com/%1/account/"
                 ).arg(apiVersion);
         break;
 
@@ -73,25 +73,25 @@ QString Dropbox::apiToUrlString(Dropbox::Api api)
 
     case Dropbox::FILEOPS_COPY:
         return QString(
-                "https://api.dropbox.com/%1/fileops/copy"
+                "https://api.dropbox.com/%1/fileops/copy/"
                 ).arg(apiVersion);
         break;
 
     case Dropbox::FILEOPS_CREATEFOLDER:
         return QString(
-                "https://api.dropbox.com/%1/fileops/create_folder"
+                "https://api.dropbox.com/%1/fileops/create_folder/"
                 ).arg(apiVersion);
         break;
 
     case Dropbox::FILEOPS_DELETE:
         return QString(
-                "https://api.dropbox.com/%1/fileops/delete"
+                "https://api.dropbox.com/%1/fileops/delete/"
                 ).arg(apiVersion);
         break;
 
     case Dropbox::FILEOPS_MOVE:
         return QString(
-                "https://api.dropbox.com/%1/fileops/move"
+                "https://api.dropbox.com/%1/fileops/move/"
                 ).arg(apiVersion);
         break;
     }
@@ -108,13 +108,13 @@ Dropbox::Api Dropbox::urlStringToApi(QString urlString)
         {
             urlString.remove(QString("%1").arg(apiVersion) + "/");
 
-            if(urlString.startsWith("token"))
+            if(urlString.startsWith("token/"))
                 return Dropbox::TOKEN;
 
-            if(urlString.startsWith("account/info"))
+            if(urlString.startsWith("account/info/"))
                 return Dropbox::ACCOUNT_INFO;
 
-            if(urlString.startsWith("account"))
+            if(urlString.startsWith("account/"))
                 return Dropbox::ACCOUNT;
 
             if(urlString.startsWith("metadata/dropbox"))
@@ -124,16 +124,16 @@ Dropbox::Api Dropbox::urlStringToApi(QString urlString)
             {
                 urlString.remove("fileops/");
 
-                if(urlString.startsWith("copy"))
+                if(urlString.startsWith("copy/"))
                     return Dropbox::FILEOPS_COPY;
 
-                if(urlString.startsWith("create_folder"))
+                if(urlString.startsWith("create_folder/"))
                     return Dropbox::FILEOPS_CREATEFOLDER;
 
-                if(urlString.startsWith("delete"))
+                if(urlString.startsWith("delete/"))
                     return Dropbox::FILEOPS_DELETE;
 
-                if(urlString.startsWith("move"))
+                if(urlString.startsWith("move/"))
                     return Dropbox::FILEOPS_MOVE;
             }
         }
