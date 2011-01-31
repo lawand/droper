@@ -144,6 +144,8 @@ void MainWindow::requestAccountInformation()
 {
     QString url = dropbox->apiToUrlString(Dropbox::ACCOUNT_INFO);
 
+    QString urlPath = "";
+
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
                     oAuth->timestampAndNonceParameters() + "&" +
@@ -153,12 +155,13 @@ void MainWindow::requestAccountInformation()
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query += "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -205,7 +208,9 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
 void MainWindow::requestDirectoryListing(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::METADATA) + path;
+    QString url = dropbox->apiToUrlString(Dropbox::METADATA);
+
+    QString urlPath = path;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
@@ -217,12 +222,13 @@ void MainWindow::requestDirectoryListing(QString path)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -305,7 +311,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
 void MainWindow::requestFile(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILES) + path;
+    QString url = dropbox->apiToUrlString(Dropbox::FILES);
+
+    QString urlPath = path;
 
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
@@ -316,12 +324,13 @@ void MainWindow::requestFile(QString path)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -356,6 +365,8 @@ void MainWindow::requestCopying(QString source, QString destination)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_COPY);
 
+    QString urlPath = "";
+
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
                     oAuth->timestampAndNonceParameters() + "&" +
@@ -368,12 +379,13 @@ void MainWindow::requestCopying(QString source, QString destination)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -389,6 +401,8 @@ void MainWindow::requestMoving(QString source, QString destination)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_MOVE);
 
+    QString urlPath = "";
+
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
                     oAuth->timestampAndNonceParameters() + "&" +
@@ -401,12 +415,13 @@ void MainWindow::requestMoving(QString source, QString destination)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -422,6 +437,8 @@ void MainWindow::requestDeleting(QString path)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_DELETE);
 
+    QString urlPath = "";
+
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
                     oAuth->timestampAndNonceParameters() + "&" +
@@ -433,12 +450,13 @@ void MainWindow::requestDeleting(QString path)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -454,6 +472,8 @@ void MainWindow::requestFolderCreation(QString path)
 {
     QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
 
+    QString urlPath = "";
+
     QString query = oAuth->consumerKeyParameter() + "&" +
                     oAuth->userTokenParameter(userData) + "&" +
                     oAuth->timestampAndNonceParameters() + "&" +
@@ -465,12 +485,13 @@ void MainWindow::requestFolderCreation(QString path)
             userData,
             "GET",
             url,
+            urlPath,
             query
             );
 
     query = query + "&" + signatureParameter;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
 
     ui->statusbar->showMessage("Loading...");
 }
