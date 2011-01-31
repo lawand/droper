@@ -80,6 +80,14 @@ QString OAuth::signatureParameter(UserData* userData,
 
     QStringList queryParts = query.split("&");
 
+    //query values need to be UTF-8 encoded
+    for(int i = 0; i < queryParts.length(); ++i)
+    {
+        QStringList partParts = queryParts[i].split("=");
+        partParts[1] = partParts[1].toUtf8();
+        queryParts[i] = partParts.join("=");
+    }
+
     //query values need to be percent encoded
     for(int i = 0; i < queryParts.length(); ++i)
     {
