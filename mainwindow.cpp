@@ -138,6 +138,8 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         handleDeleting(networkReply);
         break;
     }
+
+    networkReply->deleteLater();
 }
 
 void MainWindow::requestAccountInformation()
@@ -168,8 +170,6 @@ void MainWindow::requestAccountInformation()
 
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     //read data from reply
     QString jsonData = networkReply->readAll();
 
@@ -235,8 +235,6 @@ void MainWindow::requestDirectoryListing(QString path)
 
 void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     QString dirJson = networkReply->readAll();
 
     bool ok;
@@ -337,8 +335,6 @@ void MainWindow::requestFile(QString path)
 
 void MainWindow::handleFile(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     QByteArray fileContents = networkReply->readAll();
 
     QString fileSystemPath = QFileDialog::getExistingDirectory(this,
@@ -392,8 +388,6 @@ void MainWindow::requestCopying(QString source, QString destination)
 
 void MainWindow::handleCopying(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     refreshCurrentDirectory();
 }
 
@@ -428,8 +422,6 @@ void MainWindow::requestMoving(QString source, QString destination)
 
 void MainWindow::handleMoving(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     refreshCurrentDirectory();
 }
 
@@ -463,8 +455,6 @@ void MainWindow::requestDeleting(QString path)
 
 void MainWindow::handleDeleting(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     refreshCurrentDirectory();
 }
 
@@ -498,8 +488,6 @@ void MainWindow::requestFolderCreation(QString path)
 
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
 {
-    networkReply->deleteLater();
-
     refreshCurrentDirectory();
 }
 
