@@ -583,18 +583,29 @@ void MainWindow::on_pastePushButton_clicked()
         return;
 
     //perform the paste operation
-        QString fileName = clipboard.right(
-                (clipboard.length() - clipboard.lastIndexOf("/")) - 1
-                 );
+        //get file or folder name
+            QString name = clipboard.right(
+                    (clipboard.length() - clipboard.lastIndexOf("/")) - 1
+                    );
+            if(name.isEmpty()) //then this is a folder
+            {
+                QString choppedClipboard = clipboard;
+                choppedClipboard.chop(1);
+                name = choppedClipboard.right(
+                        (choppedClipboard.length() -
+                         choppedClipboard.lastIndexOf("/")) - 1
+                        );
+                name += "/";
+            }
 
         //check whether this is a cut or copy operation
         if(shouldPreserveClipboardContents)
         {
-            requestCopying(clipboard, currentDirectory + fileName);
+            requestCopying(clipboard, currentDirectory + name);
         }
         else
         {
-            requestMoving(clipboard, currentDirectory + fileName);
+            requestMoving(clipboard, currentDirectory + name);
 
             clipboard.clear();
         }
