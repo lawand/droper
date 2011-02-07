@@ -106,10 +106,20 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
 
     if(networkReply->error() != QNetworkReply::NoError)
     {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
+        if(networkReply->error() == QNetworkReply::AuthenticationRequiredError)
+        {
+            QMessageBox::critical(this,
+                                  "Authentication Error",
+                                  "The provided user information is not valid."
+                                  );
+        }
+        else
+        {
+            QMessageBox::information(this,
+                                     "Error",
+                                     "There was an error, try again later."
+                                     );
+        }
 
         return;
     }
