@@ -31,149 +31,170 @@ Dropbox::Dropbox(int apiVersion)
     this->apiVersion = apiVersion;
 }
 
-QString Dropbox::apiToUrlString(Dropbox::Api api)
+QUrl Dropbox::apiToUrl(Dropbox::Api api)
 {
     switch(api)
     {
     case Dropbox::TOKEN:
-        return QString(
-                "https://api.dropbox.com/%1/token/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/token"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::ACCOUNT_INFO:
-        return QString(
-                "https://api.dropbox.com/%1/account/info/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/account/info"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::ACCOUNT:
-        return QString(
-                "https://api.dropbox.com/%1/account/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/account"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::FILES:
-        return QString(
-                "https://api-content.dropbox.com/%1/files/dropbox"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api-content.dropbox.com/%1/files/dropbox"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::METADATA:
-        return QString(
-                "https://api.dropbox.com/%1/metadata/dropbox"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/metadata/dropbox"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::THUMBNAILS:
-        return QString(
-                "https://api-content.dropbox.com/%1/thumbnails/dropbox"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api-content.dropbox.com/%1/thumbnails/dropbox"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::FILEOPS_COPY:
-        return QString(
-                "https://api.dropbox.com/%1/fileops/copy/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/fileops/copy"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::FILEOPS_CREATEFOLDER:
-        return QString(
-                "https://api.dropbox.com/%1/fileops/create_folder/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/fileops/create_folder"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::FILEOPS_DELETE:
-        return QString(
-                "https://api.dropbox.com/%1/fileops/delete/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/fileops/delete"
+                        ).arg(apiVersion)
+                );
         break;
 
     case Dropbox::FILEOPS_MOVE:
-        return QString(
-                "https://api.dropbox.com/%1/fileops/move/"
-                ).arg(apiVersion);
+        return QUrl(
+                QString(
+                        "https://api.dropbox.com/%1/fileops/move"
+                        ).arg(apiVersion)
+                );
         break;
     }
 }
 
-Dropbox::Api Dropbox::urlStringToApi(QString urlString)
+Dropbox::Api Dropbox::urlToApi(QUrl url)
 {
-
-    if(urlString.startsWith("https://api.dropbox.com/"))
+    if(url.toString().startsWith("https://api.dropbox.com"))
     {
-        urlString.remove("https://api.dropbox.com/");
+        QString path = url.path();
 
-        if(urlString.startsWith(QString("%1").arg(apiVersion) + "/"))
+        if(path.startsWith("/" + QString("%1").arg(apiVersion) + "/"))
         {
-            urlString.remove(QString("%1").arg(apiVersion) + "/");
+            path.remove("/" + QString("%1").arg(apiVersion) + "/");
 
-            if(urlString.startsWith("token/"))
+            if(path == "token")
                 return Dropbox::TOKEN;
 
-            if(urlString.startsWith("account/info/"))
+            if(path == "account/info")
                 return Dropbox::ACCOUNT_INFO;
 
-            if(urlString.startsWith("account/"))
+            if(path == "account")
                 return Dropbox::ACCOUNT;
 
-            if(urlString.startsWith("metadata/dropbox"))
+            if(path.startsWith("metadata/dropbox"))
                 return Dropbox::METADATA;
 
-            if(urlString.startsWith("fileops/"))
+            if(path.startsWith("fileops/"))
             {
-                urlString.remove("fileops/");
+                path.remove("fileops/");
 
-                if(urlString.startsWith("copy/"))
+                if(path == "copy")
                     return Dropbox::FILEOPS_COPY;
 
-                if(urlString.startsWith("create_folder/"))
+                if(path == "create_folder")
                     return Dropbox::FILEOPS_CREATEFOLDER;
 
-                if(urlString.startsWith("delete/"))
+                if(path == "delete")
                     return Dropbox::FILEOPS_DELETE;
 
-                if(urlString.startsWith("move/"))
+                if(path == "move")
                     return Dropbox::FILEOPS_MOVE;
             }
         }
     }
 
-    if(urlString.startsWith("https://api-content.dropbox.com/"))
+    if(url.toString().startsWith("https://api-content.dropbox.com"))
     {
-        urlString.remove("https://api-content.dropbox.com/");
+        QString path = url.path();
 
-        if(urlString.startsWith(QString("%1").arg(apiVersion) + "/"))
+        if(path.startsWith("/" + QString("%1").arg(apiVersion) + "/"))
         {
-            urlString.remove(QString("%1").arg(apiVersion) + "/");
+            path.remove("/" + QString("%1").arg(apiVersion) + "/");
 
-            if(urlString.startsWith("files/dropbox"))
+            if(path.startsWith("files/dropbox"))
                 return Dropbox::FILES;
 
-            if(urlString.startsWith("thumbnails/dropbox"))
+            if(path.startsWith("thumbnails/dropbox"))
                 return Dropbox::THUMBNAILS;
         }
     }
 }
 
-QString Dropbox::extractMetaDataPath(QString urlString)
+QString Dropbox::metaDataPathFromUrl(QUrl url)
 {
-    urlString.remove(
-            QString(
-                    "https://api.dropbox.com/%1/metadata/dropbox"
-                    ).arg(apiVersion)
+    QString path = url.path();
+
+    QString metaDataPath = path;
+    metaDataPath = metaDataPath.remove(
+            QString("/%1/metadata/dropbox").arg(apiVersion)
             );
 
-    return urlString;
+    return metaDataPath;
 }
 
-QString Dropbox::extractFilePath(QString urlString)
+QString Dropbox::filePathFromUrl(QUrl url)
 {
-    urlString.remove(
-            QString(
-                    "https://api-content.dropbox.com/%1/files/dropbox"
-                    ).arg(apiVersion)
+    QString path = url.path();
+
+    QString filePath = path;
+    filePath = filePath.remove(
+            QString("/%1/files/dropbox").arg(apiVersion)
             );
 
-    return urlString;
+    return filePath;
 }

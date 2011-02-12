@@ -26,7 +26,7 @@
 #ifndef DROPBOX_H
 #define DROPBOX_H
 
-#include <QString>
+#include <QUrl>
 
 class Dropbox
 {
@@ -49,11 +49,11 @@ public:
 public:
     Dropbox(int apiVersion = 0);
 
-    QString apiToUrlString(Dropbox::Api api);
-    Dropbox::Api urlStringToApi(QString urlString);
+    QUrl apiToUrl(Dropbox::Api api);
+    Dropbox::Api urlToApi(QUrl url);
 
-    QString extractMetaDataPath(QString urlString);
-    QString extractFilePath(QString urlString);
+    QString metaDataPathFromUrl(QUrl url);
+    QString filePathFromUrl(QUrl url);
 
 private:
     int apiVersion;
