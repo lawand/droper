@@ -42,81 +42,108 @@ OAuth::OAuth(ConsumerData* consumerData)
     this->consumerData = consumerData;
 }
 
-QString OAuth::timestampAndNonceParameters()
+QPair<QString,QString> OAuth::timestampQueryItem()
 {
-    int currentSecsSinceEpoch = QDateTime::currentMSecsSinceEpoch()/1000;
-
-    return QString(
-            "oauth_timestamp=%1&oauth_nonce=%2"
-            ).arg(currentSecsSinceEpoch).arg(currentSecsSinceEpoch);
+    return qMakePair(
+            QString("oauth_timestamp"),
+            QString("%1").arg(QDateTime::currentMSecsSinceEpoch()/1000)
+            );
 }
 
-QString OAuth::consumerKeyParameter()
+QPair<QString,QString> OAuth::nonceQueryItem(qint64 timestamp)
 {
-    return QString("oauth_consumer_key=%1").arg(consumerData->key);
+    return qMakePair(
+            QString("oauth_nonce"),
+            QString("%1").arg(timestamp)
+            );
 }
 
-QString OAuth::signatureMethodParameter()
+QPair<QString,QString> OAuth::consumerKeyQueryItem()
 {
-    return QString("oauth_signature_method=%1").arg("HMAC-SHA1");
+    return qMakePair(
+            QString("oauth_consumer_key"),
+            QString("%1").arg(consumerData->key)
+            );
 }
 
-QString OAuth::signatureParameter(UserData* userData,
+QPair<QString,QString> OAuth::signatureMethodQueryItem()
+{
+    return qMakePair(
+            QString("oauth_signature_method"),
+            QString("%1").arg("HMAC-SHA1")
+            );
+}
+
+QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
                                   QString method,
-                                  QString url,
-                                  QString urlPath,
-                                  QString query)
+                                  QUrl url)
 {
-    //url path needs to be UTF-8 encoded and percent encoded
-    QStringList urlPathParts = urlPath.split("/");
-    for(int i = 0; i < urlPathParts.length(); ++i)
-    {
-        urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
-    }
-    urlPath = urlPathParts.join("/");
+    //prepare URL
+        QString urlSchemeAndHost = url.toString(QUrl::RemovePort |
+                                                QUrl::RemovePath |
+                                                QUrl::RemoveQuery |
+                                                QUrl::RemoveFragment);
+        QString urlPath = url.path();
 
-    QByteArray percentEncodedUrlAndPath =
-            (url+urlPath).toAscii().toPercentEncoding();
+        //url path parts need to be UTF-8 encoded and percent encoded
+        QStringList urlPathParts = urlPath.split("/");
+        for(int i = 0; i < urlPathParts.length(); ++i)
+        {
+            urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
+        }
+        urlPath = urlPathParts.join("/");
 
-    QStringList queryParts = query.split("&");
+        QByteArray readyForUseUrl =
+               (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
-    //query values need to be UTF-8 encoded
-    for(int i = 0; i < queryParts.length(); ++i)
-    {
-        QStringList partParts = queryParts[i].split("=");
-        partParts[1] = partParts[1].toUtf8();
-        queryParts[i] = partParts.join("=");
-    }
+    //prepare Query
+        QList< QPair<QString,QString> > queryItems = url.queryItems();
 
-    //query values need to be percent encoded
-    for(int i = 0; i < queryParts.length(); ++i)
-    {
-        QStringList partParts = queryParts[i].split("=");
-        partParts[1] = partParts[1].toAscii().toPercentEncoding();
-        queryParts[i] = partParts.join("=");
-    }
+        //query values need to be UTF-8 encoded and percent encoded
+        for(int i = 0; i < queryItems.length(); ++i)
+        {
+            QPair<QString,QString> queryItem = queryItems[i];
+            queryItem.second = queryItem.second.toUtf8().toPercentEncoding();
+            queryItems[i] = queryItem;
+        }
 
-    queryParts.sort();
-    QString sortedQuery = queryParts.join("&");
-    QByteArray percentEncodedAndSortedQuery =
-            sortedQuery.toAscii().toPercentEncoding();
+        qSort(queryItems);
 
-    QString base = method+
-                   "&"+
-                   percentEncodedUrlAndPath+
-                   "&"+
-                   percentEncodedAndSortedQuery;
+        QString readyForUseQuery;
+        QPair<QString,QString> queryItem;
+        foreach(queryItem, queryItems)
+        {
+            readyForUseQuery += queryItem.first + "=" + queryItem.second + "&";
+        }
+        //remove last "&"
+        readyForUseQuery.chop(1);
+        readyForUseQuery = readyForUseQuery.toAscii().toPercentEncoding();
 
-    QString hash = hmacSha1(base,
-                            consumerData->secret + "&" + userData->secret
-                            );
+    //generate base string
+        QString base = method+
+                       "&"+
+                       readyForUseUrl+
+                       "&"+
+                       readyForUseQuery;
 
-    return QString("oauth_signature=%1").arg(QString(hash));
+    //calculate the hash
+        QString hash = hmacSha1(base,
+                                consumerData->secret + "&" + userData->secret
+                                );
+
+    //return the result
+        return qMakePair(
+                QString("oauth_signature"),
+                QString(hash)
+                );
 }
 
-QString OAuth::userTokenParameter(UserData* userData)
+QPair<QString,QString> OAuth::userTokenQueryItem(UserData* userData)
 {
-    return QString("oauth_token=%1").arg(userData->token);
+    return qMakePair(
+            QString("oauth_token"),
+            QString("%1").arg(userData->token)
+            );
 }
 
 QString OAuth::hmacSha1(QString base, QString key)

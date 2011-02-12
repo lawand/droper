@@ -26,6 +26,9 @@
 #ifndef OAUTH_H
 #define OAUTH_H
 
+#include <QList>
+#include <QPair>
+#include <QUrl>
 #include <QString>
 
 //data member(s) forward declaration(s)
@@ -39,15 +42,14 @@ class OAuth
 public:
     OAuth(ConsumerData* consumerData);
 
-    QString timestampAndNonceParameters();
-    QString consumerKeyParameter();
-    QString signatureMethodParameter();
-    QString signatureParameter(UserData* userData,
+    QPair<QString,QString> timestampQueryItem();
+    QPair<QString,QString> nonceQueryItem(qint64 timestamp);
+    QPair<QString,QString> consumerKeyQueryItem();
+    QPair<QString,QString> signatureMethodQueryItem();
+    QPair<QString,QString> signatureQueryItem(UserData* userData,
                                QString method,
-                               QString url,
-                               QString urlPath,
-                               QString query);
-    QString userTokenParameter(UserData* userData);
+                               QUrl url);
+    QPair<QString,QString> userTokenQueryItem(UserData* userData);
 
 private:
     //this calculates a HMAC-SHA1 checksum
