@@ -398,8 +398,6 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
 
         return;
     }
-
-    file.close();
 }
 
 void MainWindow::requestCopying(QString source, QString destination)
