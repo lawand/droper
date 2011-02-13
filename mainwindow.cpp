@@ -96,15 +96,31 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
     ui->statusbar->clearMessage();
 
+    const int MAX_RETRIES = 20;
+    static int retryCount = 0;
     if(networkReply->error() != QNetworkReply::NoError)
     {
-        QMessageBox::information(this,
-                                 "Error",
-                                 "There was an error, try again later."
-                                 );
+        if(retryCount < MAX_RETRIES)
+        {
+            QUrl url = networkReply->url();
+            oAuth->updateRequest(userData, "GET", &url);
+            networkAccessManager->get(QNetworkRequest( url ));
+            ui->statusbar->showMessage(
+                    QString("Retring...%1").arg(retryCount)
+                    );
+            retryCount++;
+        }
+        else
+        {
+            QMessageBox::information(this,
+                                     "Error",
+                                     "There was an error, try again later."
+                                     );
+        }
 
         return;
     }
+    retryCount = 0;
 
     Dropbox::Api api = dropbox->urlToApi(networkReply->url());
 
