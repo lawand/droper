@@ -508,6 +508,8 @@ void MainWindow::requestMoving(QString source, QString destination)
 void MainWindow::handleMoving(QNetworkReply* networkReply)
 {
     refreshCurrentDirectory();
+
+    clipboard.clear();
 }
 
 void MainWindow::requestDeleting(QString path)
@@ -714,8 +716,6 @@ void MainWindow::on_pastePushButton_clicked()
         else
         {
             requestMoving(clipboard, currentDirectory + name);
-
-            clipboard.clear();
         }
 }
 
