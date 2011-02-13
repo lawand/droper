@@ -50,6 +50,9 @@ public:
                                QString method,
                                QUrl url);
     QPair<QString,QString> userTokenQueryItem(UserData* userData);
+    void updateRequest(UserData* userData,
+                       QString method,
+                       QUrl* url);
 
 private:
     //this calculates a HMAC-SHA1 checksum

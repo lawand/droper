@@ -146,6 +146,40 @@ QPair<QString,QString> OAuth::userTokenQueryItem(UserData* userData)
             );
 }
 
+void OAuth::updateRequest(UserData* userData,
+                          QString method,
+                          QUrl* url)
+{
+    QList< QPair<QString,QString> > queryItems = url->queryItems();
+
+    //replace timestamp item
+    for(int i = 0; i < queryItems.length(); ++i)
+        if(queryItems[i].first == "oauth_timestamp")
+            queryItems.removeAt(i);
+    queryItems.append(timestampQueryItem());
+
+    //replace nonce item
+    for(int i = 0; i < queryItems.length(); ++i)
+        if(queryItems[i].first == "oauth_nonce")
+            queryItems.removeAt(i);
+    //dirty trick: I know that the timestamp item is the last item :-)
+    queryItems.append(nonceQueryItem(queryItems.last().second.toLongLong()));
+
+    //remove signature item
+    for(int i = 0; i < queryItems.length(); ++i)
+        if(queryItems[i].first == "oauth_signature")
+            queryItems.removeAt(i);
+
+    //prepare for signature generation
+    url->setQueryItems(queryItems);
+
+    //add new signature item
+    queryItems.append(signatureQueryItem(userData, method, *url));
+
+    //update to include the signature
+    url->setQueryItems(queryItems);
+}
+
 QString OAuth::hmacSha1(QString base, QString key)
 {
     //inner pad
