@@ -363,6 +363,10 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
                                                      "Select a directory"
                                                      );
 
+    //do nothing if no directory was given
+    if(fileSystemPath.isEmpty())
+        return;
+
     QString filePath = dropbox->filePathFromUrl(networkReply->url());
 
     QString fileName = filePath.right(
@@ -371,9 +375,29 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
 
     QFile file(fileSystemPath + "/" + fileName);
 
-    file.open(QFile::WriteOnly);
+    //check whether the file can be opened for writing,
+    //opening it in the process
+    if(!file.open(QFile::WriteOnly))
+    {
+        QMessageBox::warning(this,
+                             "File Open Error",
+                             "Failed to open the file for writing."
+                             );
 
-    file.write(fileContents);
+        return;
+    }
+
+    //check whether the file contents can be written to the file,
+    //writing the contents in the process
+    if(file.write(fileContents) == -1)
+    {
+        QMessageBox::warning(this,
+                             "Data Write Error",
+                             "Failed to write data to the file."
+                             );
+
+        return;
+    }
 
     file.close();
 }
