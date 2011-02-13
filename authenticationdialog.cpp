@@ -77,13 +77,20 @@ void AuthenticationDialog::requestTokenAndSecret()
 {
     ui->pleaseWaitLabel->setVisible(true);
 
-    QString url = dropbox->apiToUrlString(Dropbox::TOKEN);
+    QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    "email=" + ui->emailLineEdit->text() + "&" +
-                    "password=" + ui->passwordLineEdit->text();
+    QPair<QString,QString> temp;
 
-    networkAccessManager->get( QNetworkRequest( QUrl(url+"?"+query) ) );
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("email"), ui->emailLineEdit->text());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("password"), ui->passwordLineEdit->text());
+    url.addQueryItem(temp.first, temp.second);
+
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     connect(this->networkAccessManager,
             SIGNAL(finished(QNetworkReply*)),

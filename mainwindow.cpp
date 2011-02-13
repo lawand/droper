@@ -106,7 +106,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         return;
     }
 
-    Dropbox::Api api = dropbox->urlStringToApi(networkReply->url().toString());
+    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
 
     switch(api)
     {
@@ -144,26 +144,33 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 
 void MainWindow::requestAccountInformation()
 {
-    QString url = dropbox->apiToUrlString(Dropbox::ACCOUNT_INFO);
+    QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT_INFO);
 
-    QString urlPath = "";
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter();
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query += "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -208,27 +215,36 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
 void MainWindow::requestDirectoryListing(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::METADATA);
+    QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
 
-    QString urlPath = path;
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter() + "&" +
-                    "list=true";
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("list"), QString("true"));
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -253,8 +269,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         ui->filesAndFoldersTreeWidget->clear();
 
         //update currentDirectory and ui->currentDirectoryLineEdit
-        QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
-        currentDirectory = dropbox->extractMetaDataPath(urlString);
+        currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
         ui->currentDirectoryLineEdit->setText(currentDirectory);
 
         if(currentDirectory == "/")
@@ -309,26 +324,33 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
 void MainWindow::requestFile(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILES);
+    QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + path;
 
-    QString urlPath = path;
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter();
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -341,8 +363,7 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
                                                      "Select a directory"
                                                      );
 
-    QString urlString = networkReply->url().toString(QUrl::RemoveQuery);
-    QString path = dropbox->extractFilePath(urlString);
+    QString path = dropbox->filePathFromUrl(networkReply->url());
 
     QString fileName = path.right(
             (path.length() - path.lastIndexOf("/")) - 1
@@ -359,29 +380,42 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
 
 void MainWindow::requestCopying(QString source, QString destination)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_COPY);
+    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_COPY);
 
-    QString urlPath = "";
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter() + "&" +
-                    QString("root=%1").arg("dropbox") + "&" +
-                    QString("from_path=%1").arg(source) + "&" +
-                    QString("to_path=%1").arg(destination);
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("root"), QString("dropbox"));
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("from_path"), source);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("to_path"), destination);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -393,29 +427,42 @@ void MainWindow::handleCopying(QNetworkReply* networkReply)
 
 void MainWindow::requestMoving(QString source, QString destination)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_MOVE);
+    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_MOVE);
 
-    QString urlPath = "";
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter() + "&" +
-                    QString("root=%1").arg("dropbox") + "&" +
-                    QString("from_path=%1").arg(source) + "&" +
-                    QString("to_path=%1").arg(destination);
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("root"), QString("dropbox"));
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("from_path"), source);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("to_path"), destination);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -427,28 +474,39 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
 
 void MainWindow::requestDeleting(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_DELETE);
+    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_DELETE);
 
-    QString urlPath = "";
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter() + "&" +
-                    QString("path=%1").arg(path) + "&" +
-                    QString("root=%1").arg("dropbox");
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("root"), QString("dropbox"));
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("path"), path);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -460,28 +518,39 @@ void MainWindow::handleDeleting(QNetworkReply* networkReply)
 
 void MainWindow::requestFolderCreation(QString path)
 {
-    QString url = dropbox->apiToUrlString(Dropbox::FILEOPS_CREATEFOLDER);
+    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_CREATEFOLDER);
 
-    QString urlPath = "";
+    QPair<QString,QString> temp;
 
-    QString query = oAuth->consumerKeyParameter() + "&" +
-                    oAuth->userTokenParameter(userData) + "&" +
-                    oAuth->timestampAndNonceParameters() + "&" +
-                    oAuth->signatureMethodParameter() + "&" +
-                    QString("path=%1").arg(path) + "&" +
-                    QString("root=%1").arg("dropbox");
+    temp = oAuth->consumerKeyQueryItem();
+    url.addQueryItem(temp.first, temp.second);
 
-    QString signatureParameter = oAuth->signatureParameter(
+    temp = oAuth->userTokenQueryItem(userData);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->timestampQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureMethodQueryItem();
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("root"), QString("dropbox"));
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = qMakePair(QString("path"), path);
+    url.addQueryItem(temp.first, temp.second);
+
+    temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url,
-            urlPath,
-            query
+            url
             );
+    url.addQueryItem(temp.first, temp.second);
 
-    query = query + "&" + signatureParameter;
-
-    networkAccessManager->get( QNetworkRequest( QUrl(url+urlPath+"?"+query) ) );
+    networkAccessManager->get( QNetworkRequest( url ) );
 
     ui->statusbar->showMessage("Loading...");
 }
