@@ -73,7 +73,11 @@ int main(int argc, char *argv[])
         userData.email = settings.value("user/email").toString();
     }
 
-    MainWindow mainWindow(&networkAccessManager, &oAuth, &userData, &dropbox);
+    MainWindow mainWindow(&networkAccessManager,
+                          &oAuth,
+                          &userData,
+                          &dropbox,
+                          &settings);
     mainWindow.show();
 
     return application.exec();

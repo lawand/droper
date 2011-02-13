@@ -34,6 +34,7 @@ class QNetworkAccessManager;
 class OAuth;
 class UserData;
 class Dropbox;
+class QSettings;
 
 //member-function(s)-related forward declaration(s)
 class QNetworkReply;
@@ -54,6 +55,7 @@ public:
                         OAuth* oAuth,
                         UserData* userData,
                         Dropbox* dropbox,
+                        QSettings* settings,
                         QWidget *parent = 0);
     ~MainWindow();
 
@@ -68,6 +70,7 @@ public: //shared objects
     OAuth* oAuth;
     UserData* userData;
     Dropbox* dropbox;
+    QSettings* settings;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
@@ -86,6 +89,7 @@ private slots:
     void requestFolderCreation(QString path);
     void handleFolderCreation(QNetworkReply* networkReply);
     void about();
+    void forgetAuthentication();
     void refreshCurrentDirectory();
     void on_filesAndFoldersTreeWidget_itemDoubleClicked(
             QTreeWidgetItem* item

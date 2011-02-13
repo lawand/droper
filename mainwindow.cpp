@@ -32,6 +32,7 @@
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
+#include <QSettings>
 
 //member-function(s)-related forward declaration(s)
 #include <QTreeWidgetItem>
@@ -47,6 +48,7 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
                        OAuth* oAuth,
                        UserData* userData,
                        Dropbox* dropbox,
+                       QSettings* settings,
                        QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -57,6 +59,7 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     this->oAuth = oAuth;
     this->userData = userData;
     this->dropbox = dropbox;
+    this->settings = settings;
 
     //GUI initialization
     ui->setupUi(this);
@@ -65,6 +68,9 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect(ui->showAccountInfoAction,
             SIGNAL(triggered()),
             SLOT(requestAccountInformation()));
+    connect(ui->forgetAuthenticationAction,
+            SIGNAL(triggered()),
+            SLOT(forgetAuthentication()));
     connect(ui->exitAction,
             SIGNAL(triggered()),
             SLOT(close()));
@@ -619,6 +625,11 @@ void MainWindow::about()
             );
 
     qMessageBox.exec();
+}
+
+void MainWindow::forgetAuthentication()
+{
+    settings->clear();
 }
 
 void MainWindow::refreshCurrentDirectory()

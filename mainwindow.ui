@@ -161,6 +161,7 @@
      <string>Actions</string>
     </property>
     <addaction name="showAccountInfoAction"/>
+    <addaction name="forgetAuthenticationAction"/>
     <addaction name="exitAction"/>
    </widget>
    <addaction name="menuActions"/>
@@ -185,6 +186,11 @@
   <action name="aboutQtAction">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="forgetAuthenticationAction">
+   <property name="text">
+    <string>Forget Authentication</string>
    </property>
   </action>
  </widget>
