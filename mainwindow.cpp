@@ -363,10 +363,10 @@ void MainWindow::handleFile(QNetworkReply* networkReply)
                                                      "Select a directory"
                                                      );
 
-    QString path = dropbox->filePathFromUrl(networkReply->url());
+    QString filePath = dropbox->filePathFromUrl(networkReply->url());
 
-    QString fileName = path.right(
-            (path.length() - path.lastIndexOf("/")) - 1
+    QString fileName = filePath.right(
+            (filePath.length() - filePath.lastIndexOf("/")) - 1
              );
 
     QFile file(fileSystemPath + "/" + fileName);
