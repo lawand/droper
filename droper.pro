@@ -1,4 +1,4 @@
-QT       += core gui network script
+QT       += core gui network script svg
 
 TARGET = droper
 TEMPLATE = app
@@ -22,3 +22,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     authenticationdialog.ui
+
+RESOURCES += \
+    main.qrc
+
+RC_FILE = main.rc

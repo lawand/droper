@@ -624,6 +624,9 @@ void MainWindow::about()
             "</a>"
             );
 
+    QIcon droper(":/icons/droper.svg");
+    qMessageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
+
     qMessageBox.exec();
 }
 

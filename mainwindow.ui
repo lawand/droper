@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Droper</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="main.qrc">
+    <normaloff>:/icons/droper.svg</normaloff>:/icons/droper.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -194,6 +198,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
  <connections/>
 </ui>
