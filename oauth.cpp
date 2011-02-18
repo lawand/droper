@@ -44,9 +44,11 @@ OAuth::OAuth(ConsumerData* consumerData)
 
 QPair<QString,QString> OAuth::timestampQueryItem()
 {
+    int currentSecsSinceEpoch = QDateTime::currentDateTime().toUTC().toTime_t();
+
     return qMakePair(
             QString("oauth_timestamp"),
-            QString("%1").arg(QDateTime::currentMSecsSinceEpoch()/1000)
+            QString("%1").arg(currentSecsSinceEpoch)
             );
 }
 
