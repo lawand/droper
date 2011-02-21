@@ -613,7 +613,7 @@ void MainWindow::about()
     qMessageBox.setWindowTitle("About");
 
     qMessageBox.setText(
-            "<b>Droper v0.1</b> - "
+            "<b>Droper v0.1.1</b> - "
             "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client.<br>"
             "Copyright 2011 Omar Lawand Dalatieh. <br><br>"
 
