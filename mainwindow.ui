@@ -51,23 +51,10 @@
      </layout>
     </item>
     <item>
-     <widget class="QTreeWidget" name="filesAndFoldersTreeWidget">
+     <widget class="QListWidget" name="filesAndFoldersListWidget">
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
-      <property name="indentation">
-       <number>0</number>
-      </property>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Size</string>
-       </property>
-      </column>
      </widget>
     </item>
     <item>

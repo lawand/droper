@@ -38,7 +38,7 @@ class QSettings;
 
 //member-function(s)-related forward declaration(s)
 class QNetworkReply;
-class QTreeWidgetItem;
+class QListWidgetItem;
 
 //member-function(s)-related includes
 
@@ -91,8 +91,8 @@ private slots:
     void about();
     void forgetAuthentication();
     void refreshCurrentDirectory();
-    void on_filesAndFoldersTreeWidget_itemDoubleClicked(
-            QTreeWidgetItem* item
+    void on_filesAndFoldersListWidget_itemDoubleClicked(
+            QListWidgetItem* item
             );
     void on_upPushButton_clicked();
     void on_refreshPushButton_clicked();

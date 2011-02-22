@@ -35,7 +35,7 @@
 #include <QSettings>
 
 //member-function(s)-related forward declaration(s)
-#include <QTreeWidgetItem>
+#include <QListWidgetItem>
 
 //implementation-specific data type(s)
 #include <QNetworkReply>
@@ -288,7 +288,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     }
 
     //prepare to change current directory
-        ui->filesAndFoldersTreeWidget->clear();
+        ui->filesAndFoldersListWidget->clear();
 
         //update currentDirectory and ui->currentDirectoryLineEdit
         currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
@@ -306,8 +306,8 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
         if(subDir["is_dir"] == true)
         {
-            QTreeWidgetItem* subDirItem = new QTreeWidgetItem(
-                    ui->filesAndFoldersTreeWidget
+            QListWidgetItem* subDirItem = new QListWidgetItem(
+                    ui->filesAndFoldersListWidget
                     );
 
             QString subDirPath = subDir["path"].toString();
@@ -315,7 +315,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
-            subDirItem->setText(0, name + "/");
+            subDirItem->setText(name + "/");
         }
     }
 
@@ -326,8 +326,8 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
         if(subDir["is_dir"] == false)
         {
-            QTreeWidgetItem* subDirItem = new QTreeWidgetItem(
-                    ui->filesAndFoldersTreeWidget
+            QListWidgetItem* subDirItem = new QListWidgetItem(
+                    ui->filesAndFoldersListWidget
                     );
 
             QString subDirPath = subDir["path"].toString();
@@ -335,11 +335,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
-            subDirItem->setText(0, name);
-
             QString size =  subDir["size"].toString();
 
-            subDirItem->setText(1, size);
+            subDirItem->setText(name + "\n" + "  " + size);
         }
     }
 }
@@ -640,19 +638,19 @@ void MainWindow::refreshCurrentDirectory()
     requestDirectoryListing(currentDirectory);
 }
 
-void MainWindow::on_filesAndFoldersTreeWidget_itemDoubleClicked(
-        QTreeWidgetItem* item
+void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
+        QListWidgetItem* item
         )
 {
-    QString lastCharacter = item->text(0).at(item->text(0).length() - 1);
+    QString lastCharacter = item->text().at(item->text().length() - 1);
 
     //if the item is a directory
     if(lastCharacter == "/")
         //navigate to that sub directory
-        requestDirectoryListing(currentDirectory + item->text(0));
+        requestDirectoryListing(currentDirectory + item->text());
     else
         //download the file
-        requestFile(currentDirectory + item->text(0));
+        requestFile(currentDirectory + item->text());
 }
 
 void MainWindow::on_upPushButton_clicked()
@@ -675,7 +673,7 @@ void MainWindow::on_refreshPushButton_clicked()
 void MainWindow::on_cutPushButton_clicked()
 {
     //if no item is selected, do nothing
-    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
     //mark the operation as a cut operation
@@ -683,13 +681,13 @@ void MainWindow::on_cutPushButton_clicked()
 
     //fill the clipboard
     clipboard = currentDirectory +
-                ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+                ui->filesAndFoldersListWidget->currentItem()->text();
 }
 
 void MainWindow::on_copyPushButton_clicked()
 {
     //if no item is selected, do nothing
-    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
     //mark the operation as a copy operation
@@ -697,7 +695,7 @@ void MainWindow::on_copyPushButton_clicked()
 
     //fill the clipboard
     clipboard = currentDirectory +
-                ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+                ui->filesAndFoldersListWidget->currentItem()->text();
 }
 
 void MainWindow::on_pastePushButton_clicked()
@@ -736,10 +734,10 @@ void MainWindow::on_pastePushButton_clicked()
 void MainWindow::on_renamePushButton_clicked()
 {
     //if no item is selected, do nothing
-    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
-    QString oldName = ui->filesAndFoldersTreeWidget->currentItem()->text(0);
+    QString oldName = ui->filesAndFoldersListWidget->currentItem()->text();
 
     //check to know whether this is a directory or a file
     bool isDir;
@@ -790,7 +788,7 @@ void MainWindow::on_renamePushButton_clicked()
 void MainWindow::on_deletePushButton_clicked()
 {
     //if no item is selected, do nothing
-    if( ui->filesAndFoldersTreeWidget->selectedItems().isEmpty() )
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
     //perform the delete operation
@@ -806,7 +804,7 @@ void MainWindow::on_deletePushButton_clicked()
         {
             requestDeleting(
                     currentDirectory +
-                    ui->filesAndFoldersTreeWidget->currentItem()->text(0)
+                    ui->filesAndFoldersListWidget->currentItem()->text()
                     );
         }
 }
