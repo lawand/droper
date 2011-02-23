@@ -311,11 +311,11 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
 
             QString subDirPath = subDir["path"].toString();
-            QString name = subDirPath.right(
+            QString subDirName = subDirPath.right(
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
-            subDirItem->setText(name);
+            subDirItem->setText(subDirName);
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
@@ -333,13 +333,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
 
             QString subDirPath = subDir["path"].toString();
-            QString name = subDirPath.right(
+            QString subDirName = subDirPath.right(
                     (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
                      );
 
             QString size =  subDir["size"].toString();
 
-            subDirItem->setText(name + "\n" + "  " + size);
+            subDirItem->setText(subDirName + "\n" + "  " + size);
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
