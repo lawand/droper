@@ -42,6 +42,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QResource>
 #include "json.h"
 
 MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
@@ -91,6 +92,9 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
             this,
             SLOT(handleNetworkReply(QNetworkReply*))
             );
+
+    //set icon size
+    ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
 }
 
 MainWindow::~MainWindow()
@@ -317,6 +321,17 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
             subDirItem->setText(subDirName);
 
+            QResource iconResource(
+                    QString(":/icons/%1")
+                    .arg(subDir["icon"].toString())
+                    + "48.gif"
+                    );
+
+            if(iconResource.isValid())
+                subDirItem->setIcon(QIcon(iconResource.fileName()));
+            else
+                subDirItem->setIcon(QIcon(":/icons/folder48.gif"));
+
             subDirItem->setData(Qt::UserRole, subDir);
         }
     }
@@ -340,6 +355,17 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QString size =  subDir["size"].toString();
 
             subDirItem->setText(subDirName + "\n" + "  " + size);
+
+            QResource iconResource(
+                    QString(":/icons/%1")
+                    .arg(subDir["icon"].toString())
+                    + "48.gif"
+                    );
+
+            if(iconResource.isValid())
+                subDirItem->setIcon(QIcon(iconResource.fileName()));
+            else
+                subDirItem->setIcon(QIcon(":/icons/page_white48.gif"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
