@@ -648,8 +648,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
 {
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
-    //if the item is a directory
-    if(map["is_dir"] == true)
+    if(map["is_dir"] == true)   //if the item is a directory
         //navigate to that sub directory
         requestDirectoryListing(
                 map["path"].toString()
@@ -665,10 +664,9 @@ void MainWindow::on_upPushButton_clicked()
 {
     //generate new directory
         QStringList parts = currentDirectory.split("/");
-        //remove last part knowing that there are two empty parts, one at the
-        //beginning and one at the end
         parts.removeLast();
         QString newDirectory = parts.join("/");
+
         //handle root
         if(newDirectory.isEmpty())
             newDirectory = "/";
@@ -691,11 +689,11 @@ void MainWindow::on_cutPushButton_clicked()
     shouldPreserveClipboardContents = false;
 
     //fill the clipboard
-        QListWidgetItem* currentItem =
-                ui->filesAndFoldersListWidget->currentItem();
-        QVariantMap map =
-                currentItem->data(Qt::UserRole).toMap();
-        clipboard = map["path"].toString();
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap map =
+            currentItem->data(Qt::UserRole).toMap();
+    clipboard = map["path"].toString();
 }
 
 void MainWindow::on_copyPushButton_clicked()
@@ -708,11 +706,11 @@ void MainWindow::on_copyPushButton_clicked()
     shouldPreserveClipboardContents = true;
 
     //fill the clipboard
-        QListWidgetItem* currentItem =
-                ui->filesAndFoldersListWidget->currentItem();
-        QVariantMap map =
-                currentItem->data(Qt::UserRole).toMap();
-        clipboard = map["path"].toString();
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap map =
+            currentItem->data(Qt::UserRole).toMap();
+    clipboard = map["path"].toString();
 }
 
 void MainWindow::on_pastePushButton_clicked()
@@ -721,35 +719,33 @@ void MainWindow::on_pastePushButton_clicked()
     if(clipboard.isEmpty())
         return;
 
-    //perform the paste operation
-        //get file or folder name
-            QString name = clipboard.right(
-                    (clipboard.length() - clipboard.lastIndexOf("/")) - 1
-                    );
+    //get file or folder name
+    QString name = clipboard.right(
+            (clipboard.length() - clipboard.lastIndexOf("/")) - 1
+            );
 
-        //check whether this is a cut or copy operation
-        if(shouldPreserveClipboardContents)
+    if(shouldPreserveClipboardContents) //if this is a cut operation
+    {
+        if(currentDirectory == "/")
         {
-            if(currentDirectory == "/")
-            {
-                requestCopying(clipboard, currentDirectory + name);
-            }
-            else
-            {
-                requestCopying(clipboard, currentDirectory + "/" + name);
-            }
+            requestCopying(clipboard, currentDirectory + name);
         }
         else
         {
-            if(currentDirectory == "/")
-            {
-                requestMoving(clipboard, currentDirectory + name);
-            }
-            else
-            {
-                requestMoving(clipboard, currentDirectory + "/" + name);
-            }
+            requestCopying(clipboard, currentDirectory + "/" + name);
         }
+    }
+    else
+    {
+        if(currentDirectory == "/")
+        {
+            requestMoving(clipboard, currentDirectory + name);
+        }
+        else
+        {
+            requestMoving(clipboard, currentDirectory + "/" + name);
+        }
+    }
 }
 
 void MainWindow::on_renamePushButton_clicked()
@@ -806,25 +802,24 @@ void MainWindow::on_deletePushButton_clicked()
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
-    //perform the delete operation
-        QMessageBox::StandardButton response = QMessageBox::question(
-                this,
-                "Are you sure?",
-                "Are you sure you want to delete the file/folder?",
-                QMessageBox::No|QMessageBox::Yes,
-                QMessageBox::No
-                );
+    QMessageBox::StandardButton response = QMessageBox::question(
+            this,
+            "Are you sure?",
+            "Are you sure you want to delete the file/folder?",
+            QMessageBox::No|QMessageBox::Yes,
+            QMessageBox::No
+            );
 
-        if(response == QMessageBox::Yes)
-        {
-            QListWidgetItem* currentItem =
-                    ui->filesAndFoldersListWidget->currentItem();
-            QVariantMap map =
-                    currentItem->data(Qt::UserRole).toMap();
-            QString path = map["path"].toString();
+    if(response == QMessageBox::Yes)
+    {
+        QListWidgetItem* currentItem =
+                ui->filesAndFoldersListWidget->currentItem();
+        QVariantMap map =
+                currentItem->data(Qt::UserRole).toMap();
+        QString path = map["path"].toString();
 
-            requestDeleting(path);
-        }
+        requestDeleting(path);
+    }
 }
 
 void MainWindow::on_createFolderPushButton_clicked()
@@ -838,13 +833,12 @@ void MainWindow::on_createFolderPushButton_clicked()
     if( folderName.isEmpty() )
         return;
 
-    //perform the folder creation operation
-        if(currentDirectory == "/")
-        {
-            requestFolderCreation(currentDirectory + folderName);
-        }
-        else
-        {
-            requestFolderCreation(currentDirectory + "/" + folderName);
-        }
+    if(currentDirectory == "/")
+    {
+        requestFolderCreation(currentDirectory + folderName);
+    }
+    else
+    {
+        requestFolderCreation(currentDirectory + "/" + folderName);
+    }
 }
