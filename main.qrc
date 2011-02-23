@@ -1,7 +1,4 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file>droper.svg</file>
-    </qresource>
     <qresource prefix="/">
         <file>icons/excel48.gif</file>
         <file>icons/folder48.gif</file>
@@ -35,5 +32,6 @@
         <file>icons/page_white_zip48.gif</file>
         <file>icons/powerpoint48.gif</file>
         <file>icons/word48.gif</file>
+        <file>droper.svg</file>
     </qresource>
 </RCC>
