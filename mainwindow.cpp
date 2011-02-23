@@ -294,9 +294,15 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     //prepare to change current directory
         ui->filesAndFoldersListWidget->clear();
 
-        //update currentDirectory and ui->currentDirectoryLineEdit
+        //update currentDirectory and ui->currentFolderLineEdit
         currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
-        ui->currentDirectoryLineEdit->setText(currentDirectory);
+        QString currentFolder = currentDirectory.right(
+                (currentDirectory.length()-currentDirectory.lastIndexOf("/"))-1
+                 );
+        if(!currentFolder.isEmpty())
+            ui->currentFolderLineEdit->setText(currentFolder);
+        else
+            ui->currentFolderLineEdit->setText("Dropbox");
 
         if(currentDirectory == "/")
             ui->upPushButton->setEnabled(false);

@@ -32,9 +32,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="currentDirectoryLineEdit">
+       <widget class="QLineEdit" name="currentFolderLineEdit">
         <property name="text">
-         <string>/</string>
+         <string>Dropbox</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
