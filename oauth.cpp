@@ -119,6 +119,7 @@ QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
         }
         //remove last "&"
         readyForUseQuery.chop(1);
+
         readyForUseQuery = readyForUseQuery.toAscii().toPercentEncoding();
 
     //generate base string
