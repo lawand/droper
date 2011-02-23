@@ -95,7 +95,7 @@ QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
         }
         urlPath = urlPathParts.join("/");
 
-        QByteArray readyForUseUrl =
+        QByteArray readyForUseUrlPart1 =
                (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
     //prepare Query
@@ -111,23 +111,23 @@ QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
 
         qSort(queryItems);
 
-        QString readyForUseQuery;
+        QString newQuery;
         QPair<QString,QString> queryItem;
         foreach(queryItem, queryItems)
         {
-            readyForUseQuery += queryItem.first + "=" + queryItem.second + "&";
+            newQuery += queryItem.first + "=" + queryItem.second + "&";
         }
         //remove last "&"
-        readyForUseQuery.chop(1);
+        newQuery.chop(1);
 
-        readyForUseQuery = readyForUseQuery.toAscii().toPercentEncoding();
+        QString readyForUseUrlPart2 = newQuery.toAscii().toPercentEncoding();
 
     //generate base string
         QString base = method+
                        "&"+
-                       readyForUseUrl+
+                       readyForUseUrlPart1+
                        "&"+
-                       readyForUseQuery;
+                       readyForUseUrlPart2;
 
     //calculate the hash
         QString hash = hmacSha1(base,
