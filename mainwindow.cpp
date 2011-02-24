@@ -642,13 +642,16 @@ void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
 
 void MainWindow::about()
 {
-    QMessageBox qMessageBox(this);
+    QMessageBox messageBox;
 
-    qMessageBox.setWindowTitle("About");
+    messageBox.setWindowTitle("About");
 
-    qMessageBox.setText(
+    messageBox.setText(
             "<b>Droper v0.1.1</b> - "
-            "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client.<br>"
+            "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client."
+            );
+
+    messageBox.setInformativeText(
             "Copyright 2011 Omar Lawand Dalatieh. <br><br>"
 
             "Licensed under the GNU GPLv3 license. <br><br>"
@@ -659,9 +662,9 @@ void MainWindow::about()
             );
 
     QIcon droper(":/droper.svg");
-    qMessageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
+    messageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
 
-    qMessageBox.exec();
+    messageBox.exec();
 }
 
 void MainWindow::forgetAuthentication()
