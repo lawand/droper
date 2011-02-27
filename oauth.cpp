@@ -30,6 +30,7 @@
 #include "consumerdata.h"
 
 //member functions
+#include <QUrl>
 #include "userdata.h"
 
 //implementation-specific
@@ -80,14 +81,14 @@ QPair<QString,QString> OAuth::signatureMethodQueryItem()
 
 QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
                                   QString method,
-                                  QUrl url)
+                                  QUrl* url)
 {
     //prepare URL
-        QString urlSchemeAndHost = url.toString(QUrl::RemovePort |
+        QString urlSchemeAndHost = url->toString(QUrl::RemovePort |
                                                 QUrl::RemovePath |
                                                 QUrl::RemoveQuery |
                                                 QUrl::RemoveFragment);
-        QString urlPath = url.path();
+        QString urlPath = url->path();
 
         //url path parts need to be UTF-8 encoded and percent encoded
         QStringList urlPathParts = urlPath.split("/");
@@ -101,7 +102,7 @@ QPair<QString,QString> OAuth::signatureQueryItem(UserData* userData,
                (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
     //prepare Query
-        QList< QPair<QString,QString> > queryItems = url.queryItems();
+        QList< QPair<QString,QString> > queryItems = url->queryItems();
 
         //query values need to be UTF-8 encoded and percent encoded
         for(int i = 0; i < queryItems.length(); ++i)
@@ -179,7 +180,7 @@ void OAuth::updateRequest(UserData* userData,
     url->setQueryItems(queryItems);
 
     //add new signature item
-    queryItems.append(signatureQueryItem(userData, method, *url));
+    queryItems.append(signatureQueryItem(userData, method, url));
 
     //update to include the signature
     url->setQueryItems(queryItems);

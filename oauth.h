@@ -31,8 +31,8 @@ class ConsumerData;
 
 //member functions
 #include <QPair>
-#include <QUrl>
 #include <QString>
+class QUrl;
 class UserData;
 
 class OAuth
@@ -46,7 +46,7 @@ public:
     QPair<QString,QString> signatureMethodQueryItem();
     QPair<QString,QString> signatureQueryItem(UserData* userData,
                                QString method,
-                               QUrl url);
+                               QUrl* url);
     QPair<QString,QString> userTokenQueryItem(UserData* userData);
     void updateRequest(UserData* userData,
                        QString method,

@@ -201,7 +201,7 @@ void MainWindow::requestAccountInformation()
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 
@@ -275,7 +275,7 @@ void MainWindow::requestDirectoryListing(QString path)
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 
@@ -420,7 +420,7 @@ void MainWindow::requestCopying(QString source, QString destination)
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 
@@ -467,7 +467,7 @@ void MainWindow::requestMoving(QString source, QString destination)
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 
@@ -513,7 +513,7 @@ void MainWindow::requestDeleting(QString path)
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 
@@ -557,7 +557,7 @@ void MainWindow::requestFolderCreation(QString path)
     temp = oAuth->signatureQueryItem(
             userData,
             "GET",
-            url
+            &url
             );
     url.addQueryItem(temp.first, temp.second);
 

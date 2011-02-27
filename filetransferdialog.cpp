@@ -200,7 +200,7 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         temp = oAuth->signatureQueryItem(
                 userData,
                 "GET",
-                url
+                &url
                 );
         url.addQueryItem(temp.first, temp.second);
 
