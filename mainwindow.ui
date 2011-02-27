@@ -152,6 +152,7 @@
      <string>Actions</string>
     </property>
     <addaction name="showAccountInfoAction"/>
+    <addaction name="showDownloadAction"/>
     <addaction name="forgetAuthenticationAction"/>
     <addaction name="exitAction"/>
    </widget>
@@ -182,6 +183,14 @@
   <action name="forgetAuthenticationAction">
    <property name="text">
     <string>Forget Authentication</string>
+   </property>
+  </action>
+  <action name="showDownloadAction">
+   <property name="text">
+    <string>Show Download</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Download</string>
    </property>
   </action>
  </widget>

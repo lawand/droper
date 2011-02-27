@@ -10,7 +10,8 @@ SOURCES += main.cpp\
     authenticationdialog.cpp \
     json.cpp \
     consumerdata.cpp \
-    dropbox.cpp
+    dropbox.cpp \
+    filetransferdialog.cpp
 
 HEADERS  += mainwindow.h \
     oauth.h \
@@ -18,10 +19,12 @@ HEADERS  += mainwindow.h \
     authenticationdialog.h \
     json.h \
     consumerdata.h \
-    dropbox.h
+    dropbox.h \
+    filetransferdialog.h
 
 FORMS    += mainwindow.ui \
-    authenticationdialog.ui
+    authenticationdialog.ui \
+    filetransferdialog.ui
 
 RESOURCES += \
     main.qrc

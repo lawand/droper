@@ -43,6 +43,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QResource>
+#include "filetransferdialog.h"
 #include "json.h"
 
 MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
@@ -53,7 +54,11 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
                        QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    currentDirectory("/")
+    currentDirectory("/"),
+    fileTransferDialog(networkAccessManager,
+                       oAuth,
+                       userData,
+                       dropbox)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -69,6 +74,10 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect(ui->showAccountInfoAction,
             SIGNAL(triggered()),
             SLOT(requestAccountInformation()));
+    connect(ui->showDownloadAction,
+            SIGNAL(triggered()),
+            &fileTransferDialog,
+            SLOT(show()));
     connect(ui->forgetAuthenticationAction,
             SIGNAL(triggered()),
             SLOT(forgetAuthentication()));
@@ -104,6 +113,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
+    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
+
+    //files APIs are handled by the fileTransferDialog
+    if(api == Dropbox::FILES)
+        return;
+
     ui->statusbar->clearMessage();
 
     const int MAX_RETRIES = 20;
@@ -132,16 +147,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     }
     retryCount = 0;
 
-    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
-
     switch(api)
     {
     case Dropbox::ACCOUNT_INFO:
         handleAccountInformation(networkReply);
-        break;
-
-    case Dropbox::FILES:
-        handleFile(networkReply);
         break;
 
     case Dropbox::METADATA:
@@ -378,84 +387,6 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     }
 }
 
-void MainWindow::requestFile(QString path)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + path;
-
-    QPair<QString,QString> temp;
-
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            url
-            );
-    url.addQueryItem(temp.first, temp.second);
-
-    networkAccessManager->get( QNetworkRequest( url ) );
-
-    ui->statusbar->showMessage("Loading...");
-}
-
-void MainWindow::handleFile(QNetworkReply* networkReply)
-{
-    QByteArray fileContents = networkReply->readAll();
-
-    QString fileSystemPath = QFileDialog::getExistingDirectory(this,
-                                                     "Select a directory"
-                                                     );
-
-    //do nothing if no directory was given
-    if(fileSystemPath.isEmpty())
-        return;
-
-    QString filePath = dropbox->filePathFromUrl(networkReply->url());
-
-    QString fileName = filePath.right(
-            (filePath.length() - filePath.lastIndexOf("/")) - 1
-             );
-
-    QFile file(fileSystemPath + "/" + fileName);
-
-    //check whether the file can be opened for writing,
-    //opening it in the process
-    if(!file.open(QFile::WriteOnly))
-    {
-        QMessageBox::warning(this,
-                             "File Open Error",
-                             "Failed to open the file for writing."
-                             );
-
-        return;
-    }
-
-    //check whether the file contents can be written to the file,
-    //writing the contents in the process
-    if(file.write(fileContents) == -1)
-    {
-        QMessageBox::warning(this,
-                             "Data Write Error",
-                             "Failed to write data to the file."
-                             );
-
-        return;
-    }
-}
-
 void MainWindow::requestCopying(QString source, QString destination)
 {
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_COPY);
@@ -688,11 +619,20 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         requestDirectoryListing(
                 map["path"].toString()
                 );
-    else
-        //download the file
-        requestFile(
-                map["path"].toString()
-                );
+    else    //download the file
+    {
+        if(fileTransferDialog.setFile(&map) != true)
+        {
+            QMessageBox::information(this,
+                                     "Download Active",
+                                     "There already is a file being "
+                                     "downloaded.");
+        }
+        else
+        {
+            fileTransferDialog.show();
+        }
+    }
 }
 
 void MainWindow::on_upPushButton_clicked()

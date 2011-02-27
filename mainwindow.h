@@ -36,6 +36,9 @@ class UserData;
 class Dropbox;
 class QSettings;
 
+//data member(s)
+#include <filetransferdialog.h>
+
 //member-function(s)-related forward declaration(s)
 class QNetworkReply;
 class QListWidgetItem;
@@ -64,6 +67,7 @@ private:
     QString currentDirectory;
     QString clipboard;
     bool shouldPreserveClipboardContents;
+    FileTransferDialog fileTransferDialog;
 
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
@@ -78,8 +82,6 @@ private slots:
     void handleAccountInformation(QNetworkReply* networkReply);
     void requestDirectoryListing(QString path);
     void handleDirectoryListing(QNetworkReply* networkReply);
-    void requestFile(QString path);
-    void handleFile(QNetworkReply* networkReply);
     void requestCopying(QString source, QString destination);
     void handleCopying(QNetworkReply* networkReply);
     void requestMoving(QString source, QString destination);
