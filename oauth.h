@@ -52,12 +52,12 @@ public:
                        QString method,
                        QUrl* url);
 
+public: //shared objects
+    ConsumerData* consumerData;
+
 private:
     //this calculates a HMAC-SHA1 checksum
     QString hmacSha1(QString base, QString key);
-
-public: //shared objects
-    ConsumerData* consumerData;
 };
 
 #endif // OAUTH_H

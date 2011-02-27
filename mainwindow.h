@@ -58,19 +58,19 @@ public:
                         QWidget *parent = 0);
     ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
-    QString currentDirectory;
-    QString clipboard;
-    bool shouldPreserveClipboardContents;
-    FileTransferDialog fileTransferDialog;
-
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;
     Dropbox* dropbox;
     QSettings* settings;
+
+private:
+    Ui::MainWindow *ui;
+    QString currentDirectory;
+    QString clipboard;
+    bool shouldPreserveClipboardContents;
+    FileTransferDialog fileTransferDialog;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);

@@ -60,6 +60,15 @@ public:
             );
     ~FileTransferDialog();
 
+public:
+    bool setFile(QVariantMap* fileMap);
+
+public: //shared objects
+    QNetworkAccessManager* networkAccessManager;
+    OAuth* oAuth;
+    UserData* userData;
+    Dropbox* dropbox;
+
 private:
     Ui::FileTransferDialog *ui;
     bool active;
@@ -67,12 +76,6 @@ private:
     QFile localFile;
     QNetworkReply* networkReply;
     QTime downloadTime;
-
-public: //shared objects
-    QNetworkAccessManager* networkAccessManager;
-    OAuth* oAuth;
-    UserData* userData;
-    Dropbox* dropbox;
 
 private slots:
     void initialize();
@@ -83,9 +86,6 @@ private slots:
     void handleReadyRead();
     void handleDownloadProgress(qint64 received, qint64 total);
     void handleFinished();
-
-public:
-    bool setFile(QVariantMap* fileMap);
 };
 
 #endif // FILETRANSFERDIALOG_H

@@ -54,14 +54,14 @@ public:
                                   QWidget *parent = 0);
     ~AuthenticationDialog();
 
-private:
-    Ui::AuthenticationDialog *ui;
-
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;
     Dropbox* dropbox;
+
+private:
+    Ui::AuthenticationDialog *ui;
 
 private slots:
     void requestTokenAndSecret();

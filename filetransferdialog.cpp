@@ -70,6 +70,28 @@ FileTransferDialog::~FileTransferDialog()
     delete ui;
 }
 
+bool FileTransferDialog::setFile(QVariantMap* fileMap)
+{
+    //can't set a new file while actively downloading another
+    if(active)
+        return false;
+
+    remotePath = (*fileMap)["path"].toString();
+    QString fileName = remotePath.right(
+            (remotePath.length() - remotePath.lastIndexOf("/")) - 1
+            );
+
+    ui->fileNameAndSizeLabel->setText(
+            QString("%1 (%2)").arg(fileName).arg((*fileMap)["size"].toString())
+                    );
+    ui->localPathLineEdit->setEnabled(true);
+    ui->browsePushButton->setEnabled(true);
+    ui->progressBar->setFormat("%p%");
+
+    //report success
+    return true;
+}
+
 void FileTransferDialog::initialize()
 {
     //set variables
@@ -130,28 +152,6 @@ void FileTransferDialog::on_localPathLineEdit_textChanged(QString text)
     ui->toggleStartPushButton->setEnabled(
             !ui->localPathLineEdit->text().isEmpty()
             );
-}
-
-bool FileTransferDialog::setFile(QVariantMap* fileMap)
-{
-    //can't set a new file while actively downloading another
-    if(active)
-        return false;
-
-    remotePath = (*fileMap)["path"].toString();
-    QString fileName = remotePath.right(
-            (remotePath.length() - remotePath.lastIndexOf("/")) - 1
-            );
-
-    ui->fileNameAndSizeLabel->setText(
-            QString("%1 (%2)").arg(fileName).arg((*fileMap)["size"].toString())
-                    );
-    ui->localPathLineEdit->setEnabled(true);
-    ui->browsePushButton->setEnabled(true);
-    ui->progressBar->setFormat("%p%");
-
-    //report success
-    return true;
 }
 
 void FileTransferDialog::on_toggleStartPushButton_clicked()
