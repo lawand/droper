@@ -309,9 +309,9 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                 (currentDirectory.length()-currentDirectory.lastIndexOf("/"))-1
                  );
         if(!currentFolder.isEmpty())
-            ui->currentFolderLineEdit->setText(currentFolder);
+            ui->currentFolderLabel->setText(currentFolder);
         else
-            ui->currentFolderLineEdit->setText("Dropbox");
+            ui->currentFolderLabel->setText("Dropbox");
 
         if(currentDirectory == "/")
             ui->upPushButton->setEnabled(false);
