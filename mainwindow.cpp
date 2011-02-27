@@ -29,10 +29,10 @@
 
 //data members
 #include <QNetworkAccessManager>
+#include <QSettings>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
-#include <QSettings>
 
 //member functions
 #include <QListWidgetItem>

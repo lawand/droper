@@ -34,9 +34,6 @@
 #include "userdata.h"
 #include "dropbox.h"
 
-//member functions
-#include <QCloseEvent>
-
 //implementation-specific
 #include <QFileDialog>
 #include <QDesktopServices>

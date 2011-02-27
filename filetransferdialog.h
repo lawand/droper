@@ -32,8 +32,8 @@
 //data members
 #include <QString>
 #include <QFile>
-class QNetworkReply;
 #include <QTime>
+class QNetworkReply;
 class QNetworkAccessManager;
 class OAuth;
 class UserData;

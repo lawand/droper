@@ -26,6 +26,7 @@
 #ifndef USERDATA_H
 #define USERDATA_H
 
+//data members
 #include <QString>
 
 class UserData

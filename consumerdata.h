@@ -26,6 +26,7 @@
 #ifndef CONSUMERDATA_H
 #define CONSUMERDATA_H
 
+//data members
 #include <QString>
 
 class ConsumerData

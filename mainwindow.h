@@ -30,12 +30,12 @@
 #include <QMainWindow>
 
 //data members
+#include <filetransferdialog.h>
 class QNetworkAccessManager;
+class QSettings;
 class OAuth;
 class UserData;
 class Dropbox;
-class QSettings;
-#include <filetransferdialog.h>
 
 //member functions
 class QNetworkReply;

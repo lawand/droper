@@ -26,7 +26,9 @@
 #ifndef DROPBOX_H
 #define DROPBOX_H
 
+//member functions
 #include <QUrl>
+#include <QString>
 
 class Dropbox
 {

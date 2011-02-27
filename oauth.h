@@ -30,10 +30,10 @@
 class ConsumerData;
 
 //member functions
-class UserData;
 #include <QPair>
 #include <QUrl>
 #include <QString>
+class UserData;
 
 class OAuth
 {
