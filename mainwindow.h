@@ -26,24 +26,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//base class(es)
+//base class
 #include <QMainWindow>
 
-//data member(s) forward declaration(s)
+//data members
 class QNetworkAccessManager;
 class OAuth;
 class UserData;
 class Dropbox;
 class QSettings;
-
-//data member(s)
 #include <filetransferdialog.h>
 
-//member-function(s)-related forward declaration(s)
+//member functions
 class QNetworkReply;
 class QListWidgetItem;
-
-//member-function(s)-related includes
 
 namespace Ui {
     class MainWindow;

@@ -26,16 +26,16 @@
 #ifndef AUTHENTICATIONDIALOG_H
 #define AUTHENTICATIONDIALOG_H
 
-//base class(es)
+//base class
 #include <QDialog>
 
-//data member(s) forward declaration(s)
+//data members
 class QNetworkAccessManager;
 class OAuth;
 class UserData;
 class Dropbox;
 
-//member-function(s)-related forward declaration(s)
+//member functions
 class QNetworkReply;
 
 namespace Ui {

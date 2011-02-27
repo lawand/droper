@@ -26,10 +26,10 @@
 #ifndef FILETRANSFERDIALOG_H
 #define FILETRANSFERDIALOG_H
 
-//base class(es)
+//base class
 #include <QDialog>
 
-//data member(s)
+//data members
 #include <QString>
 #include <QFile>
 class QNetworkReply;
@@ -39,7 +39,7 @@ class OAuth;
 class UserData;
 class Dropbox;
 
-//member-function(s)-related
+//member functions
 #include <QVariantMap>
 
 namespace Ui {

@@ -26,16 +26,14 @@
 #ifndef OAUTH_H
 #define OAUTH_H
 
-#include <QList>
+//data members
+class ConsumerData;
+
+//member functions
+class UserData;
 #include <QPair>
 #include <QUrl>
 #include <QString>
-
-//data member(s) forward declaration(s)
-class ConsumerData;
-
-//member-function(s)-related forward declaration(s)
-class UserData;
 
 class OAuth
 {

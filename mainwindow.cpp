@@ -23,21 +23,21 @@
 **
 ****************************************************************************/
 
-//corresponding header file(s)
+//corresponding headers
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//data member(s)
+//data members
 #include <QNetworkAccessManager>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
 #include <QSettings>
 
-//member-function(s)-related forward declaration(s)
+//member functions
 #include <QListWidgetItem>
 
-//implementation-specific data type(s)
+//implementation-specific
 #include <QNetworkReply>
 #include <QMessageBox>
 #include <QFileDialog>

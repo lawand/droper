@@ -23,7 +23,7 @@
 **
 ****************************************************************************/
 
-//corresponding header file(s)
+//corresponding headers
 #include "dropbox.h"
 
 Dropbox::Dropbox(int apiVersion)

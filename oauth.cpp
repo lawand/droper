@@ -23,18 +23,20 @@
 **
 ****************************************************************************/
 
-//corresponding header file(s)
+//corresponding headers
 #include "oauth.h"
 
-//data member(s)
+//data members
 #include "consumerdata.h"
 
-//implementation-specific data type(s)
+//member functions
+#include "userdata.h"
+
+//implementation-specific
 #include <QByteArray>
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QStringList>
-#include "userdata.h"
 
 OAuth::OAuth(ConsumerData* consumerData)
 {

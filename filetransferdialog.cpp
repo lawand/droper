@@ -23,18 +23,18 @@
 **
 ****************************************************************************/
 
-//corresponding header file(s)
+//corresponding headers
 #include "filetransferdialog.h"
 #include "ui_filetransferdialog.h"
 
-//data member(s)
+//data members
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
 
-//member-function(s)-related
+//member functions
 #include <QCloseEvent>
 
 //implementation-specific

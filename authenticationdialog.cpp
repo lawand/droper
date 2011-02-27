@@ -23,17 +23,17 @@
 **
 ****************************************************************************/
 
-//corresponding header file(s)
+//corresponding headers
 #include "authenticationdialog.h"
 #include "ui_authenticationdialog.h"
 
-//data member(s)
+//data members
 #include <QNetworkAccessManager>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
 
-//implementation-specific data type(s)
+//implementation-specific
 #include <QUrl>
 #include <QNetworkRequest>
 #include <QNetworkReply>
