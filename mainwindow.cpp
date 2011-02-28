@@ -43,6 +43,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QResource>
+#include <QDesktopWidget>
 #include "filetransferdialog.h"
 #include "json.h"
 
@@ -58,7 +59,8 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     fileTransferDialog(networkAccessManager,
                        oAuth,
                        userData,
-                       dropbox)
+                       dropbox,
+                       this)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -123,6 +125,12 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
 
     //set icon size
     ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
+
+    //center widget in screen
+    move(
+            QApplication::desktop()->availableGeometry().center() -
+            this->rect().center()
+            );
 }
 
 MainWindow::~MainWindow()
@@ -580,7 +588,7 @@ void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
 
 void MainWindow::about()
 {
-    QMessageBox messageBox;
+    QMessageBox messageBox(this);
 
     messageBox.setWindowTitle("About");
 
