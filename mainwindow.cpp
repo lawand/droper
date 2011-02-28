@@ -189,21 +189,10 @@ void MainWindow::requestAccountInformation()
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -260,24 +249,13 @@ void MainWindow::requestDirectoryListing(QString path)
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
     temp = qMakePair(QString("list"), QString("true"));
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -399,12 +377,6 @@ void MainWindow::requestCopying(QString source, QString destination)
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
@@ -417,12 +389,7 @@ void MainWindow::requestCopying(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -446,12 +413,6 @@ void MainWindow::requestMoving(QString source, QString destination)
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
@@ -464,12 +425,7 @@ void MainWindow::requestMoving(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -495,12 +451,6 @@ void MainWindow::requestDeleting(QString path)
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
@@ -510,12 +460,7 @@ void MainWindow::requestDeleting(QString path)
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -539,12 +484,6 @@ void MainWindow::requestFolderCreation(QString path)
     temp = oAuth->userTokenQueryItem(userData);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->timestampQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-    url.addQueryItem(temp.first, temp.second);
-
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
@@ -554,12 +493,7 @@ void MainWindow::requestFolderCreation(QString path)
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    temp = oAuth->signatureQueryItem(
-            userData,
-            "GET",
-            &url
-            );
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->updateRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 

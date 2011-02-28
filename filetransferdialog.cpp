@@ -188,21 +188,10 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         temp = oAuth->userTokenQueryItem(userData);
         url.addQueryItem(temp.first, temp.second);
 
-        temp = oAuth->timestampQueryItem();
-        url.addQueryItem(temp.first, temp.second);
-
-        temp = oAuth->nonceQueryItem(temp.second.toLongLong());
-        url.addQueryItem(temp.first, temp.second);
-
         temp = oAuth->signatureMethodQueryItem();
         url.addQueryItem(temp.first, temp.second);
 
-        temp = oAuth->signatureQueryItem(
-                userData,
-                "GET",
-                &url
-                );
-        url.addQueryItem(temp.first, temp.second);
+        oAuth->updateRequest(userData, "GET", &url);
 
         networkReply = networkAccessManager->get( QNetworkRequest( url ) );
         connect(networkReply, SIGNAL(readyRead()), SLOT(handleReadyRead()));
