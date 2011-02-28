@@ -107,6 +107,10 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect( ui->createFolderPushButton, SIGNAL(clicked()),
              ui->createFolderAction, SLOT(trigger()) );
 
+    connect( ui->filesAndFoldersListWidget,
+             SIGNAL(customContextMenuRequested(QPoint)),
+             SLOT(showContextMenu(QPoint)) );
+
     //initial directory listing
     requestDirectoryListing(currentDirectory);
 
@@ -732,4 +736,26 @@ void MainWindow::createFolder()
     {
         requestFolderCreation(currentDirectory + "/" + folderName);
     }
+}
+
+void MainWindow::showContextMenu(QPoint point)
+{
+    ui->filesAndFoldersListWidget->setCurrentItem(
+            ui->filesAndFoldersListWidget->itemAt(point)
+            );
+
+    QMenu menu(this);
+    if(ui->filesAndFoldersListWidget->currentItem() != 0)
+    {
+        menu.addAction(ui->cutAction);
+        menu.addAction(ui->copyAction);
+        menu.addAction(ui->renameAction);
+        menu.addAction(ui->deleteAction);
+    }
+    else
+    {
+        menu.addAction(ui->pasteAction);
+    }
+
+    menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
 }

@@ -100,6 +100,7 @@ private slots:
     void rename();
     void del();
     void createFolder();
+    void showContextMenu(QPoint point);
 };
 
 #endif // MAINWINDOW_H
