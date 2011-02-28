@@ -71,26 +71,41 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     ui->setupUi(this);
 
     //initial connections
-    connect(ui->showAccountInfoAction,
-            SIGNAL(triggered()),
-            SLOT(requestAccountInformation()));
-    connect(ui->showDownloadAction,
-            SIGNAL(triggered()),
-            &fileTransferDialog,
-            SLOT(show()));
-    connect(ui->forgetAuthenticationAction,
-            SIGNAL(triggered()),
-            SLOT(forgetAuthentication()));
-    connect(ui->exitAction,
-            SIGNAL(triggered()),
-            SLOT(close()));
-    connect(ui->aboutAction,
-            SIGNAL(triggered()),
-            SLOT(about()));
-    connect(ui->aboutQtAction,
-            SIGNAL(triggered()),
-            qApp,
-            SLOT(aboutQt()));
+    connect( ui->showAccountInfoAction, SIGNAL(triggered()),
+            SLOT(requestAccountInformation()) );
+    connect( ui->showDownloadAction, SIGNAL(triggered()), &fileTransferDialog,
+            SLOT(show()) );
+    connect( ui->forgetAuthenticationAction, SIGNAL(triggered()),
+            SLOT(forgetAuthentication()) );
+    connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
+    connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );
+    connect( ui->copyAction, SIGNAL(triggered()), SLOT(copy()) );
+    connect( ui->pasteAction, SIGNAL(triggered()), SLOT(paste()) );
+    connect( ui->renameAction, SIGNAL(triggered()), SLOT(rename()) );
+    connect( ui->deleteAction, SIGNAL(triggered()), SLOT(del()) );
+    connect( ui->createFolderAction, SIGNAL(triggered()),
+             SLOT(createFolder()) );
+    connect( ui->upAction, SIGNAL(triggered()), SLOT(up()) );
+    connect( ui->refreshAction, SIGNAL(triggered()), SLOT(refresh()) );
+    connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
+    connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
+
+    connect( ui->upPushButton, SIGNAL(clicked()), ui->upAction,
+             SLOT(trigger()) );
+    connect( ui->refreshPushButton, SIGNAL(clicked()), ui->refreshAction,
+             SLOT(trigger()) );
+    connect( ui->cutPushButton, SIGNAL(clicked()), ui->cutAction,
+             SLOT(trigger()) );
+    connect( ui->copyPushButton, SIGNAL(clicked()), ui->copyAction,
+             SLOT(trigger()) );
+    connect( ui->pastePushButton, SIGNAL(clicked()), ui->pasteAction,
+             SLOT(trigger()) );
+    connect( ui->renamePushButton, SIGNAL(clicked()), ui->renameAction,
+             SLOT(trigger()) );
+    connect( ui->deletePushButton, SIGNAL(clicked()), ui->deleteAction,
+             SLOT(trigger()) );
+    connect( ui->createFolderPushButton, SIGNAL(clicked()),
+             ui->createFolderAction, SLOT(trigger()) );
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -536,7 +551,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
     }
 }
 
-void MainWindow::on_upPushButton_clicked()
+void MainWindow::up()
 {
     //generate new directory
         QStringList parts = currentDirectory.split("/");
@@ -550,12 +565,12 @@ void MainWindow::on_upPushButton_clicked()
     requestDirectoryListing(newDirectory);
 }
 
-void MainWindow::on_refreshPushButton_clicked()
+void MainWindow::refresh()
 {
     refreshCurrentDirectory();
 }
 
-void MainWindow::on_cutPushButton_clicked()
+void MainWindow::cut()
 {
     //if no item is selected, do nothing
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
@@ -572,7 +587,7 @@ void MainWindow::on_cutPushButton_clicked()
     clipboard = map["path"].toString();
 }
 
-void MainWindow::on_copyPushButton_clicked()
+void MainWindow::copy()
 {
     //if no item is selected, do nothing
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
@@ -589,7 +604,7 @@ void MainWindow::on_copyPushButton_clicked()
     clipboard = map["path"].toString();
 }
 
-void MainWindow::on_pastePushButton_clicked()
+void MainWindow::paste()
 {
     //if the clipboard is empty, do nothing
     if(clipboard.isEmpty())
@@ -624,7 +639,7 @@ void MainWindow::on_pastePushButton_clicked()
     }
 }
 
-void MainWindow::on_renamePushButton_clicked()
+void MainWindow::rename()
 {
     //if no item is selected, do nothing
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
@@ -672,7 +687,7 @@ void MainWindow::on_renamePushButton_clicked()
     }
 }
 
-void MainWindow::on_deletePushButton_clicked()
+void MainWindow::del()
 {
     //if no item is selected, do nothing
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
@@ -698,7 +713,7 @@ void MainWindow::on_deletePushButton_clicked()
     }
 }
 
-void MainWindow::on_createFolderPushButton_clicked()
+void MainWindow::createFolder()
 {
     QString folderName = QInputDialog::getText(this,
                           "Create Folder",

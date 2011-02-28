@@ -182,7 +182,27 @@
     <addaction name="forgetAuthenticationAction"/>
     <addaction name="exitAction"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="cutAction"/>
+    <addaction name="copyAction"/>
+    <addaction name="pasteAction"/>
+    <addaction name="renameAction"/>
+    <addaction name="deleteAction"/>
+    <addaction name="createFolderAction"/>
+   </widget>
+   <widget class="QMenu" name="menuNavigate">
+    <property name="title">
+     <string>Navigate</string>
+    </property>
+    <addaction name="upAction"/>
+    <addaction name="refreshAction"/>
+   </widget>
    <addaction name="menuActions"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuNavigate"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -215,8 +235,66 @@
    <property name="text">
     <string>Show Download</string>
    </property>
-   <property name="toolTip">
-    <string>Show Download</string>
+  </action>
+  <action name="cutAction">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="copyAction">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="pasteAction">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="renameAction">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="deleteAction">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="createFolderAction">
+   <property name="text">
+    <string>Create Folder</string>
+   </property>
+  </action>
+  <action name="upAction">
+   <property name="text">
+    <string>Up</string>
+   </property>
+   <property name="shortcut">
+    <string>Backspace</string>
+   </property>
+  </action>
+  <action name="refreshAction">
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>

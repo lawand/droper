@@ -92,14 +92,14 @@ private slots:
     void on_filesAndFoldersListWidget_itemDoubleClicked(
             QListWidgetItem* item
             );
-    void on_upPushButton_clicked();
-    void on_refreshPushButton_clicked();
-    void on_cutPushButton_clicked();
-    void on_copyPushButton_clicked();
-    void on_pastePushButton_clicked();
-    void on_renamePushButton_clicked();
-    void on_deletePushButton_clicked();
-    void on_createFolderPushButton_clicked();
+    void up();
+    void refresh();
+    void cut();
+    void copy();
+    void paste();
+    void rename();
+    void del();
+    void createFolder();
 };
 
 #endif // MAINWINDOW_H
