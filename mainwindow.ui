@@ -47,7 +47,7 @@
       <item>
        <widget class="QLabel" name="currentFolderLabel">
         <property name="text">
-         <string/>
+         <string>Dropbox</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
