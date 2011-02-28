@@ -150,7 +150,7 @@ void FileTransferDialog::on_browsePushButton_clicked()
 void FileTransferDialog::on_localPathLineEdit_textChanged(QString text)
 {
     ui->toggleStartPushButton->setEnabled(
-            !ui->localPathLineEdit->text().isEmpty()
+            !text.isEmpty()
             );
 }
 
