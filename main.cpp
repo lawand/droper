@@ -27,6 +27,7 @@
 #include <QNetworkAccessManager>
 #include <QSettings>
 #include <QMessageBox>
+#include <QSslSocket>
 #include "authenticationdialog.h"
 #include "consumerdata.h"
 #include "dropbox.h"
@@ -37,6 +38,19 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+    //check for OpenSSL
+    if( !QSslSocket::supportsSsl() )
+    {
+        QMessageBox::critical(
+                0,
+                "Droper",
+                "OpenSSL not detected, install it and "
+                "try again."
+                );
+
+        return -1;
+    }
 
     QNetworkAccessManager networkAccessManager;
     ConsumerData consumerData;
