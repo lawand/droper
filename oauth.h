@@ -32,6 +32,7 @@ class ConsumerData;
 //member functions
 #include <QPair>
 #include <QString>
+#include <QNetworkRequest>
 class QUrl;
 class UserData;
 
@@ -40,23 +41,31 @@ class OAuth
 public:
     OAuth(ConsumerData* consumerData);
 
-    QPair<QString,QString> timestampQueryItem();
-    QPair<QString,QString> nonceQueryItem(qint64 timestamp);
+public:
+    void signRequest(
+            UserData* userData,
+            QString method,
+            QNetworkRequest* networkRequest
+            );
     QPair<QString,QString> consumerKeyQueryItem();
-    QPair<QString,QString> signatureMethodQueryItem();
-    QPair<QString,QString> signatureQueryItem(UserData* userData,
-                               QString method,
-                               QUrl* url);
-    QPair<QString,QString> userTokenQueryItem(UserData* userData);
-    void signRequest(UserData* userData,
-                       QString method,
-                       QUrl* url);
 
 public: //shared objects
     ConsumerData* consumerData;
 
 private:
-    //this calculates a HMAC-SHA1 checksum
+    QString timestampAndNonceItems();
+    QString consumerKeyItem();
+    QString signatureMethodItem();
+    QString userTokenItem(UserData* userData);
+    QString versionItem();
+    QString signatureItem(
+            UserData* userData,
+            QString method,
+            QUrl* url,
+            QString oAuthHeader
+            );
+
+    //calculates a HMAC-SHA1 checksum
     QString hmacSha1(QString base, QString key);
 };
 

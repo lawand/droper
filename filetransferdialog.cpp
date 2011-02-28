@@ -180,20 +180,13 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
 
         QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + remotePath;
 
-        QPair<QString,QString> temp;
+        QNetworkRequest networkRequest(url);
 
-        temp = oAuth->consumerKeyQueryItem();
-        url.addQueryItem(temp.first, temp.second);
+        oAuth->signRequest(userData,
+                           "GET",
+                           &networkRequest);
 
-        temp = oAuth->userTokenQueryItem(userData);
-        url.addQueryItem(temp.first, temp.second);
-
-        temp = oAuth->signatureMethodQueryItem();
-        url.addQueryItem(temp.first, temp.second);
-
-        oAuth->signRequest(userData, "GET", &url);
-
-        networkReply = networkAccessManager->get( QNetworkRequest( url ) );
+        networkReply = networkAccessManager->get( networkRequest );
         connect(networkReply, SIGNAL(readyRead()), SLOT(handleReadyRead()));
         connect(networkReply, SIGNAL(downloadProgress(qint64,qint64)),
                 SLOT(handleDownloadProgress(qint64,qint64)));

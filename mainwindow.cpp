@@ -128,8 +128,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         if(retryCount < MAX_RETRIES)
         {
             QUrl url = networkReply->url();
-            oAuth->signRequest(userData, "GET", &url);
-            networkAccessManager->get(QNetworkRequest( url ));
+            QNetworkRequest networkRequest(url);
+            oAuth->signRequest(userData, "GET", &networkRequest);
+            networkAccessManager->get(networkRequest);
+
             ui->statusbar->showMessage(
                     QString("Retring...%1").arg(retryCount)
                     );
@@ -181,20 +183,13 @@ void MainWindow::requestAccountInformation()
 {
     QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT_INFO);
 
-    QPair<QString,QString> temp;
+    QNetworkRequest networkRequest(url);
 
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
+    oAuth->signRequest(userData,
+                       "GET",
+                       &networkRequest);
 
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    oAuth->signRequest(userData, "GET", &url);
-
-    networkAccessManager->get( QNetworkRequest( url ) );
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -242,22 +237,14 @@ void MainWindow::requestDirectoryListing(QString path)
     QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
 
     QPair<QString,QString> temp;
-
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
     temp = qMakePair(QString("list"), QString("true"));
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->signRequest(userData, "GET", &url);
+    QNetworkRequest networkRequest(url);
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    oAuth->signRequest(userData, "GET", &networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -371,15 +358,6 @@ void MainWindow::requestCopying(QString source, QString destination)
 
     QPair<QString,QString> temp;
 
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
     temp = qMakePair(QString("root"), QString("dropbox"));
     url.addQueryItem(temp.first, temp.second);
 
@@ -389,9 +367,13 @@ void MainWindow::requestCopying(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->signRequest(userData, "GET", &url);
+    QNetworkRequest networkRequest(url);
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    oAuth->signRequest(userData,
+                       "GET",
+                       &networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -407,15 +389,6 @@ void MainWindow::requestMoving(QString source, QString destination)
 
     QPair<QString,QString> temp;
 
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
     temp = qMakePair(QString("root"), QString("dropbox"));
     url.addQueryItem(temp.first, temp.second);
 
@@ -425,9 +398,13 @@ void MainWindow::requestMoving(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->signRequest(userData, "GET", &url);
+    QNetworkRequest networkRequest(url);
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    oAuth->signRequest(userData,
+                       "GET",
+                       &networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -445,24 +422,19 @@ void MainWindow::requestDeleting(QString path)
 
     QPair<QString,QString> temp;
 
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
     temp = qMakePair(QString("root"), QString("dropbox"));
     url.addQueryItem(temp.first, temp.second);
 
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->signRequest(userData, "GET", &url);
+    QNetworkRequest networkRequest(url);
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    oAuth->signRequest(userData,
+                       "GET",
+                       &networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
@@ -478,24 +450,19 @@ void MainWindow::requestFolderCreation(QString path)
 
     QPair<QString,QString> temp;
 
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->userTokenQueryItem(userData);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = oAuth->signatureMethodQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
     temp = qMakePair(QString("root"), QString("dropbox"));
     url.addQueryItem(temp.first, temp.second);
 
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->signRequest(userData, "GET", &url);
+    QNetworkRequest networkRequest(url);
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    oAuth->signRequest(userData,
+                       "GET",
+                       &networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     ui->statusbar->showMessage("Loading...");
 }
