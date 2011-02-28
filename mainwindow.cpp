@@ -310,14 +310,20 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                                 .arg(totalUnit)
                                 ;
 
-    QString accountInfo = QString("Name: %1 \n"
-                                  "Country: %2 \n"
-                                  "UID: %3 \n"
-                                  "\n"
-                                  "Total Space: %7 \n"
-                                  "Space Left: %4 \n"
-                                  "Regular files: %5 \n"
-                                  "Shared files: %6")
+    QString accountInfo = QString(
+            "Showing account information for: \n"
+            "%1 \n"
+            "\n"
+            "Name: %2 \n"
+            "Country: %3 \n"
+            "UID: %4 \n"
+            "\n"
+            "Total Space: %8 \n"
+            "Space Left: %5 \n"
+            "Regular files: %6 \n"
+            "Shared files: %7"
+            )
+            .arg(userData->email)
             .arg(jsonResult["display_name"].toString())
             .arg(jsonResult["country"].toString())
             .arg(jsonResult["uid"].toString())
