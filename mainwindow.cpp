@@ -232,19 +232,100 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
     QVariantMap quotaInfo = jsonResult["quota_info"].toMap();
 
+    qreal normalFiles = quotaInfo["normal"].toReal();
+    QString normalFilesUnit;
+    if (normalFiles < 1024) {
+        normalFilesUnit = "bytes";
+    } else if (normalFiles < 1024*1024) {
+        normalFiles /= 1024;
+        normalFilesUnit = "kB";
+    } else if (normalFiles < 1024*1024*1024){
+        normalFiles /= 1024*1024;
+        normalFilesUnit = "MB";
+    } else {
+        normalFiles /= 1024*1024*1024;
+        normalFilesUnit = "GB";
+    }
+    QString normalFilesString = QString("%1%2")
+                                .arg(normalFiles, 0, 'f', 1)
+                                .arg(normalFilesUnit)
+                                ;
+
+    qreal sharedFiles = quotaInfo["shared"].toReal();
+    QString sharedFilesUnit;
+    if (sharedFiles < 1024) {
+        sharedFilesUnit = "bytes";
+    } else if (sharedFiles < 1024*1024) {
+        sharedFiles /= 1024;
+        sharedFilesUnit = "kB";
+    } else if (sharedFiles < 1024*1024*1024){
+        sharedFiles /= 1024*1024;
+        sharedFilesUnit = "MB";
+    } else {
+        sharedFiles /= 1024*1024*1024;
+        sharedFilesUnit = "GB";
+    }
+    QString sharedFilesString = QString("%1%2")
+                                .arg(sharedFiles, 0, 'f', 1)
+                                .arg(sharedFilesUnit)
+                                ;
+
+    qreal quota = quotaInfo["quota"].toReal();
+    QString quotaUnit;
+    if (quota < 1024) {
+        quotaUnit = "bytes";
+    } else if (quota < 1024*1024) {
+        quota /= 1024;
+        quotaUnit = "kB";
+    } else if (quota < 1024*1024*1024){
+        quota /= 1024*1024;
+        quotaUnit = "MB";
+    } else {
+        quota /= 1024*1024*1024;
+        quotaUnit = "GB";
+    }
+    QString quotaString = QString("%1%2")
+                                .arg(quota, 0, 'f', 1)
+                                .arg(quotaUnit)
+                                ;
+
+    qreal total = quotaInfo["normal"].toReal() +
+                quotaInfo["shared"].toReal() +
+                quotaInfo["quota"].toReal();
+    QString totalUnit;
+    if (total < 1024) {
+        totalUnit = "bytes";
+    } else if (total < 1024*1024) {
+        total /= 1024;
+        totalUnit = "kB";
+    } else if (total < 1024*1024*1024){
+        total /= 1024*1024;
+        totalUnit = "MB";
+    } else {
+        total /= 1024*1024*1024;
+        totalUnit = "GB";
+    }
+    QString totalString = QString("%1%2")
+                                .arg(total, 0, 'f', 1)
+                                .arg(totalUnit)
+                                ;
+
     QString accountInfo = QString("Name: %1 \n"
                                   "Country: %2 \n"
                                   "UID: %3 \n"
-                                  "Quota Info: \n"
-                                  "  Shared: %4 \n"
-                                  "  Quota: %5 \n"
-                                  "  Normal: %6 \n")
+                                  "\n"
+                                  "Total Space: %7 \n"
+                                  "Space Left: %4 \n"
+                                  "Regular files: %5 \n"
+                                  "Shared files: %6")
             .arg(jsonResult["display_name"].toString())
             .arg(jsonResult["country"].toString())
             .arg(jsonResult["uid"].toString())
-            .arg(quotaInfo["shared"].toString())
-            .arg(quotaInfo["quota"].toString())
-            .arg(quotaInfo["normal"].toString());
+            .arg(quotaString)
+            .arg(normalFilesString)
+            .arg(sharedFilesString)
+            .arg(totalString)
+            ;
 
     QMessageBox::information(this,
                              "Account Information",
