@@ -35,10 +35,10 @@
 #include "dropbox.h"
 
 //member functions
+#include <QNetworkReply>
 #include <QListWidgetItem>
 
 //implementation-specific
-#include <QNetworkReply>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QInputDialog>
