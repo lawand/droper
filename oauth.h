@@ -48,7 +48,7 @@ public:
                                QString method,
                                QUrl* url);
     QPair<QString,QString> userTokenQueryItem(UserData* userData);
-    void updateRequest(UserData* userData,
+    void signRequest(UserData* userData,
                        QString method,
                        QUrl* url);
 

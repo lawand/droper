@@ -152,7 +152,7 @@ QPair<QString,QString> OAuth::userTokenQueryItem(UserData* userData)
             );
 }
 
-void OAuth::updateRequest(UserData* userData,
+void OAuth::signRequest(UserData* userData,
                           QString method,
                           QUrl* url)
 {

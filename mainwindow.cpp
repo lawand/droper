@@ -128,7 +128,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         if(retryCount < MAX_RETRIES)
         {
             QUrl url = networkReply->url();
-            oAuth->updateRequest(userData, "GET", &url);
+            oAuth->signRequest(userData, "GET", &url);
             networkAccessManager->get(QNetworkRequest( url ));
             ui->statusbar->showMessage(
                     QString("Retring...%1").arg(retryCount)
@@ -192,7 +192,7 @@ void MainWindow::requestAccountInformation()
     temp = oAuth->signatureMethodQueryItem();
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -255,7 +255,7 @@ void MainWindow::requestDirectoryListing(QString path)
     temp = qMakePair(QString("list"), QString("true"));
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -389,7 +389,7 @@ void MainWindow::requestCopying(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -425,7 +425,7 @@ void MainWindow::requestMoving(QString source, QString destination)
     temp = qMakePair(QString("to_path"), destination);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -460,7 +460,7 @@ void MainWindow::requestDeleting(QString path)
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
@@ -493,7 +493,7 @@ void MainWindow::requestFolderCreation(QString path)
     temp = qMakePair(QString("path"), path);
     url.addQueryItem(temp.first, temp.second);
 
-    oAuth->updateRequest(userData, "GET", &url);
+    oAuth->signRequest(userData, "GET", &url);
 
     networkAccessManager->get( QNetworkRequest( url ) );
 

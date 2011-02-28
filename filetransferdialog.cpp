@@ -191,7 +191,7 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         temp = oAuth->signatureMethodQueryItem();
         url.addQueryItem(temp.first, temp.second);
 
-        oAuth->updateRequest(userData, "GET", &url);
+        oAuth->signRequest(userData, "GET", &url);
 
         networkReply = networkAccessManager->get( QNetworkRequest( url ) );
         connect(networkReply, SIGNAL(readyRead()), SLOT(handleReadyRead()));
