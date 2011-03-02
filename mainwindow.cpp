@@ -71,6 +71,7 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
 
     //GUI initialization
     ui->setupUi(this);
+    showMaximized();
 
     //initial connections
     connect( ui->showAccountInfoAction, SIGNAL(triggered()),
@@ -108,12 +109,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
 
     //set icon size
     ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
-
-    //center widget in screen
-    move(
-            QApplication::desktop()->availableGeometry().center() -
-            this->rect().center()
-            );
 }
 
 MainWindow::~MainWindow()
