@@ -590,7 +590,7 @@ void MainWindow::about()
 {
     QMessageBox messageBox(this);
 
-    messageBox.setWindowTitle("Droper",);
+    messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
             "<b>Droper v0.1.1</b> - "
