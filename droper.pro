@@ -1,4 +1,4 @@
-QT       += core gui network script svg
+QT       += core gui network svg
 
 TARGET = droper
 TEMPLATE = app
