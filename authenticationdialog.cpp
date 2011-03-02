@@ -59,9 +59,13 @@ AuthenticationDialog::AuthenticationDialog(
     ui->setupUi(this);
 
     //initial connections
-    connect(ui->okPushButton,
-            SIGNAL(clicked()),
+    connect(ui->buttonBox,
+            SIGNAL(accepted()),
             SLOT(requestTokenAndSecret())
+            );
+    connect(ui->buttonBox,
+            SIGNAL(rejected()),
+            SLOT(reject())
             );
 
     //some initial values for data members

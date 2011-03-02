@@ -61,6 +61,12 @@ FileTransferDialog::FileTransferDialog(
     //GUI initialization
     ui->setupUi(this);
 
+    //initial connections
+    connect(ui->buttonBox,
+            SIGNAL(rejected()),
+            SLOT(reject())
+            );
+
     //initial state
     initialize();
 }
