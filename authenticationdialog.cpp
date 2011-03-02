@@ -155,15 +155,3 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
 
     accept();
 }
-
-void AuthenticationDialog::on_helpToolButton_clicked()
-{
-    QMessageBox::information(this,
-                             "Droper",
-                             "You should enter your Dropbox account's email "
-                             "and password. If you don't have a Dropbox "
-                             "account, visit "
-                             "<a href=\"http://www.dropbox.com/\">"
-                             "http://www.dropbox.com/</a> to create one. <br>"
-                             );
-}

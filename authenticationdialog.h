@@ -66,7 +66,6 @@ private:
 private slots:
     void requestTokenAndSecret();
     void handleTokenAndSecret(QNetworkReply* networkReply);
-    void on_helpToolButton_clicked();
 };
 
 #endif // AUTHENTICATIONDIALOG_H
