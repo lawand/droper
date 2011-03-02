@@ -20,51 +20,14 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="currentFolderLabel">
-        <property name="text">
-         <string>Dropbox</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="refreshPushButton">
-        <property name="text">
-         <string>Refresh</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="currentFolderLabel">
+      <property name="text">
+       <string>Dropbox</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QListWidget" name="filesAndFoldersListWidget">
@@ -75,78 +38,6 @@
        <bool>true</bool>
       </property>
      </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="cutPushButton">
-        <property name="text">
-         <string>Cut</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="copyPushButton">
-        <property name="text">
-         <string>Copy</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pastePushButton">
-        <property name="text">
-         <string>Paste</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="renamePushButton">
-        <property name="text">
-         <string>Rename</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="deletePushButton">
-        <property name="text">
-         <string>Delete</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="createFolderPushButton">
-        <property name="text">
-         <string>Create Folder</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>
@@ -175,27 +66,7 @@
     <addaction name="forgetAuthenticationAction"/>
     <addaction name="exitAction"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="cutAction"/>
-    <addaction name="copyAction"/>
-    <addaction name="pasteAction"/>
-    <addaction name="renameAction"/>
-    <addaction name="deleteAction"/>
-    <addaction name="createFolderAction"/>
-   </widget>
-   <widget class="QMenu" name="menuNavigate">
-    <property name="title">
-     <string>Navigate</string>
-    </property>
-    <addaction name="upAction"/>
-    <addaction name="refreshAction"/>
-   </widget>
    <addaction name="menuActions"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuNavigate"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -233,40 +104,25 @@
    <property name="text">
     <string>Cut</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+X</string>
-   </property>
   </action>
   <action name="copyAction">
    <property name="text">
     <string>Copy</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="pasteAction">
    <property name="text">
     <string>Paste</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+V</string>
-   </property>
   </action>
   <action name="renameAction">
    <property name="text">
     <string>Rename</string>
    </property>
-   <property name="shortcut">
-    <string>F2</string>
-   </property>
   </action>
   <action name="deleteAction">
    <property name="text">
     <string>Delete</string>
-   </property>
-   <property name="shortcut">
-    <string>Del</string>
    </property>
   </action>
   <action name="createFolderAction">
@@ -278,16 +134,10 @@
    <property name="text">
     <string>Up</string>
    </property>
-   <property name="shortcut">
-    <string>Backspace</string>
-   </property>
   </action>
   <action name="refreshAction">
    <property name="text">
     <string>Refresh</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
    </property>
   </action>
  </widget>

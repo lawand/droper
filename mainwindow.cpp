@@ -92,21 +92,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
 
-    connect( ui->refreshPushButton, SIGNAL(clicked()), ui->refreshAction,
-             SLOT(trigger()) );
-    connect( ui->cutPushButton, SIGNAL(clicked()), ui->cutAction,
-             SLOT(trigger()) );
-    connect( ui->copyPushButton, SIGNAL(clicked()), ui->copyAction,
-             SLOT(trigger()) );
-    connect( ui->pastePushButton, SIGNAL(clicked()), ui->pasteAction,
-             SLOT(trigger()) );
-    connect( ui->renamePushButton, SIGNAL(clicked()), ui->renameAction,
-             SLOT(trigger()) );
-    connect( ui->deletePushButton, SIGNAL(clicked()), ui->deleteAction,
-             SLOT(trigger()) );
-    connect( ui->createFolderPushButton, SIGNAL(clicked()),
-             ui->createFolderAction, SLOT(trigger()) );
-
     connect( ui->filesAndFoldersListWidget,
              SIGNAL(customContextMenuRequested(QPoint)),
              SLOT(showContextMenu(QPoint)) );
@@ -857,6 +842,8 @@ void MainWindow::showContextMenu(QPoint point)
     {
         QMenu menu(this);
         menu.addAction(ui->pasteAction);
+        menu.addAction(ui->createFolderAction);
+        menu.addAction(ui->refreshAction);
         menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
     }
     else
