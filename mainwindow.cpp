@@ -167,7 +167,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         else
         {
             QMessageBox::information(this,
-                                     "Error",
+                                     "Droper",
                                      "There was an error, try again later."
                                      );
         }
@@ -231,7 +231,7 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(this,
-                                 "Error",
+                                 "Droper",
                                  "There was an error, try again later."
                                  );
 
@@ -342,7 +342,7 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
             ;
 
     QMessageBox::information(this,
-                             "Account Information",
+                             "Droper",
                              accountInfo);
 }
 
@@ -372,7 +372,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(this,
-                                 "Error",
+                                 "Droper",
                                  "There was an error, try again later."
                                  );
 
@@ -590,7 +590,7 @@ void MainWindow::about()
 {
     QMessageBox messageBox(this);
 
-    messageBox.setWindowTitle("About");
+    messageBox.setWindowTitle("Droper",);
 
     messageBox.setText(
             "<b>Droper v0.1.1</b> - "
@@ -639,7 +639,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         if(fileTransferDialog.setFile(&map) != true)
         {
             QMessageBox::information(this,
-                                     "Download Active",
+                                     "Droper",
                                      "There already is a file being "
                                      "downloaded.");
         }

@@ -116,14 +116,14 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
         if(networkReply->error() == QNetworkReply::AuthenticationRequiredError)
         {
             QMessageBox::critical(this,
-                                  "Authentication Error",
+                                  "Droper",
                                   "The provided user information is not valid."
                                   );
         }
         else
         {
             QMessageBox::information(this,
-                                     "Error",
+                                     "Droper",
                                      "There was an error, try again later."
                                      );
         }
@@ -138,7 +138,7 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(this,
-                                 "Error",
+                                 "Droper",
                                  "There was an error, try again later."
                                  );
 
@@ -155,7 +155,7 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
 void AuthenticationDialog::on_helpToolButton_clicked()
 {
     QMessageBox::information(this,
-                             "Help",
+                             "Droper",
                              "You should enter your Dropbox account's email "
                              "and password. If you don't have a Dropbox "
                              "account, visit "

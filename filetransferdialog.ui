@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Download</string>
+   <string>Droper</string>
   </property>
   <property name="windowIcon">
    <iconset resource="main.qrc">

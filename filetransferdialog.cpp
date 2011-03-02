@@ -134,7 +134,7 @@ void FileTransferDialog::on_browsePushButton_clicked()
     if(QFile(directory + "/" + fileName).exists())
     {
         QMessageBox::information(this,
-                                 "File Exists",
+                                 "Droper",
                                  QString(
                                          "This directory already has a file "
                                          "named '%1'. Choose another one."
@@ -171,7 +171,7 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         if(!localFile.open(QFile::WriteOnly | QFile::Append))
         {
             QMessageBox::warning(this,
-                                 "File Open Error",
+                                 "Droper",
                                  "Failed to open the file for writing."
                                  );
 
@@ -255,7 +255,7 @@ void FileTransferDialog::handleFinished()
 
         //notify the user
         QMessageBox::critical(this,
-                              "Error",
+                              "Droper",
                               "File download error!"
                               );
         show();
@@ -273,7 +273,7 @@ void FileTransferDialog::handleFinished()
     {
         //notify the user
         QMessageBox::information(this,
-                                 "Done",
+                                 "Droper",
                                  "File download is done.");
 
         //set variables
