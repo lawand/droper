@@ -605,7 +605,7 @@ void MainWindow::refreshCurrentDirectory()
     requestDirectoryListing(currentDirectory);
 }
 
-void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
+void MainWindow::on_filesAndFoldersListWidget_itemClicked(
         QListWidgetItem* item
         )
 {

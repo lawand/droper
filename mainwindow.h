@@ -89,7 +89,7 @@ private slots:
     void about();
     void forgetAuthentication();
     void refreshCurrentDirectory();
-    void on_filesAndFoldersListWidget_itemDoubleClicked(
+    void on_filesAndFoldersListWidget_itemClicked(
             QListWidgetItem* item
             );
     void up();
