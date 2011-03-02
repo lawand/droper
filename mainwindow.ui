@@ -64,7 +64,6 @@
     <addaction name="showAccountInfoAction"/>
     <addaction name="showDownloadAction"/>
     <addaction name="forgetAuthenticationAction"/>
-    <addaction name="exitAction"/>
    </widget>
    <addaction name="menuActions"/>
    <addaction name="menuHelp"/>
@@ -73,11 +72,6 @@
   <action name="aboutAction">
    <property name="text">
     <string>About</string>
-   </property>
-  </action>
-  <action name="exitAction">
-   <property name="text">
-    <string>Exit</string>
    </property>
   </action>
   <action name="showAccountInfoAction">

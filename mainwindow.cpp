@@ -80,7 +80,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
             SLOT(show()) );
     connect( ui->forgetAuthenticationAction, SIGNAL(triggered()),
             SLOT(forgetAuthentication()) );
-    connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
     connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );
     connect( ui->copyAction, SIGNAL(triggered()), SLOT(copy()) );
     connect( ui->pasteAction, SIGNAL(triggered()), SLOT(paste()) );
