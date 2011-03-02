@@ -32,6 +32,7 @@
         <file>icons/page_white_zip48.gif</file>
         <file>icons/powerpoint48.gif</file>
         <file>icons/word48.gif</file>
+        <file>icons/up.gif</file>
         <file>droper.svg</file>
     </qresource>
 </RCC>

@@ -92,8 +92,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
 
-    connect( ui->upPushButton, SIGNAL(clicked()), ui->upAction,
-             SLOT(trigger()) );
     connect( ui->refreshPushButton, SIGNAL(clicked()), ui->refreshAction,
              SLOT(trigger()) );
     connect( ui->cutPushButton, SIGNAL(clicked()), ui->cutAction,
@@ -392,10 +390,15 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         else
             ui->currentFolderLabel->setText("Dropbox");
 
-        if(currentDirectory == "/")
-            ui->upPushButton->setEnabled(false);
-        else
-            ui->upPushButton->setEnabled(true);
+        if(currentDirectory != "/")
+        {
+            QListWidgetItem* upItem = new QListWidgetItem(
+                    ui->filesAndFoldersListWidget
+                    );
+
+            upItem->setText("Up");
+            upItem->setIcon(QIcon(":/icons/up.gif"));
+        }
 
     //add folders
     foreach(const QVariant &subDirJson, jsonResult["contents"].toList())
@@ -627,13 +630,23 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
 {
+    if(item->data(Qt::UserRole).isNull()) //if this is the Up item
+    {
+        //navigate to the parent directory
+        ui->upAction->trigger();
+
+        return;
+    }
+
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
     if(map["is_dir"] == true)   //if the item is a directory
-        //navigate to that sub directory
+    {
+        //navigate to a sub directory
         requestDirectoryListing(
                 map["path"].toString()
                 );
+    }
     else    //download the file
     {
         if(fileTransferDialog.setFile(&map) != true)
@@ -835,22 +848,32 @@ void MainWindow::createFolder()
 
 void MainWindow::showContextMenu(QPoint point)
 {
+    //select item under cursor
     ui->filesAndFoldersListWidget->setCurrentItem(
             ui->filesAndFoldersListWidget->itemAt(point)
             );
 
-    QMenu menu(this);
-    if(ui->filesAndFoldersListWidget->currentItem() != 0)
+    if(ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
+        QMenu menu(this);
+        menu.addAction(ui->pasteAction);
+        menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
+    }
+    else
+    {
+        if(ui->filesAndFoldersListWidget->currentItem()
+            ->data(Qt::UserRole).isNull()
+            ) //if this is the Up item
+        {
+            //don't show a menu
+            return;
+        }
+
+        QMenu menu(this);
         menu.addAction(ui->cutAction);
         menu.addAction(ui->copyAction);
         menu.addAction(ui->renameAction);
         menu.addAction(ui->deleteAction);
+        menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
     }
-    else
-    {
-        menu.addAction(ui->pasteAction);
-    }
-
-    menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
 }
