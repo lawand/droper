@@ -94,7 +94,10 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
 
     connect( ui->filesAndFoldersListWidget,
              SIGNAL(customContextMenuRequested(QPoint)),
-             SLOT(showContextMenu(QPoint)) );
+             SLOT(showFilesAndFoldersListWidgetContextMenu(QPoint)) );
+    connect( ui->currentFolderToolButton,
+             SIGNAL(clicked()),
+             SLOT(showCurrentFolderMenu()) );
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -359,7 +362,18 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     //prepare to change current directory
         ui->filesAndFoldersListWidget->clear();
 
-        //update currentDirectory and ui->currentFolderLineEdit
+        //set current directory's icon
+            QResource iconResource(
+                    QString(":/icons/%1")
+                    .arg(jsonResult["icon"].toString())
+                    + "48.gif"
+                    );
+            if(iconResource.isValid())
+                ui->currentFolderToolButton->setIcon(QIcon(iconResource.fileName()));
+            else
+                ui->currentFolderToolButton->setIcon(QIcon(":/icons/folder48.gif"));
+
+        //update currentDirectory and ui->currentFolderLabel
         currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
         QString currentFolder = currentDirectory.right(
                 (currentDirectory.length()-currentDirectory.lastIndexOf("/"))-1
@@ -605,7 +619,7 @@ void MainWindow::refreshCurrentDirectory()
     requestDirectoryListing(currentDirectory);
 }
 
-void MainWindow::on_filesAndFoldersListWidget_itemClicked(
+void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
 {
@@ -825,22 +839,14 @@ void MainWindow::createFolder()
     }
 }
 
-void MainWindow::showContextMenu(QPoint point)
+void MainWindow::showFilesAndFoldersListWidgetContextMenu(QPoint point)
 {
     //select item under cursor
     ui->filesAndFoldersListWidget->setCurrentItem(
             ui->filesAndFoldersListWidget->itemAt(point)
             );
 
-    if(ui->filesAndFoldersListWidget->selectedItems().isEmpty())
-    {
-        QMenu menu(this);
-        menu.addAction(ui->pasteAction);
-        menu.addAction(ui->createFolderAction);
-        menu.addAction(ui->refreshAction);
-        menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
-    }
-    else
+    if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
         if(ui->filesAndFoldersListWidget->currentItem()
             ->data(Qt::UserRole).isNull()
@@ -857,4 +863,13 @@ void MainWindow::showContextMenu(QPoint point)
         menu.addAction(ui->deleteAction);
         menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
     }
+}
+
+void MainWindow::showCurrentFolderMenu()
+{
+    QMenu menu(this);
+    menu.addAction(ui->pasteAction);
+    menu.addAction(ui->createFolderAction);
+    menu.addAction(ui->refreshAction);
+    menu.exec(ui->currentFolderToolButton->geometry().center());
 }

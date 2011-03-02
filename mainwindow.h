@@ -89,7 +89,7 @@ private slots:
     void about();
     void forgetAuthentication();
     void refreshCurrentDirectory();
-    void on_filesAndFoldersListWidget_itemClicked(
+    void on_filesAndFoldersListWidget_itemDoubleClicked(
             QListWidgetItem* item
             );
     void up();
@@ -100,7 +100,8 @@ private slots:
     void rename();
     void del();
     void createFolder();
-    void showContextMenu(QPoint point);
+    void showFilesAndFoldersListWidgetContextMenu(QPoint point);
+    void showCurrentFolderMenu();
 };
 
 #endif // MAINWINDOW_H
