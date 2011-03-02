@@ -794,7 +794,7 @@ void MainWindow::del()
 
     QMessageBox::StandardButton response = QMessageBox::question(
             this,
-            "Are you sure?",
+            "Droper",
             "Are you sure you want to delete the file/folder?",
             QMessageBox::No|QMessageBox::Yes,
             QMessageBox::No
