@@ -39,4 +39,12 @@ symbian {
     TARGET.UID3 = 0x2003AD26
 
     ICON = droper.svg
+
+    vendorinfo = \
+    "%{\"Lawand\"}" \
+    ":\"Lawand\""
+    my_deployment.pkg_prerules = vendorinfo
+    DEPLOYMENT += my_deployment
+
+    DEPLOYMENT.installer_header=0x2002CCCF
     }
