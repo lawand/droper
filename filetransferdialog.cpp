@@ -110,6 +110,7 @@ void FileTransferDialog::initialize()
     ui->progressBar->setFormat("");
     ui->toggleStartPushButton->setEnabled(false);
     ui->toggleStartPushButton->setText("Start");
+    ui->speedLabel->clear();
     active = false;
     remotePath = "";
     networkReply = 0;
@@ -215,6 +216,7 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         ui->progressBar->setValue(0);
         ui->progressBar->setFormat("%p%");
         ui->toggleStartPushButton->setText("Start");
+        ui->speedLabel->clear();
         active = false;
         localFile.remove();
         networkReply->abort();
@@ -242,11 +244,11 @@ void FileTransferDialog::handleDownloadProgress(qint64 received, qint64 total)
         unit = "MB/s";
     }
 
-    ui->progressBar->setFormat(
-            QString("%p% (Downloading at %1)").arg(
-                    QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit)
-                    )
+    ui->speedLabel->setText(
+            QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit)
             );
+
+    ui->progressBar->setFormat("%p% (Downloading)");
 
     ui->progressBar->setValue((received*100)/total);
 }
@@ -271,6 +273,7 @@ void FileTransferDialog::handleFinished()
         ui->progressBar->setValue(0);
         ui->progressBar->setFormat("%p%");
         ui->toggleStartPushButton->setText("Start");
+        ui->speedLabel->clear();
         active = false;
         localFile.remove();
         networkReply->deleteLater();
