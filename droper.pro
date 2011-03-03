@@ -1,6 +1,8 @@
 QT       += core gui network svg
 
-TARGET = droper
+VERSION = 0.1.1
+
+TARGET = Droper
 TEMPLATE = app
 
 SOURCES += main.cpp\
@@ -30,3 +32,11 @@ RESOURCES += \
     main.qrc
 
 RC_FILE = main.rc
+
+symbian {
+    TARGET.CAPABILITY = NetworkServices
+
+    TARGET.UID3 = 0x2003AD26
+
+    ICON = droper.svg
+    }
