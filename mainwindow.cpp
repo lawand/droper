@@ -364,12 +364,16 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(jsonResult["icon"].toString())
-                    + "48.gif"
+                    + "48.png"
                     );
             if(iconResource.isValid())
-                ui->currentFolderToolButton->setIcon(QIcon(iconResource.fileName()));
+                ui->currentFolderToolButton->setIcon(
+                        QIcon(iconResource.fileName())
+                        );
             else
-                ui->currentFolderToolButton->setIcon(QIcon(":/icons/folder48.gif"));
+                ui->currentFolderToolButton->setIcon(
+                        QIcon(":/icons/folder48.png")
+                        );
 
         //update currentDirectory and ui->currentFolderLabel
         currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
@@ -388,7 +392,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
 
             upItem->setText("Up");
-            upItem->setIcon(QIcon(":/icons/up.gif"));
+            upItem->setIcon(QIcon(":/icons/up48.png"));
         }
 
     //add folders
@@ -412,13 +416,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(subDir["icon"].toString())
-                    + "48.gif"
+                    + "48.png"
                     );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/folder48.gif"));
+                subDirItem->setIcon(QIcon(":/icons/folder48.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
@@ -447,13 +451,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(subDir["icon"].toString())
-                    + "48.gif"
+                    + "48.png"
                     );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/page_white48.gif"));
+                subDirItem->setIcon(QIcon(":/icons/page_white48.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }

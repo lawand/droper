@@ -41,7 +41,7 @@
         </property>
         <property name="icon">
          <iconset resource="main.qrc">
-          <normaloff>:/icons/folder48.gif</normaloff>:/icons/folder48.gif</iconset>
+          <normaloff>:/icons/folder48.png</normaloff>:/icons/folder48.png</iconset>
         </property>
        </widget>
       </item>
