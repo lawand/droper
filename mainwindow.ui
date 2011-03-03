@@ -95,15 +95,15 @@
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
    </widget>
-   <widget class="QMenu" name="menuActions">
+   <widget class="QMenu" name="menuOptions">
     <property name="title">
-     <string>Actions</string>
+     <string>Options</string>
     </property>
     <addaction name="showAccountInfoAction"/>
     <addaction name="showActiveDownloadAction"/>
     <addaction name="forgetAuthenticationAction"/>
    </widget>
-   <addaction name="menuActions"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

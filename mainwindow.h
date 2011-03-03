@@ -101,8 +101,8 @@ private slots:
     void del();
     void download();
     void createFolder();
-    void showFilesAndFoldersListWidgetContextMenu(QPoint point);
-    void showCurrentFolderMenu();
+    void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
+    void on_currentFolderToolButton_pressed();
 };
 
 #endif // MAINWINDOW_H

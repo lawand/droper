@@ -93,13 +93,6 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
     connect( ui->downloadAction, SIGNAL(triggered()), SLOT(download()) );
 
-    connect( ui->filesAndFoldersListWidget,
-             SIGNAL(customContextMenuRequested(QPoint)),
-             SLOT(showFilesAndFoldersListWidgetContextMenu(QPoint)) );
-    connect( ui->currentFolderToolButton,
-             SIGNAL(clicked()),
-             SLOT(showCurrentFolderMenu()) );
-
     //initial directory listing
     requestDirectoryListing(currentDirectory);
 
@@ -858,13 +851,10 @@ void MainWindow::createFolder()
     }
 }
 
-void MainWindow::showFilesAndFoldersListWidgetContextMenu(QPoint point)
+void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
+        QPoint point
+        )
 {
-    //select item under cursor
-    ui->filesAndFoldersListWidget->setCurrentItem(
-            ui->filesAndFoldersListWidget->itemAt(point)
-            );
-
     if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
         if(ui->filesAndFoldersListWidget->currentItem()
@@ -892,11 +882,13 @@ void MainWindow::showFilesAndFoldersListWidgetContextMenu(QPoint point)
     }
 }
 
-void MainWindow::showCurrentFolderMenu()
+void MainWindow::on_currentFolderToolButton_pressed()
 {
     QMenu menu(this);
     menu.addAction(ui->pasteAction);
     menu.addAction(ui->createFolderAction);
     menu.addAction(ui->refreshAction);
     menu.exec(ui->currentFolderToolButton->geometry().center());
+
+    ui->currentFolderToolButton->setDown(false);
 }
