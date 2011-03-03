@@ -75,6 +75,9 @@
       <property name="alternatingRowColors">
        <bool>true</bool>
       </property>
+      <property name="spacing">
+       <number>1</number>
+      </property>
      </widget>
     </item>
    </layout>
