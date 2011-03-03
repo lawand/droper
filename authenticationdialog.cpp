@@ -38,6 +38,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QMessageBox>
+#include <QDesktopWidget>
 #include "json.h"
 
 AuthenticationDialog::AuthenticationDialog(
@@ -57,6 +58,10 @@ AuthenticationDialog::AuthenticationDialog(
 
     //GUI initialization
     ui->setupUi(this);
+    //draw at screen's center
+    move(QApplication::desktop()->availableGeometry().center() -
+         this->rect().center()
+         );
 
     //initial connections
     connect(ui->buttonBox,
