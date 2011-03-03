@@ -76,8 +76,8 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     //initial connections
     connect( ui->showAccountInfoAction, SIGNAL(triggered()),
             SLOT(requestAccountInformation()) );
-    connect( ui->showDownloadAction, SIGNAL(triggered()), &fileTransferDialog,
-            SLOT(show()) );
+    connect( ui->showActiveDownloadAction, SIGNAL(triggered()),
+             &fileTransferDialog, SLOT(show()) );
     connect( ui->forgetAuthenticationAction, SIGNAL(triggered()),
             SLOT(forgetAuthentication()) );
     connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );

@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>626</width>
-     <height>20</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -100,7 +100,7 @@
      <string>Actions</string>
     </property>
     <addaction name="showAccountInfoAction"/>
-    <addaction name="showDownloadAction"/>
+    <addaction name="showActiveDownloadAction"/>
     <addaction name="forgetAuthenticationAction"/>
    </widget>
    <addaction name="menuActions"/>
@@ -127,9 +127,9 @@
     <string>Forget Authentication</string>
    </property>
   </action>
-  <action name="showDownloadAction">
+  <action name="showActiveDownloadAction">
    <property name="text">
-    <string>Show Download</string>
+    <string>Show Active Download</string>
    </property>
   </action>
   <action name="cutAction">
