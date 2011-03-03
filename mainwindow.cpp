@@ -91,6 +91,7 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     connect( ui->refreshAction, SIGNAL(triggered()), SLOT(refresh()) );
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
+    connect( ui->downloadAction, SIGNAL(triggered()), SLOT(download()) );
 
     connect( ui->filesAndFoldersListWidget,
              SIGNAL(customContextMenuRequested(QPoint)),
@@ -648,20 +649,6 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
                 map["path"].toString()
                 );
     }
-    else    //download the file
-    {
-        if(fileTransferDialog.setFile(&map) != true)
-        {
-            QMessageBox::information(this,
-                                     "Droper",
-                                     "There already is a file being "
-                                     "downloaded.");
-        }
-        else
-        {
-            fileTransferDialog.show();
-        }
-    }
 }
 
 void MainWindow::up()
@@ -826,6 +813,30 @@ void MainWindow::del()
     }
 }
 
+void MainWindow::download()
+{
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+        return;
+
+    //fill the clipboard
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap map =
+            currentItem->data(Qt::UserRole).toMap();
+
+    if(fileTransferDialog.setFile(&map) != true)
+    {
+        QMessageBox::information(this,
+                                 "Droper",
+                                 "There already is a file being "
+                                 "downloaded.");
+    }
+    else
+    {
+        fileTransferDialog.show();
+    }
+}
+
 void MainWindow::createFolder()
 {
     QString folderName = QInputDialog::getText(this,
@@ -869,6 +880,14 @@ void MainWindow::showFilesAndFoldersListWidgetContextMenu(QPoint point)
         menu.addAction(ui->copyAction);
         menu.addAction(ui->renameAction);
         menu.addAction(ui->deleteAction);
+
+        QVariantMap map = ui->filesAndFoldersListWidget->currentItem()
+                          ->data(Qt::UserRole).toMap();
+        if(map["is_dir"] != true)   //if the item is not a directory
+        {
+            menu.addAction(ui->downloadAction);
+        }
+
         menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
     }
 }

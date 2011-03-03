@@ -99,6 +99,7 @@ private slots:
     void paste();
     void rename();
     void del();
+    void download();
     void createFolder();
     void showFilesAndFoldersListWidgetContextMenu(QPoint point);
     void showCurrentFolderMenu();

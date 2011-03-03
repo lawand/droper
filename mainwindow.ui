@@ -172,6 +172,11 @@
     <string>Refresh</string>
    </property>
   </action>
+  <action name="downloadAction">
+   <property name="text">
+    <string>Download</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="main.qrc"/>
