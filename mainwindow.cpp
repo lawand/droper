@@ -464,6 +464,10 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
 void MainWindow::requestCopying(QString source, QString destination)
 {
+    //avoid errors
+    if(source == destination)
+        return;
+
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_COPY);
 
     QPair<QString,QString> temp;
@@ -495,6 +499,10 @@ void MainWindow::handleCopying(QNetworkReply* networkReply)
 
 void MainWindow::requestMoving(QString source, QString destination)
 {
+    //avoid errors
+    if(source == destination)
+        return;
+
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_MOVE);
 
     QPair<QString,QString> temp;
