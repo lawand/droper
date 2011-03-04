@@ -16,19 +16,19 @@ h1 {
 	font-weight:900;
 	color:#ccc;
 	}
-p,li {
+p, li {
 	font:11px/20px verdana, arial, helvetica, sans-serif;
 	margin:0px 0px 16px 0px;
 	padding:0px;
 	}
 
 a {
-	color:#2e93c7;
+	color:#09c;
 	text-decoration:none;
 	font-family:verdana, arial, helvetica, sans-serif;
 	}
-a:link {color:#2e93c7;}
-a:visited {color:#69a7c7;}
+a:link {color:#09c;}
+a:visited {color:#07a;}
 a:hover {background-color:#eee;}
 
 #Header {
@@ -61,7 +61,7 @@ Tantek Celik hack (above). */
 body>#Header {height:14px;}
 
 #Content {
-	margin:0px 50px 50px 130px;
+	margin:0px 50px 50px 200px;
 	padding:10px;
 	}
 
@@ -69,7 +69,7 @@ body>#Header {height:14px;}
 	position:absolute;
 	top:100px;
 	left:20px;
-	width:102px;
+	width:172px;
 	padding:10px;
 	background-color:#eee;
 	border:1px dashed #999;
@@ -79,9 +79,8 @@ body>#Header {height:14px;}
 /* Again, the ugly brilliant hack. */
 	voice-family: "\"}\"";
 	voice-family:inherit;
-	width:120px;
+	width:150px;
 	}
 /* Again, "be nice to Opera 5". */
-body>#Menu {width:80px;}
-
+body>#Menu {width:150px;}
 
