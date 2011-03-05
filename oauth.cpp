@@ -134,10 +134,12 @@ QString OAuth::signatureItem(
         )
 {
     //prepare URL
-        QString urlSchemeAndHost = url->toString(QUrl::RemovePort |
-                                                QUrl::RemovePath |
-                                                QUrl::RemoveQuery |
-                                                QUrl::RemoveFragment);
+        QString urlSchemeAndHost = url->toString(
+                QUrl::RemovePort |
+                QUrl::RemovePath |
+                QUrl::RemoveQuery |
+                QUrl::RemoveFragment
+                );
         QString urlPath = url->path();
 
         //url path parts need to be UTF-8 encoded and percent encoded
