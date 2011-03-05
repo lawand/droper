@@ -47,11 +47,13 @@ class AuthenticationDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AuthenticationDialog(QNetworkAccessManager* networkAccessManager,
-                                  OAuth* oAuth,
-                                  UserData* userData,
-                                  Dropbox* dropbox,
-                                  QWidget *parent = 0);
+    explicit AuthenticationDialog(
+            QNetworkAccessManager* networkAccessManager,
+            OAuth* oAuth,
+            UserData* userData,
+            Dropbox* dropbox,
+            QWidget *parent = 0
+            );
     ~AuthenticationDialog();
 
 public: //shared objects

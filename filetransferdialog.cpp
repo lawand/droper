@@ -62,7 +62,8 @@ FileTransferDialog::FileTransferDialog(
     ui->setupUi(this);
 
     //initial connections
-    connect(ui->buttonBox,
+    connect(
+            ui->buttonBox,
             SIGNAL(rejected()),
             SLOT(reject())
             );
@@ -140,13 +141,14 @@ void FileTransferDialog::on_browsePushButton_clicked()
 
     if(QFile(directory + "/" + fileName).exists())
     {
-        QMessageBox::information(this,
-                                 "Droper",
-                                 QString(
-                                         "This directory already has a file "
-                                         "named '%1'. Choose another one."
-                                         ).arg(fileName)
-                                 );
+        QMessageBox::information(
+                this,
+                "Droper",
+                QString(
+                        "This directory already has a file "
+                        "named '%1'. Choose another one."
+                        ).arg(fileName)
+                );
     }
     else
     {
@@ -177,10 +179,11 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
         //opening it in the process
         if(!localFile.open(QFile::WriteOnly | QFile::Append))
         {
-            QMessageBox::warning(this,
-                                 "Droper",
-                                 "Failed to open the file for writing."
-                                 );
+            QMessageBox::warning(
+                    this,
+                    "Droper",
+                    "Failed to open the file for writing."
+                    );
 
             return;
         }
@@ -189,16 +192,24 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
 
         QNetworkRequest networkRequest(url);
 
-        oAuth->signRequest(userData,
-                           "GET",
-                           &networkRequest);
+        oAuth->signRequest(
+                userData,
+                "GET",
+                &networkRequest
+                );
 
         networkReply = networkAccessManager->get( networkRequest );
         connect(networkReply, SIGNAL(readyRead()), SLOT(handleReadyRead()));
-        connect(networkReply, SIGNAL(downloadProgress(qint64,qint64)),
-                SLOT(handleDownloadProgress(qint64,qint64)));
-        connect(networkReply, SIGNAL(finished()),
-                SLOT(handleFinished()));
+        connect(
+                networkReply,
+                SIGNAL(downloadProgress(qint64,qint64)),
+                SLOT(handleDownloadProgress(qint64,qint64))
+                );
+        connect(
+                networkReply,
+                SIGNAL(finished()),
+                SLOT(handleFinished())
+                );
         downloadTime.start();
 
         ui->progressBar->setFormat("%p% (Starting...)");
@@ -262,10 +273,11 @@ void FileTransferDialog::handleFinished()
             return;
 
         //notify the user
-        QMessageBox::critical(this,
-                              "Droper",
-                              "File download error!"
-                              );
+        QMessageBox::critical(
+                this,
+                "Droper",
+                "File download error!"
+                );
         show();
 
         //set variables
@@ -281,9 +293,11 @@ void FileTransferDialog::handleFinished()
     else
     {
         //notify the user
-        QMessageBox::information(this,
-                                 "Droper",
-                                 "File download is done.");
+        QMessageBox::information(
+                this,
+                "Droper",
+                "File download is done."
+                );
 
         //set variables
         localFile.close();

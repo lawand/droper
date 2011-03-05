@@ -50,12 +50,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QNetworkAccessManager* networkAccessManager,
-                        OAuth* oAuth,
-                        UserData* userData,
-                        Dropbox* dropbox,
-                        QSettings* settings,
-                        QWidget *parent = 0);
+    explicit MainWindow(
+            QNetworkAccessManager* networkAccessManager,
+            OAuth* oAuth,
+            UserData* userData,
+            Dropbox* dropbox,
+            QSettings* settings,
+            QWidget *parent = 0
+            );
     ~MainWindow();
 
 public: //shared objects

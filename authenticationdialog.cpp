@@ -46,7 +46,8 @@ AuthenticationDialog::AuthenticationDialog(
         OAuth* oAuth,
         UserData* userData,
         Dropbox* dropbox,
-        QWidget *parent) :
+        QWidget *parent
+        ) :
     QDialog(parent),
     ui(new Ui::AuthenticationDialog)
 {
@@ -59,16 +60,19 @@ AuthenticationDialog::AuthenticationDialog(
     //GUI initialization
     ui->setupUi(this);
     //draw at screen's center
-    move(QApplication::desktop()->availableGeometry().center() -
-         this->rect().center()
-         );
+    move(
+            QApplication::desktop()->availableGeometry().center() -
+            this->rect().center()
+            );
 
     //initial connections
-    connect(ui->buttonBox,
+    connect(
+            ui->buttonBox,
             SIGNAL(accepted()),
             SLOT(requestTokenAndSecret())
             );
-    connect(ui->buttonBox,
+    connect(
+            ui->buttonBox,
             SIGNAL(rejected()),
             SLOT(reject())
             );
@@ -101,7 +105,8 @@ void AuthenticationDialog::requestTokenAndSecret()
 
     networkAccessManager->get( QNetworkRequest( url ) );
 
-    connect(this->networkAccessManager,
+    connect(
+            this->networkAccessManager,
             SIGNAL(finished(QNetworkReply*)),
             this,
             SLOT(handleTokenAndSecret(QNetworkReply*))
@@ -110,7 +115,8 @@ void AuthenticationDialog::requestTokenAndSecret()
 
 void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
 {
-    disconnect(this->networkAccessManager,
+    disconnect(
+            this->networkAccessManager,
             SIGNAL(finished(QNetworkReply*)),
             this,
             SLOT(handleTokenAndSecret(QNetworkReply*))
@@ -124,17 +130,19 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
     {
         if(networkReply->error() == QNetworkReply::AuthenticationRequiredError)
         {
-            QMessageBox::critical(this,
-                                  "Droper",
-                                  "The provided user information is not valid."
-                                  );
+            QMessageBox::critical(
+                    this,
+                    "Droper",
+                    "The provided user information is not valid."
+                    );
         }
         else
         {
-            QMessageBox::information(this,
-                                     "Droper",
-                                     "There was an error, try again later."
-                                     );
+            QMessageBox::information(
+                    this,
+                    "Droper",
+                    "There was an error, try again later."
+                    );
         }
 
         return;
@@ -146,10 +154,11 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
     QVariantMap jsonResult = Json::parse(jsonData, ok).toMap();
     if(!ok)
     {
-        QMessageBox::information(this,
-                                 "Droper",
-                                 "There was an error, try again later."
-                                 );
+        QMessageBox::information(
+                this,
+                "Droper",
+                "There was an error, try again later."
+                );
 
         return;
     }

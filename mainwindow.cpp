@@ -47,20 +47,24 @@
 #include "filetransferdialog.h"
 #include "json.h"
 
-MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
-                       OAuth* oAuth,
-                       UserData* userData,
-                       Dropbox* dropbox,
-                       QSettings* settings,
-                       QWidget *parent) :
+MainWindow::MainWindow(
+        QNetworkAccessManager* networkAccessManager,
+        OAuth* oAuth,
+        UserData* userData,
+        Dropbox* dropbox,
+        QSettings* settings,
+        QWidget *parent
+        ) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     currentDirectory("/"),
-    fileTransferDialog(networkAccessManager,
-                       oAuth,
-                       userData,
-                       dropbox,
-                       this)
+    fileTransferDialog(
+            networkAccessManager,
+            oAuth,
+            userData,
+            dropbox,
+            this
+            )
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -74,19 +78,32 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     showMaximized();
 
     //initial connections
-    connect( ui->showAccountInfoAction, SIGNAL(triggered()),
-            SLOT(requestAccountInformation()) );
-    connect( ui->showActiveDownloadAction, SIGNAL(triggered()),
-             &fileTransferDialog, SLOT(show()) );
-    connect( ui->forgetAuthenticationAction, SIGNAL(triggered()),
-            SLOT(forgetAuthentication()) );
+    connect(
+            ui->showAccountInfoAction,
+            SIGNAL(triggered()),
+            SLOT(requestAccountInformation())
+            );
+    connect(
+            ui->showActiveDownloadAction,
+            SIGNAL(triggered()),
+             &fileTransferDialog,
+             SLOT(show())
+             );
+    connect(
+            ui->forgetAuthenticationAction,
+            SIGNAL(triggered()),
+            SLOT(forgetAuthentication())
+            );
     connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );
     connect( ui->copyAction, SIGNAL(triggered()), SLOT(copy()) );
     connect( ui->pasteAction, SIGNAL(triggered()), SLOT(paste()) );
     connect( ui->renameAction, SIGNAL(triggered()), SLOT(rename()) );
     connect( ui->deleteAction, SIGNAL(triggered()), SLOT(del()) );
-    connect( ui->createFolderAction, SIGNAL(triggered()),
-             SLOT(createFolder()) );
+    connect(
+            ui->createFolderAction,
+            SIGNAL(triggered()),
+            SLOT(createFolder())
+            );
     connect( ui->upAction, SIGNAL(triggered()), SLOT(up()) );
     connect( ui->refreshAction, SIGNAL(triggered()), SLOT(refresh()) );
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
@@ -97,7 +114,8 @@ MainWindow::MainWindow(QNetworkAccessManager* networkAccessManager,
     requestDirectoryListing(currentDirectory);
 
     //connect the networkAccessManager with the handler
-    connect(this->networkAccessManager,
+    connect(
+            this->networkAccessManager,
             SIGNAL(finished(QNetworkReply*)),
             this,
             SLOT(handleNetworkReply(QNetworkReply*))
@@ -140,10 +158,11 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         }
         else
         {
-            QMessageBox::information(this,
-                                     "Droper",
-                                     "There was an error, try again later."
-                                     );
+            QMessageBox::information(
+                    this,
+                    "Droper",
+                    "There was an error, try again later."
+                    );
 
             //reset for next time
             retryCount = 0;
@@ -190,9 +209,11 @@ void MainWindow::requestAccountInformation()
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(userData,
-                       "GET",
-                       &networkRequest);
+    oAuth->signRequest(
+            userData,
+            "GET",
+            &networkRequest
+            );
 
     networkAccessManager->get( networkRequest );
 
@@ -208,10 +229,11 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
     QVariantMap jsonResult = Json::parse(jsonData, ok).toMap();
     if(!ok)
     {
-        QMessageBox::information(this,
-                                 "Droper",
-                                 "There was an error, try again later."
-                                 );
+        QMessageBox::information(
+                this,
+                "Droper",
+                "There was an error, try again later."
+                );
 
         return;
     }
@@ -353,10 +375,11 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     QVariantMap jsonResult = Json::parse(dirJson, ok).toMap();
     if(!ok)
     {
-        QMessageBox::information(this,
-                                 "Droper",
-                                 "There was an error, try again later."
-                                 );
+        QMessageBox::information(
+                this,
+                "Droper",
+                "There was an error, try again later."
+                );
 
         return;
     }
@@ -489,9 +512,11 @@ void MainWindow::requestCopying(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(userData,
-                       "GET",
-                       &networkRequest);
+    oAuth->signRequest(
+            userData,
+            "GET",
+            &networkRequest
+            );
 
     networkAccessManager->get( networkRequest );
 
@@ -524,9 +549,11 @@ void MainWindow::requestMoving(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(userData,
-                       "GET",
-                       &networkRequest);
+    oAuth->signRequest(
+            userData,
+            "GET",
+            &networkRequest
+            );
 
     networkAccessManager->get( networkRequest );
 
@@ -554,9 +581,11 @@ void MainWindow::requestDeleting(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(userData,
-                       "GET",
-                       &networkRequest);
+    oAuth->signRequest(
+            userData,
+            "GET",
+            &networkRequest
+            );
 
     networkAccessManager->get( networkRequest );
 
@@ -582,9 +611,11 @@ void MainWindow::requestFolderCreation(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(userData,
-                       "GET",
-                       &networkRequest);
+    oAuth->signRequest(
+            userData,
+            "GET",
+            &networkRequest
+            );
 
     networkAccessManager->get( networkRequest );
 
@@ -831,10 +862,12 @@ void MainWindow::download()
 
     if(fileTransferDialog.setFile(&map) != true)
     {
-        QMessageBox::information(this,
-                                 "Droper",
-                                 "There already is a file being "
-                                 "downloaded.");
+        QMessageBox::information(
+                this,
+                "Droper",
+                "There already is a file being "
+                "downloaded."
+                );
     }
     else
     {
@@ -844,10 +877,11 @@ void MainWindow::download()
 
 void MainWindow::createFolder()
 {
-    QString folderName = QInputDialog::getText(this,
-                          "Create Folder",
-                          "Enter the folder's name:"
-                          );
+    QString folderName = QInputDialog::getText(
+            this,
+            "Create Folder",
+            "Enter the folder's name:"
+            );
 
     //if no folderName was entered, do nothing
     if( folderName.isEmpty() )

@@ -64,10 +64,12 @@ int main(int argc, char *argv[])
        settings.value("user/secret").isNull() ||
        settings.value("user/email").isNull())
     {
-        AuthenticationDialog authenticationDialog(&networkAccessManager,
-                                                  &oAuth,
-                                                  &userData,
-                                                  &dropbox);
+        AuthenticationDialog authenticationDialog(
+                &networkAccessManager,
+                &oAuth,
+                &userData,
+                &dropbox
+                );
 
         if(authenticationDialog.exec() != QDialog::Accepted)
         {
@@ -87,11 +89,13 @@ int main(int argc, char *argv[])
         userData.email = settings.value("user/email").toString();
     }
 
-    MainWindow mainWindow(&networkAccessManager,
-                          &oAuth,
-                          &userData,
-                          &dropbox,
-                          &settings);
+    MainWindow mainWindow(
+            &networkAccessManager,
+            &oAuth,
+            &userData,
+            &dropbox,
+            &settings
+            );
     mainWindow.show();
 
     return application.exec();

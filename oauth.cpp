@@ -203,9 +203,10 @@ QString OAuth::signatureItem(
                        readyForUseParametersString;
 
     //calculate the hash
-        QString hash = hmacSha1(base,
-                                consumerData->secret + "&" + userData->secret
-                                );
+        QString hash = hmacSha1(
+                base,
+                consumerData->secret + "&" + userData->secret
+                );
 
     //return the result
         return QString("%1=\"%2\"")
