@@ -144,10 +144,14 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                                      "Droper",
                                      "There was an error, try again later."
                                      );
+
+            //reset for next time
+            retryCount = 0;
         }
 
         return;
     }
+    //reset for next time
     retryCount = 0;
 
     switch(api)
