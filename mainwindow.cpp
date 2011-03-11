@@ -934,7 +934,11 @@ void MainWindow::on_currentFolderToolButton_pressed()
     menu.addAction(ui->pasteAction);
     menu.addAction(ui->createFolderAction);
     menu.addAction(ui->refreshAction);
-    menu.exec(ui->currentFolderToolButton->geometry().center());
+    menu.exec(
+            this->mapToGlobal(
+                    ui->currentFolderToolButton->geometry().center()
+                    )
+            );
 
     ui->currentFolderToolButton->setDown(false);
 }
