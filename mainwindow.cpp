@@ -44,7 +44,7 @@
 #include <QInputDialog>
 #include <QResource>
 #include <QDesktopWidget>
-#include "filetransferdialog.h"
+#include "downloaddialog.h"
 #include "json.h"
 
 MainWindow::MainWindow(
@@ -58,7 +58,7 @@ MainWindow::MainWindow(
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     currentDirectory("/"),
-    fileTransferDialog(
+    downloadDialog(
             networkAccessManager,
             oAuth,
             userData,
@@ -86,7 +86,7 @@ MainWindow::MainWindow(
     connect(
             ui->showActiveDownloadAction,
             SIGNAL(triggered()),
-             &fileTransferDialog,
+             &downloadDialog,
              SLOT(show())
              );
     connect(
@@ -134,7 +134,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
     Dropbox::Api api = dropbox->urlToApi(networkReply->url());
 
-    //files APIs are handled by the fileTransferDialog
+    //files APIs are handled by the downloadDialog
     if(api == Dropbox::FILES)
         return;
 
@@ -860,7 +860,7 @@ void MainWindow::download()
     QVariantMap map =
             currentItem->data(Qt::UserRole).toMap();
 
-    if(fileTransferDialog.setFile(&map) != true)
+    if(downloadDialog.setFile(&map) != true)
     {
         QMessageBox::information(
                 this,
@@ -871,7 +871,7 @@ void MainWindow::download()
     }
     else
     {
-        fileTransferDialog.show();
+        downloadDialog.show();
     }
 }
 

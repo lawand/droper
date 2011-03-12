@@ -30,7 +30,7 @@
 #include <QMainWindow>
 
 //data members
-#include <filetransferdialog.h>
+#include <downloaddialog.h>
 class QNetworkAccessManager;
 class QSettings;
 class OAuth;
@@ -72,7 +72,7 @@ private:
     QString currentDirectory;
     QString clipboard;
     bool shouldPreserveClipboardContents;
-    FileTransferDialog fileTransferDialog;
+    DownloadDialog downloadDialog;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);

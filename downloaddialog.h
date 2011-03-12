@@ -23,8 +23,8 @@
 **
 ****************************************************************************/
 
-#ifndef FILETRANSFERDIALOG_H
-#define FILETRANSFERDIALOG_H
+#ifndef DOWNLOADDIALOG_H
+#define DOWNLOADDIALOG_H
 
 //base class
 #include <QDialog>
@@ -43,22 +43,22 @@ class Dropbox;
 #include <QVariantMap>
 
 namespace Ui {
-    class FileTransferDialog;
+    class DownloadDialog;
 }
 
-class FileTransferDialog : public QDialog
+class DownloadDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FileTransferDialog(
+    explicit DownloadDialog(
             QNetworkAccessManager* networkAccessManager,
             OAuth* oAuth,
             UserData* userData,
             Dropbox* dropbox,
             QWidget *parent = 0
             );
-    ~FileTransferDialog();
+    ~DownloadDialog();
 
 public:
     bool setFile(QVariantMap* fileMap);
@@ -70,7 +70,7 @@ public: //shared objects
     Dropbox* dropbox;
 
 private:
-    Ui::FileTransferDialog *ui;
+    Ui::DownloadDialog *ui;
     bool active;
     QString remotePathAndFileName;
     QFile localFile;
@@ -88,4 +88,4 @@ private slots:
     void handleFinished();
 };
 
-#endif // FILETRANSFERDIALOG_H
+#endif // DOWNLOADDIALOG_H

@@ -24,8 +24,8 @@
 ****************************************************************************/
 
 //corresponding headers
-#include "filetransferdialog.h"
-#include "ui_filetransferdialog.h"
+#include "downloaddialog.h"
+#include "ui_downloaddialog.h"
 
 //data members
 #include <QNetworkReply>
@@ -39,7 +39,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 
-FileTransferDialog::FileTransferDialog(
+DownloadDialog::DownloadDialog(
         QNetworkAccessManager* networkAccessManager,
         OAuth* oAuth,
         UserData* userData,
@@ -47,7 +47,7 @@ FileTransferDialog::FileTransferDialog(
         QWidget *parent
         ) :
     QDialog(parent),
-    ui(new Ui::FileTransferDialog),
+    ui(new Ui::DownloadDialog),
     active(false),
     remotePathAndFileName(""),
     networkReply(0)
@@ -72,12 +72,12 @@ FileTransferDialog::FileTransferDialog(
     initialize();
 }
 
-FileTransferDialog::~FileTransferDialog()
+DownloadDialog::~DownloadDialog()
 {
     delete ui;
 }
 
-bool FileTransferDialog::setFile(QVariantMap* fileMap)
+bool DownloadDialog::setFile(QVariantMap* fileMap)
 {
     //can't set a new file while actively downloading another
     if(active)
@@ -100,7 +100,7 @@ bool FileTransferDialog::setFile(QVariantMap* fileMap)
     return true;
 }
 
-void FileTransferDialog::initialize()
+void DownloadDialog::initialize()
 {
     //set variables
     ui->fileNameAndSizeLabel->setText("No Active Downloads");
@@ -118,7 +118,7 @@ void FileTransferDialog::initialize()
     networkReply = 0;
 }
 
-void FileTransferDialog::reject()
+void DownloadDialog::reject()
 {
     if(!active)
     {
@@ -128,7 +128,7 @@ void FileTransferDialog::reject()
     QDialog::reject();
 }
 
-void FileTransferDialog::on_browsePushButton_clicked()
+void DownloadDialog::on_browsePushButton_clicked()
 {
     QString directory = QFileDialog::getExistingDirectory(
             this,
@@ -158,14 +158,14 @@ void FileTransferDialog::on_browsePushButton_clicked()
     }
 }
 
-void FileTransferDialog::on_localPathLineEdit_textChanged(QString text)
+void DownloadDialog::on_localPathLineEdit_textChanged(QString text)
 {
     ui->toggleStartPushButton->setEnabled(
             !text.isEmpty()
             );
 }
 
-void FileTransferDialog::on_toggleStartPushButton_clicked()
+void DownloadDialog::on_toggleStartPushButton_clicked()
 {
     if(!active)
     {
@@ -241,12 +241,12 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
     }
 }
 
-void FileTransferDialog::handleReadyRead()
+void DownloadDialog::handleReadyRead()
 {
     localFile.write(networkReply->readAll());
 }
 
-void FileTransferDialog::handleDownloadProgress(qint64 received, qint64 total)
+void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
 {
     // calculate the download speed
     double speed = received * 1000.0 / downloadTime.elapsed();
@@ -270,7 +270,7 @@ void FileTransferDialog::handleDownloadProgress(qint64 received, qint64 total)
     ui->progressBar->setValue((received*100)/total);
 }
 
-void FileTransferDialog::handleFinished()
+void DownloadDialog::handleFinished()
 {
     if(networkReply->error() != QNetworkReply::NoError)
     {
