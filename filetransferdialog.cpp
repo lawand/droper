@@ -49,7 +49,7 @@ FileTransferDialog::FileTransferDialog(
     QDialog(parent),
     ui(new Ui::FileTransferDialog),
     active(false),
-    remotePath(""),
+    remotePathAndFileName(""),
     networkReply(0)
 {
     //member initialization
@@ -83,9 +83,10 @@ bool FileTransferDialog::setFile(QVariantMap* fileMap)
     if(active)
         return false;
 
-    remotePath = (*fileMap)["path"].toString();
-    QString fileName = remotePath.right(
-            (remotePath.length() - remotePath.lastIndexOf("/")) - 1
+    remotePathAndFileName = (*fileMap)["path"].toString();
+    QString fileName = remotePathAndFileName.right(
+            (remotePathAndFileName.length() -
+             remotePathAndFileName.lastIndexOf("/")) - 1
             );
 
     ui->fileNameAndSizeLabel->setText(
@@ -113,7 +114,7 @@ void FileTransferDialog::initialize()
     ui->toggleStartPushButton->setText("Start");
     ui->speedLabel->clear();
     active = false;
-    remotePath = "";
+    remotePathAndFileName = "";
     networkReply = 0;
 }
 
@@ -135,8 +136,9 @@ void FileTransferDialog::on_browsePushButton_clicked()
             QDesktopServices::storageLocation(QDesktopServices::DesktopLocation)
             );
 
-    QString fileName = remotePath.right(
-            (remotePath.length() - remotePath.lastIndexOf("/")) - 1
+    QString fileName = remotePathAndFileName.right(
+            (remotePathAndFileName.length() -
+             remotePathAndFileName.lastIndexOf("/")) - 1
             );
 
     if(QFile(directory + "/" + fileName).exists())
@@ -167,8 +169,9 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
 {
     if(!active)
     {
-        QString fileName = remotePath.right(
-                (remotePath.length() - remotePath.lastIndexOf("/")) - 1
+        QString fileName = remotePathAndFileName.right(
+                (remotePathAndFileName.length() -
+                 remotePathAndFileName.lastIndexOf("/")) - 1
                 );
 
         QString localPath = ui->localPathLineEdit->text();
@@ -188,7 +191,10 @@ void FileTransferDialog::on_toggleStartPushButton_clicked()
             return;
         }
 
-        QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + remotePath;
+        QUrl url =
+                dropbox->apiToUrl(Dropbox::FILES).toString() +
+                remotePathAndFileName
+                ;
 
         QNetworkRequest networkRequest(url);
 

@@ -72,7 +72,7 @@ public: //shared objects
 private:
     Ui::FileTransferDialog *ui;
     bool active;
-    QString remotePath;
+    QString remotePathAndFileName;
     QFile localFile;
     QNetworkReply* networkReply;
     QTime downloadTime;
