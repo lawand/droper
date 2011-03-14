@@ -669,7 +669,11 @@ void MainWindow::refreshCurrentDirectory()
     requestDirectoryListing(currentDirectory);
 }
 
+#ifdef Q_OS_SYMBIAN
+void MainWindow::on_filesAndFoldersListWidget_itemClicked(
+#else
 void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
+#endif
         QListWidgetItem* item
         )
 {

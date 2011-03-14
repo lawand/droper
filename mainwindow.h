@@ -91,7 +91,11 @@ private slots:
     void about();
     void forgetAuthentication();
     void refreshCurrentDirectory();
+#ifdef Q_OS_SYMBIAN
+    void on_filesAndFoldersListWidget_itemClicked(
+#else
     void on_filesAndFoldersListWidget_itemDoubleClicked(
+#endif
             QListWidgetItem* item
             );
     void up();
