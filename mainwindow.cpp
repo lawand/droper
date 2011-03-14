@@ -935,7 +935,7 @@ void MainWindow::showProperties()
             "ddd, dd MMM yyyy HH:mm:ss"
             );
     modifiedTimeDate.setTimeSpec(Qt::UTC);
-    QDateTime current = QDateTime::currentDateTimeUtc();
+    QDateTime current = QDateTime::currentDateTime().toUTC();
     int secs = modifiedTimeDate.secsTo(current);
     int mins = secs/60;
     int hours = mins/60;
