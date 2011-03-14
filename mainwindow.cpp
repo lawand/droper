@@ -302,25 +302,25 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                                 .arg(quotaUnit)
                                 ;
 
-    qreal total = quotaInfo["normal"].toReal() +
-                quotaInfo["shared"].toReal() +
-                quotaInfo["quota"].toReal();
-    QString totalUnit;
-    if (total < 1024) {
-        totalUnit = "bytes";
-    } else if (total < 1024*1024) {
-        total /= 1024;
-        totalUnit = "kB";
-    } else if (total < 1024*1024*1024){
-        total /= 1024*1024;
-        totalUnit = "MB";
+    qreal unused = quotaInfo["quota"].toReal() -
+                   quotaInfo["normal"].toReal() +
+                   quotaInfo["shared"].toReal();
+    QString unusedUnit;
+    if (unused < 1024) {
+        unusedUnit = "bytes";
+    } else if (unused < 1024*1024) {
+        unused /= 1024;
+        unusedUnit = "kB";
+    } else if (unused < 1024*1024*1024){
+        unused /= 1024*1024;
+        unusedUnit = "MB";
     } else {
-        total /= 1024*1024*1024;
-        totalUnit = "GB";
+        unused /= 1024*1024*1024;
+        unusedUnit = "GB";
     }
-    QString totalString = QString("%1%2")
-                                .arg(total, 0, 'f', 1)
-                                .arg(totalUnit)
+    QString unusedString = QString("%1%2")
+                                .arg(unused, 0, 'f', 1)
+                                .arg(unusedUnit)
                                 ;
 
 
@@ -338,18 +338,18 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                         "Country: %2 \n"
                         "UID: %3 \n"
                         "\n"
-                        "Total Space: %7 \n"
-                        "Space Left: %4 \n"
-                        "Regular files: %5 \n"
-                        "Shared files: %6"
+                        "Total Space: %4 \n"
+                        "Unused Space: %5 \n"
+                        "Regular files: %6 \n"
+                        "Shared files: %7"
                         )
                         .arg(jsonResult["display_name"].toString())
                         .arg(jsonResult["country"].toString())
                         .arg(jsonResult["uid"].toString())
                         .arg(quotaString)
+                        .arg(unusedString)
                         .arg(normalFilesString)
                         .arg(sharedFilesString)
-                        .arg(totalString)
             );
 
     messageBox.exec();
