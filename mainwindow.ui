@@ -180,6 +180,11 @@
     <string>Download</string>
    </property>
   </action>
+  <action name="propertiesAction">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="main.qrc"/>

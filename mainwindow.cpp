@@ -109,6 +109,11 @@ MainWindow::MainWindow(
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
     connect( ui->downloadAction, SIGNAL(triggered()), SLOT(download()) );
+    connect(
+            ui->propertiesAction,
+            SIGNAL(triggered()),
+            SLOT(showProperties())
+            );
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -897,6 +902,103 @@ void MainWindow::createFolder()
     }
 }
 
+void MainWindow::showProperties()
+{
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+        return;
+
+    //get raw info
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap map =
+            currentItem->data(Qt::UserRole).toMap();
+
+    //size
+    QString size = map["size"].toString();
+    if(!size.endsWith("bytes"))
+    {
+        QString bytes = map["bytes"].toString();
+        size += QString(" (%1 bytes)").arg(bytes);
+    }
+
+    //path and name
+    QString path = map["path"].toString();
+    QString name = path.right(
+            (path.length() - path.lastIndexOf("/")) - 1
+            );
+
+    //modified date and time
+    QString modifiedString = map["modified"].toString();
+    modifiedString.chop(6);     //chop() removes the time zone
+    QDateTime modifiedTimeDate = QDateTime::fromString(
+            modifiedString,
+            "ddd, dd MMM yyyy HH:mm:ss"
+            );
+    modifiedTimeDate.setTimeSpec(Qt::UTC);
+    QDateTime current = QDateTime::currentDateTimeUtc();
+    int secs = modifiedTimeDate.secsTo(current);
+    int mins = secs/60;
+    int hours = mins/60;
+    int days = hours/24;
+    int months = days/30;
+    int years = months/12;
+    QString friendlyModifiedString;
+    if(secs < 60)
+    {
+        friendlyModifiedString = QString(
+                "about %1 second(s) ago"
+                ).arg(secs);
+    }
+    else if(mins < 60)
+    {
+        friendlyModifiedString = QString(
+                "about %1 minute(s) ago"
+                ).arg(mins);
+    }
+    else if(hours < 24)
+    {
+        friendlyModifiedString = QString(
+                "about %1 hour(s) ago"
+                ).arg(hours);
+    }
+    else if(days < 30)
+    {
+        friendlyModifiedString = QString(
+                "about %1 day(s) ago"
+                ).arg(days);
+    }
+    else if(months < 12)
+    {
+        friendlyModifiedString = QString(
+                "about %1 month(s) ago"
+                ).arg(months);
+    }
+    else
+    {
+        friendlyModifiedString = QString(
+                "about %1 year(s) ago"
+                ).arg(years);
+    }
+    modifiedString += QString(" (%1)").arg(friendlyModifiedString);
+
+    //show results
+    QMessageBox messageBox(this);
+    messageBox.setWindowTitle("Droper");
+    messageBox.setText(
+            QString(
+                    "Showing details for file : %1"
+                    ).arg(name)
+            );
+    messageBox.setInformativeText(
+            QString(
+                    "Size: %1\n"
+                    "Path: %2 \n"
+                    "Modified (in UTC): %3"
+                    ).arg(size).arg(path).arg(modifiedString)
+            );
+    messageBox.exec();
+}
+
 void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
         QPoint point
         )
@@ -921,6 +1023,7 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
                           ->data(Qt::UserRole).toMap();
         if(map["is_dir"] != true)   //if the item is not a directory
         {
+            menu.addAction(ui->propertiesAction);
             menu.addAction(ui->downloadAction);
         }
 

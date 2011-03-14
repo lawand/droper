@@ -103,6 +103,7 @@ private slots:
     void del();
     void download();
     void createFolder();
+    void showProperties();
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     void on_currentFolderToolButton_pressed();
 };
