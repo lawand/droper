@@ -986,7 +986,8 @@ void MainWindow::showProperties()
     messageBox.setWindowTitle("Droper");
     messageBox.setText(
             QString(
-                    "Showing details for file : %1"
+                    "Showing details for file: \n"
+                    "%1"
                     ).arg(name)
             );
     messageBox.setInformativeText(
