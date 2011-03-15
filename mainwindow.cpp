@@ -339,7 +339,10 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                         "Total Space: %4 \n"
                         "Unused Space: %5 \n"
                         "Regular files: %6 \n"
-                        "Shared files: %7"
+                        "Shared files: %7 \n"
+                        "\n"
+                        "Total Space = Regular files + "
+                        "Shared files + Unused Space"
                         )
                         .arg(jsonResult["display_name"].toString())
                         .arg(jsonResult["country"].toString())
