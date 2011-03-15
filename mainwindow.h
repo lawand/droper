@@ -73,6 +73,7 @@ private:
     QString clipboard;
     bool shouldPreserveClipboardContents;
     DownloadDialog downloadDialog;
+    bool renameOperationBeingProcessed;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);

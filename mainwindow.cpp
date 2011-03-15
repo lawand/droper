@@ -64,7 +64,8 @@ MainWindow::MainWindow(
             userData,
             dropbox,
             this
-            )
+            ),
+    renameOperationBeingProcessed(false)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -570,7 +571,14 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
 {
     refreshCurrentDirectory();
 
-    clipboard.clear();
+    if(!renameOperationBeingProcessed)
+    {
+        clipboard.clear();
+    }
+    else
+    {
+        renameOperationBeingProcessed = false;
+    }
 }
 
 void MainWindow::requestDeleting(QString path)
@@ -790,6 +798,9 @@ void MainWindow::rename()
     //if no item is selected, do nothing
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
+
+    //mark the current operation as a rename
+    renameOperationBeingProcessed = true;
 
     QListWidgetItem* currentItem =
             ui->filesAndFoldersListWidget->currentItem();
