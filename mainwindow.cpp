@@ -145,7 +145,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 
     ui->statusbar->clearMessage();
 
-    const int MAX_RETRIES = 20;
+    const int MAX_RETRIES = 10;
     static int retryCount = 0;
     if(networkReply->error() != QNetworkReply::NoError)
     {
@@ -156,9 +156,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
             oAuth->signRequest(userData, "GET", &networkRequest);
             networkAccessManager->get(networkRequest);
 
-            ui->statusbar->showMessage(
-                    QString("Retring...%1").arg(retryCount)
-                    );
+            ui->statusbar->showMessage("Loading...");
             retryCount++;
         }
         else
