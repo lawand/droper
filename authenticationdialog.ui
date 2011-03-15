@@ -79,10 +79,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="pleaseWaitLabel">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+      <widget class="QLabel" name="infoLabel">
        <property name="text">
         <string>Please Wait...</string>
        </property>
