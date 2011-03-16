@@ -46,6 +46,9 @@
 #include <QDesktopWidget>
 #include "downloaddialog.h"
 #include "json.h"
+#ifdef Q_OS_SYMBIAN
+#include <QtScroller>
+#endif
 
 MainWindow::MainWindow(
         QNetworkAccessManager* networkAccessManager,
@@ -129,6 +132,14 @@ MainWindow::MainWindow(
 
     //set icon size
     ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
+
+#ifdef Q_OS_SYMBIAN
+    //enable kinetic scrolling
+    QtScroller::grabGesture(
+        ui->filesAndFoldersListWidget->viewport(),
+        QtScroller::TouchGesture
+        );
+#endif
 }
 
 MainWindow::~MainWindow()

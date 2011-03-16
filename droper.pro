@@ -47,4 +47,7 @@ symbian {
     DEPLOYMENT += my_deployment
 
     DEPLOYMENT.installer_header=0x2002CCCF
+
+    #for kinetic scrolling
+    include(kineticscroller/qtscroller.pri)
     }
