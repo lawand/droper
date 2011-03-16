@@ -78,7 +78,7 @@ AuthenticationDialog::AuthenticationDialog(
             );
 
     //some initial values for data members
-    ui->infoLabel->setText("Enter Dropbox credentials.");
+    ui->infoLabel->setVisible(false);
 }
 
 AuthenticationDialog::~AuthenticationDialog()
@@ -89,6 +89,7 @@ AuthenticationDialog::~AuthenticationDialog()
 void AuthenticationDialog::requestTokenAndSecret()
 {
     ui->infoLabel->setText("Please Wait...");
+    ui->infoLabel->setVisible(true);
 
     QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
 
@@ -143,7 +144,7 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
                     );
         }
 
-        ui->infoLabel->setText("Try again.");
+        ui->infoLabel->setVisible(false);
 
         return;
     }
