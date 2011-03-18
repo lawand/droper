@@ -45,9 +45,6 @@
         <property name="contextMenuPolicy">
          <enum>Qt::NoContextMenu</enum>
         </property>
-        <property name="text">
-         <string>...</string>
-        </property>
         <property name="icon">
          <iconset resource="main.qrc">
           <normaloff>:/icons/folder48.png</normaloff>:/icons/folder48.png</iconset>
