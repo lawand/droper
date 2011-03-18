@@ -181,6 +181,18 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 
             //reset for next time
             retryCount = 0;
+
+#ifdef Q_OS_SYMBIAN
+            //regrapping the gestures, for more info see
+            //requestDirectoryListing()
+            if(api==Dropbox::METADATA)
+            {
+                QtScroller::grabGesture(
+                    ui->filesAndFoldersListWidget->viewport(),
+                    QtScroller::TouchGesture
+                    );
+            }
+#endif
         }
 
         return;
@@ -370,6 +382,17 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
 void MainWindow::requestDirectoryListing(QString path)
 {
+#ifdef Q_OS_SYMBIAN
+    //kinetic scrolling while clearing the list and refilling it causes
+    //scrolling-related problems, so I am ungrapping now and grapping again
+    //after the directory listing is handled successfully or after the operation
+    //has ended reproducing an error. in other words, either in
+    //handleNetworkReply() or in handleDirectoryListing()
+    QtScroller::ungrabGesture(
+        ui->filesAndFoldersListWidget->viewport()
+        );
+#endif
+
     QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
 
     QPair<QString,QString> temp;
@@ -398,6 +421,15 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                 "Droper",
                 "There was an error, try again later."
                 );
+
+#ifdef Q_OS_SYMBIAN
+        //regrapping the gestures, for more info see
+        //requestDirectoryListing()
+        QtScroller::grabGesture(
+            ui->filesAndFoldersListWidget->viewport(),
+            QtScroller::TouchGesture
+            );
+#endif
 
         return;
     }
@@ -508,6 +540,15 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             subDirItem->setData(Qt::UserRole, subDir);
         }
     }
+
+#ifdef Q_OS_SYMBIAN
+    //regrapping the gestures, for more info see
+    //requestDirectoryListing()
+    QtScroller::grabGesture(
+        ui->filesAndFoldersListWidget->viewport(),
+        QtScroller::TouchGesture
+        );
+#endif
 }
 
 void MainWindow::requestCopying(QString source, QString destination)
