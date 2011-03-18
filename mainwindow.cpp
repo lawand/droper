@@ -157,11 +157,6 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     if(api == Dropbox::FILES)
         return;
 
-    //stop the loading animation
-    ui->loadingLabel->setVisible(false);
-    ui->currentFolderToolButton->setVisible(true);
-    delete ui->loadingLabel->movie();
-
     const int MAX_RETRIES = 10;
     static int retryCount = 0;
     if(networkReply->error() != QNetworkReply::NoError)
@@ -173,18 +168,15 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
             oAuth->signRequest(userData, "GET", &networkRequest);
             networkAccessManager->get(networkRequest);
 
-            //show the loading animation
-            ui->loadingLabel->setVisible(true);
-            ui->currentFolderToolButton->setVisible(false);
-            QMovie *loading = new QMovie(":/animations/loading.gif");
-            loading->setScaledSize(QSize(32, 32));
-            ui->loadingLabel->setMovie(loading);
-            loading->start();
-
             retryCount++;
         }
         else
         {
+            //stop the loading animation
+            ui->loadingLabel->setVisible(false);
+            ui->currentFolderToolButton->setVisible(true);
+            delete ui->loadingLabel->movie();
+
             QMessageBox::information(
                     this,
                     "Droper",
@@ -211,6 +203,11 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     }
     //reset for next time
     retryCount = 0;
+
+    //stop the loading animation
+    ui->loadingLabel->setVisible(false);
+    ui->currentFolderToolButton->setVisible(true);
+    delete ui->loadingLabel->movie();
 
     switch(api)
     {
