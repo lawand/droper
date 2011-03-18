@@ -1055,7 +1055,24 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
             menu.addAction(ui->downloadAction);
         }
 
+#ifdef Q_OS_SYMBIAN
+    //disable kinetic scrolling while the menu is being executed
+    QtScroller::ungrabGesture(
+        ui->filesAndFoldersListWidget->viewport()
+        );
+#endif
         menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
+#ifdef Q_OS_SYMBIAN
+    //enable kinetic scrolling back
+    QtScroller::grabGesture(
+        ui->filesAndFoldersListWidget->viewport(),
+        QtScroller::TouchGesture
+        );
+
+    //this is a fix to the problem of showing an extra action in the men named
+    //action
+    ui->filesAndFoldersListWidget->setContextMenuPolicy(Qt::NoContextMenu);
+#endif
     }
 }
 
