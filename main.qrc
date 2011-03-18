@@ -34,6 +34,7 @@
         <file>icons/page_white_word48.png</file>
         <file>icons/page_white_zip48.png</file>
         <file>icons/up48.png</file>
+        <file>animations/loading.gif</file>
         <file>droper.svg</file>
     </qresource>
 </RCC>

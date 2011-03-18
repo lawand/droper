@@ -44,6 +44,7 @@
 #include <QInputDialog>
 #include <QResource>
 #include <QDesktopWidget>
+#include <QMovie>
 #include "downloaddialog.h"
 #include "json.h"
 #ifdef Q_OS_SYMBIAN
@@ -80,6 +81,7 @@ MainWindow::MainWindow(
     //GUI initialization
     ui->setupUi(this);
     showMaximized();
+    ui->loadingLabel->setVisible(false);
 
     //initial connections
     connect(
@@ -155,7 +157,10 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     if(api == Dropbox::FILES)
         return;
 
-    ui->statusbar->clearMessage();
+    //stop the loading animation
+    ui->loadingLabel->setVisible(false);
+    ui->currentFolderToolButton->setVisible(true);
+    delete ui->loadingLabel->movie();
 
     const int MAX_RETRIES = 10;
     static int retryCount = 0;
@@ -168,7 +173,14 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
             oAuth->signRequest(userData, "GET", &networkRequest);
             networkAccessManager->get(networkRequest);
 
-            ui->statusbar->showMessage("Loading...");
+            //show the loading animation
+            ui->loadingLabel->setVisible(true);
+            ui->currentFolderToolButton->setVisible(false);
+            QMovie *loading = new QMovie(":/animations/loading.gif");
+            loading->setScaledSize(QSize(32, 32));
+            ui->loadingLabel->setMovie(loading);
+            loading->start();
+
             retryCount++;
         }
         else
@@ -244,7 +256,13 @@ void MainWindow::requestAccountInformation()
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
@@ -405,7 +423,13 @@ void MainWindow::requestDirectoryListing(QString path)
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
@@ -580,7 +604,13 @@ void MainWindow::requestCopying(QString source, QString destination)
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleCopying(QNetworkReply* networkReply)
@@ -617,7 +647,13 @@ void MainWindow::requestMoving(QString source, QString destination)
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleMoving(QNetworkReply* networkReply)
@@ -656,7 +692,13 @@ void MainWindow::requestDeleting(QString path)
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleDeleting(QNetworkReply* networkReply)
@@ -686,7 +728,13 @@ void MainWindow::requestFolderCreation(QString path)
 
     networkAccessManager->get( networkRequest );
 
-    ui->statusbar->showMessage("Loading...");
+    //show the loading animation
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(32, 32));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
 }
 
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
