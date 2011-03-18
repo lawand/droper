@@ -404,6 +404,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
     //prepare to change current directory
         ui->filesAndFoldersListWidget->clear();
+        ui->filesAndFoldersListWidget->scrollToTop();
 
         //set current directory's icon
             QResource iconResource(
