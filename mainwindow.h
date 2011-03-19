@@ -74,6 +74,7 @@ private:
     bool shouldPreserveClipboardContents;
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
+    bool operationActive;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
