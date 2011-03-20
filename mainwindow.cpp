@@ -270,7 +270,7 @@ void MainWindow::requestAccountInformation()
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -443,7 +443,7 @@ void MainWindow::requestDirectoryListing(QString path)
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -630,7 +630,7 @@ void MainWindow::requestCopying(QString source, QString destination)
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -679,7 +679,7 @@ void MainWindow::requestMoving(QString source, QString destination)
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -730,7 +730,7 @@ void MainWindow::requestDeleting(QString path)
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -772,7 +772,7 @@ void MainWindow::requestFolderCreation(QString path)
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
     QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(32, 32));
+    loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }

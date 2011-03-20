@@ -44,14 +44,14 @@
        <widget class="QLabel" name="loadingLabel">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="text">
@@ -63,14 +63,14 @@
        <widget class="QToolButton" name="currentFolderToolButton">
         <property name="minimumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
-          <height>32</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="contextMenuPolicy">
@@ -80,10 +80,22 @@
          <iconset resource="main.qrc">
           <normaloff>:/icons/folder48.png</normaloff>:/icons/folder48.png</iconset>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="currentFolderLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="contextMenuPolicy">
          <enum>Qt::NoContextMenu</enum>
         </property>
