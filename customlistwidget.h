@@ -38,6 +38,7 @@ public:
 
 private slots:
     virtual void mousePressEvent(QMouseEvent *mouseEvent);
+    virtual void mouseReleaseEvent(QMouseEvent *mouseEvent);
 };
 
 #endif // CUSTOMLISTWIDGET_H

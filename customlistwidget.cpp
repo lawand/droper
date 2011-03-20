@@ -36,3 +36,9 @@ void CustomListWidget::mousePressEvent(QMouseEvent *mouseEvent)
     setContextMenuPolicy(Qt::CustomContextMenu);
     QListWidget::mousePressEvent(mouseEvent);
 }
+
+void CustomListWidget::mouseReleaseEvent(QMouseEvent *mouseEvent)
+{
+    QListWidget::mouseReleaseEvent(mouseEvent);
+    setContextMenuPolicy(Qt::NoContextMenu);
+}
