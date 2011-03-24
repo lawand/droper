@@ -83,6 +83,8 @@ MainWindow::MainWindow(
     ui->setupUi(this);
     showMaximized();
     ui->loadingLabel->setVisible(false);
+    ui->upAction->setEnabled(false);
+    ui->pasteAction->setEnabled(false);
 
     //initial connections
     connect(
@@ -662,6 +664,7 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
     if(!renameOperationBeingProcessed)
     {
         clipboard.clear();
+        ui->pasteAction->setEnabled(false);
     }
     else
     {
@@ -833,6 +836,7 @@ void MainWindow::cut()
     QVariantMap map =
             currentItem->data(Qt::UserRole).toMap();
     clipboard = map["path"].toString();
+    ui->pasteAction->setEnabled(true);
 }
 
 void MainWindow::copy()
@@ -850,6 +854,7 @@ void MainWindow::copy()
     QVariantMap map =
             currentItem->data(Qt::UserRole).toMap();
     clipboard = map["path"].toString();
+    ui->pasteAction->setEnabled(true);
 }
 
 void MainWindow::paste()
