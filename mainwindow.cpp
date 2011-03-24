@@ -489,15 +489,10 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         else
             ui->currentFolderLabel->setText("Dropbox");
 
-        if(currentDirectory != "/")
-        {
-            QListWidgetItem* upItem = new QListWidgetItem(
-                    ui->filesAndFoldersListWidget
-                    );
-
-            upItem->setText("Up");
-            upItem->setIcon(QIcon(":/icons/up48.png"));
-        }
+        if(currentDirectory == "/")
+            ui->upAction->setEnabled(false);
+        else
+            ui->upAction->setEnabled(true);
 
     //add folders
     foreach(const QVariant &subDirJson, jsonResult["contents"].toList())
@@ -793,14 +788,6 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
 {
-    if(item->data(Qt::UserRole).isNull()) //if this is the Up item
-    {
-        //navigate to the parent directory
-        ui->upAction->trigger();
-
-        return;
-    }
-
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
     if(map["is_dir"] == true)   //if the item is a directory
@@ -1129,14 +1116,6 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 {
     if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
-        if(ui->filesAndFoldersListWidget->currentItem()
-            ->data(Qt::UserRole).isNull()
-            ) //if this is the Up item
-        {
-            //don't show a menu
-            return;
-        }
-
         QMenu menu(this);
         menu.addAction(ui->cutAction);
         menu.addAction(ui->copyAction);
@@ -1175,6 +1154,7 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 void MainWindow::on_currentFolderToolButton_pressed()
 {
     QMenu menu(this);
+    menu.addAction(ui->upAction);
     menu.addAction(ui->pasteAction);
     menu.addAction(ui->createFolderAction);
     menu.addAction(ui->refreshAction);
