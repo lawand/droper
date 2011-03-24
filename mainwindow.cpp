@@ -466,7 +466,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
         //set current directory's icon
             QResource iconResource(
-                    QString(":/icons/%1")
+                    QString(":/resources/icons/%1")
                     .arg(jsonResult["icon"].toString())
                     + ".png"
                     );
@@ -476,7 +476,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                         );
             else
                 ui->currentFolderToolButton->setIcon(
-                        QIcon(":/icons/folder.png")
+                        QIcon(":/resources/icons/folder.png")
                         );
 
         //update currentDirectory and ui->currentFolderLabel
@@ -513,7 +513,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             subDirItem->setText(subDirName);
 
             QResource iconResource(
-                    QString(":/icons/%1")
+                    QString(":/resources/icons/%1")
                     .arg(subDir["icon"].toString())
                     + ".png"
                     );
@@ -521,7 +521,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/folder.png"));
+                subDirItem->setIcon(QIcon(":/resources/icons/folder.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
@@ -548,7 +548,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             subDirItem->setText(subDirName + "\n" + "  " + size);
 
             QResource iconResource(
-                    QString(":/icons/%1")
+                    QString(":/resources/icons/%1")
                     .arg(subDir["icon"].toString())
                     + ".png"
                     );
@@ -556,7 +556,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/page_white.png"));
+                subDirItem->setIcon(QIcon(":/resources/icons/page_white.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
@@ -1171,7 +1171,7 @@ void MainWindow::showLoadingAnimation()
 {
     ui->loadingLabel->setVisible(true);
     ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
+    QMovie *loading = new QMovie(":/resources/animations/loading.gif");
     loading->setScaledSize(QSize(48, 48));
     ui->loadingLabel->setMovie(loading);
     loading->start();
