@@ -468,7 +468,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(jsonResult["icon"].toString())
-                    + "48.png"
+                    + ".png"
                     );
             if(iconResource.isValid())
                 ui->currentFolderToolButton->setIcon(
@@ -476,7 +476,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                         );
             else
                 ui->currentFolderToolButton->setIcon(
-                        QIcon(":/icons/folder48.png")
+                        QIcon(":/icons/folder.png")
                         );
 
         //update currentDirectory and ui->currentFolderLabel
@@ -515,13 +515,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(subDir["icon"].toString())
-                    + "48.png"
+                    + ".png"
                     );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/folder48.png"));
+                subDirItem->setIcon(QIcon(":/icons/folder.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
@@ -550,13 +550,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
             QResource iconResource(
                     QString(":/icons/%1")
                     .arg(subDir["icon"].toString())
-                    + "48.png"
+                    + ".png"
                     );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
             else
-                subDirItem->setIcon(QIcon(":/icons/page_white48.png"));
+                subDirItem->setIcon(QIcon(":/icons/page_white.png"));
 
             subDirItem->setData(Qt::UserRole, subDir);
         }
