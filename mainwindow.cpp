@@ -491,6 +491,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         else
             ui->currentFolderLabel->setText("Dropbox");
 
+        //disable the up action if we are at root, enable it otherwise
         if(currentDirectory == "/")
             ui->upAction->setEnabled(false);
         else
