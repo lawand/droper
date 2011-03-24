@@ -45,6 +45,7 @@
 #include <QResource>
 #include <QDesktopWidget>
 #include <QMovie>
+#include <QToolBar>
 #include "downloaddialog.h"
 #include "json.h"
 #ifdef Q_OS_SYMBIAN
@@ -85,6 +86,18 @@ MainWindow::MainWindow(
     ui->loadingLabel->setVisible(false);
     ui->upAction->setEnabled(false);
     ui->pasteAction->setEnabled(false);
+        //toolbar
+        QToolBar* toolBar = new QToolBar(this);
+        toolBar->addAction(ui->upAction);
+        toolBar->addAction(ui->refreshAction);
+        toolBar->addAction(ui->createFolderAction);
+        toolBar->addAction(ui->pasteAction);
+        toolBar->setIconSize(QSize(24,24));
+#ifdef Q_OS_SYMBIAN
+        this->addToolBar(Qt::BottomToolBarArea, toolBar);
+#else
+        this->addToolBar(toolBar);
+#endif
 
     //initial connections
     connect(
@@ -473,12 +486,18 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     + ".png"
                     );
             if(iconResource.isValid())
-                ui->currentFolderToolButton->setIcon(
-                        QIcon(iconResource.fileName())
+                ui->currentFolderIconLabel->setPixmap(
+                        QIcon(iconResource.fileName()).pixmap(
+                                ui->currentFolderLabel->geometry().height(),
+                                ui->currentFolderLabel->geometry().height()
+                                )
                         );
             else
-                ui->currentFolderToolButton->setIcon(
-                        QIcon(":/resources/icons/folder.png")
+                ui->currentFolderIconLabel->setPixmap(
+                        QIcon(":/resources/icons/folder.png").pixmap(
+                                ui->currentFolderLabel->geometry().height(),
+                                ui->currentFolderLabel->geometry().height()
+                                )
                         );
 
         //update currentDirectory and ui->currentFolderLabel
@@ -1157,28 +1176,17 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
     }
 }
 
-void MainWindow::on_currentFolderToolButton_pressed()
-{
-    QMenu menu(this);
-    menu.addAction(ui->upAction);
-    menu.addAction(ui->pasteAction);
-    menu.addAction(ui->createFolderAction);
-    menu.addAction(ui->refreshAction);
-    menu.exec(
-            this->mapToGlobal(
-                    ui->currentFolderToolButton->geometry().center()
-                    )
-            );
-
-    ui->currentFolderToolButton->setDown(false);
-}
-
 void MainWindow::showLoadingAnimation()
 {
     ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
+    ui->currentFolderIconLabel->setVisible(false);
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
+    loading->setScaledSize(
+            QSize(
+                    ui->currentFolderLabel->geometry().height(),
+                    ui->currentFolderLabel->geometry().height()
+                    )
+            );
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -1186,6 +1194,6 @@ void MainWindow::showLoadingAnimation()
 void MainWindow::hideLoadingAnimation()
 {
     ui->loadingLabel->setVisible(false);
-    ui->currentFolderToolButton->setVisible(true);
+    ui->currentFolderIconLabel->setVisible(true);
     delete ui->loadingLabel->movie();
 }

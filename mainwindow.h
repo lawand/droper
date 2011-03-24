@@ -111,7 +111,6 @@ private slots:
     void createFolder();
     void showProperties();
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
-    void on_currentFolderToolButton_pressed();
     void showLoadingAnimation();
     void hideLoadingAnimation();
 };

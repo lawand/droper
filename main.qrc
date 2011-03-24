@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/actions/createFolder.png</file>
+        <file>resources/actions/paste.png</file>
+        <file>resources/actions/refresh.png</file>
+        <file>resources/actions/up.png</file>
         <file>resources/animations/loading.gif</file>
         <file>resources/icons/folder.png</file>
         <file>resources/icons/folder_gray.png</file>

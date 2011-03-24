@@ -34,57 +34,23 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
-          <height>20</height>
+          <width>13</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
       </item>
       <item>
        <widget class="QLabel" name="loadingLabel">
-        <property name="minimumSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
         <property name="text">
-         <string/>
+         <string>L</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="currentFolderToolButton">
-        <property name="minimumSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="contextMenuPolicy">
-         <enum>Qt::NoContextMenu</enum>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/icons/folder.png</normaloff>:/resources/icons/folder.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
+       <widget class="QLabel" name="currentFolderIconLabel">
+        <property name="text">
+         <string>I</string>
         </property>
        </widget>
       </item>
@@ -111,8 +77,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
-          <height>20</height>
+          <width>13</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -209,6 +175,10 @@
    </property>
   </action>
   <action name="pasteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/paste.png</normaloff>:/resources/actions/paste.png</iconset>
+   </property>
    <property name="text">
     <string>Paste</string>
    </property>
@@ -224,16 +194,28 @@
    </property>
   </action>
   <action name="createFolderAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/createFolder.png</normaloff>:/resources/actions/createFolder.png</iconset>
+   </property>
    <property name="text">
     <string>Create Folder</string>
    </property>
   </action>
   <action name="upAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/up.png</normaloff>:/resources/actions/up.png</iconset>
+   </property>
    <property name="text">
     <string>Up</string>
    </property>
   </action>
   <action name="refreshAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/refresh.png</normaloff>:/resources/actions/refresh.png</iconset>
+   </property>
    <property name="text">
     <string>Refresh</string>
    </property>
