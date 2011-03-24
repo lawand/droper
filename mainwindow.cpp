@@ -174,9 +174,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
         else
         {
             //stop the loading animation
-            ui->loadingLabel->setVisible(false);
-            ui->currentFolderToolButton->setVisible(true);
-            delete ui->loadingLabel->movie();
+            hideLoadingAnimation();
 
             //the operation is no longer active
             operationActive = false;
@@ -209,9 +207,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
     retryCount = 0;
 
     //stop the loading animation
-    ui->loadingLabel->setVisible(false);
-    ui->currentFolderToolButton->setVisible(true);
-    delete ui->loadingLabel->movie();
+    hideLoadingAnimation();
 
     //the operation is no longer active
     operationActive = false;
@@ -267,12 +263,7 @@ void MainWindow::requestAccountInformation()
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
@@ -440,12 +431,7 @@ void MainWindow::requestDirectoryListing(QString path)
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
@@ -627,12 +613,7 @@ void MainWindow::requestCopying(QString source, QString destination)
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleCopying(QNetworkReply* networkReply)
@@ -676,12 +657,7 @@ void MainWindow::requestMoving(QString source, QString destination)
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleMoving(QNetworkReply* networkReply)
@@ -727,12 +703,7 @@ void MainWindow::requestDeleting(QString path)
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleDeleting(QNetworkReply* networkReply)
@@ -769,12 +740,7 @@ void MainWindow::requestFolderCreation(QString path)
     networkAccessManager->get( networkRequest );
 
     //show the loading animation
-    ui->loadingLabel->setVisible(true);
-    ui->currentFolderToolButton->setVisible(false);
-    QMovie *loading = new QMovie(":/animations/loading.gif");
-    loading->setScaledSize(QSize(48, 48));
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
+    showLoadingAnimation();
 }
 
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
@@ -1219,4 +1185,21 @@ void MainWindow::on_currentFolderToolButton_pressed()
             );
 
     ui->currentFolderToolButton->setDown(false);
+}
+
+void MainWindow::showLoadingAnimation()
+{
+    ui->loadingLabel->setVisible(true);
+    ui->currentFolderToolButton->setVisible(false);
+    QMovie *loading = new QMovie(":/animations/loading.gif");
+    loading->setScaledSize(QSize(48, 48));
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
+}
+
+void MainWindow::hideLoadingAnimation()
+{
+    ui->loadingLabel->setVisible(false);
+    ui->currentFolderToolButton->setVisible(true);
+    delete ui->loadingLabel->movie();
 }
