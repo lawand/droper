@@ -13,8 +13,7 @@ SOURCES += main.cpp\
     json.cpp \
     consumerdata.cpp \
     dropbox.cpp \
-    downloaddialog.cpp \
-    customlistwidget.cpp
+    downloaddialog.cpp
 
 HEADERS  += mainwindow.h \
     oauth.h \
@@ -23,8 +22,7 @@ HEADERS  += mainwindow.h \
     json.h \
     consumerdata.h \
     dropbox.h \
-    downloaddialog.h \
-    customlistwidget.h
+    downloaddialog.h
 
 FORMS    += mainwindow.ui \
     authenticationdialog.ui \

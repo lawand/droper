@@ -52,6 +52,20 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+#ifdef Q_OS_SYMBIAN
+    //check for Qt 4.6.x
+    #if QT_VERSION >= 0x040700
+        QMessageBox::critical(
+                0,
+                "Droper",
+                "This device contains Qt 4.7.x, "
+                "whereas 4.6.x is the only supported version."
+                );
+
+        return -1;
+    #endif
+#endif
+
     QNetworkAccessManager networkAccessManager;
     ConsumerData consumerData;
     OAuth oAuth(&consumerData);
@@ -96,7 +110,11 @@ int main(int argc, char *argv[])
             &dropbox,
             &settings
             );
+#ifdef Q_OS_SYMBIAN
+    mainWindow.showFullScreen();
+#else
     mainWindow.show();
+#endif
 
     return application.exec();
 }

@@ -33,6 +33,7 @@
 #include <downloaddialog.h>
 class QNetworkAccessManager;
 class QSettings;
+class QToolBar;
 class OAuth;
 class UserData;
 class Dropbox;
@@ -75,6 +76,7 @@ private:
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
     bool operationActive;
+    QToolBar* toolBar;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
@@ -113,6 +115,8 @@ private slots:
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     void showLoadingAnimation();
     void hideLoadingAnimation();
+    void showOptionsMenu();
+    void showInfoMenu();
 };
 
 #endif // MAINWINDOW_H

@@ -30,6 +30,7 @@
 //data members
 #include <QNetworkAccessManager>
 #include <QSettings>
+#include <QToolBar>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
@@ -45,7 +46,8 @@
 #include <QResource>
 #include <QDesktopWidget>
 #include <QMovie>
-#include <QToolBar>
+#include <QMenu>
+#include <QToolButton>
 #include "downloaddialog.h"
 #include "json.h"
 #ifdef Q_OS_SYMBIAN
@@ -82,16 +84,29 @@ MainWindow::MainWindow(
 
     //GUI initialization
     ui->setupUi(this);
-    showMaximized();
     ui->loadingLabel->setVisible(false);
     ui->upAction->setEnabled(false);
     ui->pasteAction->setEnabled(false);
         //toolbar
-        QToolBar* toolBar = new QToolBar(this);
+        toolBar = new QToolBar(this);
         toolBar->addAction(ui->upAction);
         toolBar->addAction(ui->refreshAction);
         toolBar->addAction(ui->createFolderAction);
         toolBar->addAction(ui->pasteAction);
+        toolBar->addAction(ui->optionsAction);
+        connect(
+                (QToolButton*)toolBar->widgetForAction(ui->optionsAction),
+                SIGNAL(pressed()),
+                SLOT(showOptionsMenu())
+                );
+        toolBar->addAction(ui->infoAction);
+        connect(
+                (QToolButton*)toolBar->widgetForAction(ui->infoAction),
+                SIGNAL(pressed()),
+                SLOT(showInfoMenu())
+                );
+        toolBar->addAction(ui->exitAction);
+        toolBar->setMovable(false);
         toolBar->setIconSize(QSize(24,24));
 #ifdef Q_OS_SYMBIAN
         this->addToolBar(Qt::BottomToolBarArea, toolBar);
@@ -136,6 +151,7 @@ MainWindow::MainWindow(
             SIGNAL(triggered()),
             SLOT(showProperties())
             );
+    connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -1168,10 +1184,6 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
         ui->filesAndFoldersListWidget->viewport(),
         QtScroller::TouchGesture
         );
-
-    //this is a fix to the problem of showing an extra action in the men named
-    //action
-    ui->filesAndFoldersListWidget->setContextMenuPolicy(Qt::NoContextMenu);
 #endif
     }
 }
@@ -1196,4 +1208,37 @@ void MainWindow::hideLoadingAnimation()
     ui->loadingLabel->setVisible(false);
     ui->currentFolderIconLabel->setVisible(true);
     delete ui->loadingLabel->movie();
+}
+
+void MainWindow::showOptionsMenu()
+{
+    QMenu menu(this);
+    menu.addAction(ui->showAccountInfoAction);
+    menu.addAction(ui->showActiveDownloadAction);
+    menu.addAction(ui->forgetAuthenticationAction);
+    menu.exec(
+            toolBar->mapToGlobal(
+                    toolBar->widgetForAction(
+                            ui->optionsAction
+                            )->geometry().center()
+                    )
+            );
+
+    ((QToolButton*)toolBar->widgetForAction(ui->optionsAction))->setDown(false);
+}
+
+void MainWindow::showInfoMenu()
+{
+    QMenu menu(this);
+    menu.addAction(ui->aboutAction);
+    menu.addAction(ui->aboutQtAction);
+    menu.exec(
+            toolBar->mapToGlobal(
+                    toolBar->widgetForAction(
+                            ui->infoAction
+                            )->geometry().center()
+                    )
+            );
+
+    ((QToolButton*)toolBar->widgetForAction(ui->infoAction))->setDown(false);
 }
