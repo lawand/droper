@@ -123,9 +123,9 @@ MainWindow::MainWindow(
     connect(
             ui->showActiveDownloadAction,
             SIGNAL(triggered()),
-             &downloadDialog,
-             SLOT(show())
-             );
+            &downloadDialog,
+            SLOT(show())
+            );
     connect(
             ui->forgetAuthenticationAction,
             SIGNAL(triggered()),
