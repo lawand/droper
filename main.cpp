@@ -54,16 +54,20 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_SYMBIAN
     //check for Qt 4.6.x
-    #if QT_VERSION >= 0x040700
+    if( !QString(qVersion()).startsWith("4.6") )
+    {
         QMessageBox::critical(
                 0,
                 "Droper",
-                "This device contains Qt 4.7.x, "
-                "whereas 4.6.x is the only supported version."
+                QString(
+                        "This device contains Qt %1, which is unsupported. \n"
+                        "4.6.x are the only supported versions."
+                        ).arg(qVersion())
+
                 );
 
         return -1;
-    #endif
+    }
 #endif
 
     QNetworkAccessManager networkAccessManager;
