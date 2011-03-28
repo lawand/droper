@@ -72,8 +72,7 @@ MainWindow::MainWindow(
             dropbox,
             this
             ),
-    renameOperationBeingProcessed(false),
-    operationActive(false)
+    renameOperationBeingProcessed(false)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -206,9 +205,6 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
             //stop the loading animation
             hideLoadingAnimation();
 
-            //the operation is no longer active
-            operationActive = false;
-
             QMessageBox::information(
                     this,
                     "Droper",
@@ -238,9 +234,6 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 
     //stop the loading animation
     hideLoadingAnimation();
-
-    //the operation is no longer active
-    operationActive = false;
 
     switch(api)
     {
@@ -274,12 +267,6 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 
 void MainWindow::requestAccountInformation()
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
     QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT_INFO);
 
     QNetworkRequest networkRequest(url);
@@ -431,12 +418,6 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
 
 void MainWindow::requestDirectoryListing(QString path)
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
 #ifdef Q_OS_SYMBIAN
     //kinetic scrolling while clearing the list and refilling it causes
     //scrolling-related problems, so I am ungrapping now and grapping again
@@ -605,12 +586,6 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
 void MainWindow::requestCopying(QString source, QString destination)
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
     //avoid errors
     if(source == destination)
         return;
@@ -649,12 +624,6 @@ void MainWindow::handleCopying(QNetworkReply* networkReply)
 
 void MainWindow::requestMoving(QString source, QString destination)
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
     //avoid errors
     if(source == destination)
         return;
@@ -703,12 +672,6 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
 
 void MainWindow::requestDeleting(QString path)
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_DELETE);
 
     QPair<QString,QString> temp;
@@ -740,12 +703,6 @@ void MainWindow::handleDeleting(QNetworkReply* networkReply)
 
 void MainWindow::requestFolderCreation(QString path)
 {
-    //don't request if another operation is active
-    if(operationActive)
-        return;
-    else
-        operationActive = true;
-
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_CREATEFOLDER);
 
     QPair<QString,QString> temp;

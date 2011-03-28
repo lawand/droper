@@ -75,7 +75,6 @@ private:
     bool shouldPreserveClipboardContents;
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
-    bool operationActive;
     QToolBar* toolBar;
 
 private slots:
