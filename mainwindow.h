@@ -116,6 +116,7 @@ private slots:
     void hideLoadingAnimation();
     void showOptionsMenu();
     void showInfoMenu();
+    QMenu* createPopupMenu();
 };
 
 #endif // MAINWINDOW_H

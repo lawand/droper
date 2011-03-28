@@ -1194,3 +1194,8 @@ void MainWindow::showInfoMenu()
 
     ((QToolButton*)toolBar->widgetForAction(ui->infoAction))->setDown(false);
 }
+
+QMenu* MainWindow::createPopupMenu()
+{
+    return NULL;
+}
