@@ -503,17 +503,11 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
                     );
             if(iconResource.isValid())
                 ui->currentFolderIconLabel->setPixmap(
-                        QIcon(iconResource.fileName()).pixmap(
-                                ui->currentFolderLabel->geometry().height(),
-                                ui->currentFolderLabel->geometry().height()
-                                )
+                        QIcon(iconResource.fileName()).pixmap(16, 16)
                         );
             else
                 ui->currentFolderIconLabel->setPixmap(
-                        QIcon(":/resources/icons/folder.png").pixmap(
-                                ui->currentFolderLabel->geometry().height(),
-                                ui->currentFolderLabel->geometry().height()
-                                )
+                        QIcon(":/resources/icons/folder.png").pixmap(16, 16)
                         );
 
         //update currentDirectory and ui->currentFolderLabel
@@ -1192,6 +1186,7 @@ void MainWindow::showLoadingAnimation()
 {
     ui->loadingLabel->setVisible(true);
     ui->currentFolderIconLabel->setVisible(false);
+
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
     loading->setScaledSize(
             QSize(
