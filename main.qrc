@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/actions/createFolder.png</file>
-        <file>resources/actions/exit.png</file>
-        <file>resources/actions/info.png</file>
         <file>resources/actions/options.png</file>
         <file>resources/actions/paste.png</file>
         <file>resources/actions/refresh.png</file>

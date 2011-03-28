@@ -97,16 +97,9 @@ MainWindow::MainWindow(
                 SIGNAL(pressed()),
                 SLOT(showOptionsMenu())
                 );
-        toolBar->addAction(ui->infoAction);
-        connect(
-                (QToolButton*)toolBar->widgetForAction(ui->infoAction),
-                SIGNAL(pressed()),
-                SLOT(showInfoMenu())
-                );
-        toolBar->addAction(ui->exitAction);
         toolBar->setMovable(false);
-        toolBar->setIconSize(QSize(24,24));
 #ifdef Q_OS_SYMBIAN
+        toolBar->setIconSize(QSize(48, 48));
         this->addToolBar(Qt::BottomToolBarArea, toolBar);
 #else
         this->addToolBar(toolBar);
@@ -1168,6 +1161,11 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->showActiveDownloadAction);
     menu.addAction(ui->forgetAuthenticationAction);
+    menu.addAction(ui->aboutAction);
+    menu.addAction(ui->aboutQtAction);
+#ifdef Q_OS_SYMBIAN
+    menu.addAction(ui->exitAction);
+#endif
     menu.exec(
             toolBar->mapToGlobal(
                     toolBar->widgetForAction(
@@ -1177,22 +1175,6 @@ void MainWindow::showOptionsMenu()
             );
 
     ((QToolButton*)toolBar->widgetForAction(ui->optionsAction))->setDown(false);
-}
-
-void MainWindow::showInfoMenu()
-{
-    QMenu menu(this);
-    menu.addAction(ui->aboutAction);
-    menu.addAction(ui->aboutQtAction);
-    menu.exec(
-            toolBar->mapToGlobal(
-                    toolBar->widgetForAction(
-                            ui->infoAction
-                            )->geometry().center()
-                    )
-            );
-
-    ((QToolButton*)toolBar->widgetForAction(ui->infoAction))->setDown(false);
 }
 
 QMenu* MainWindow::createPopupMenu()

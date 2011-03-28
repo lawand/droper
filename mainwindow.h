@@ -115,7 +115,6 @@ private slots:
     void showLoadingAnimation();
     void hideLoadingAnimation();
     void showOptionsMenu();
-    void showInfoMenu();
     QMenu* createPopupMenu();
 };
 

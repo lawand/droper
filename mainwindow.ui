@@ -179,10 +179,6 @@
    </property>
   </action>
   <action name="exitAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/exit.png</normaloff>:/resources/actions/exit.png</iconset>
-   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -194,15 +190,6 @@
    </property>
    <property name="text">
     <string>Options</string>
-   </property>
-  </action>
-  <action name="infoAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/info.png</normaloff>:/resources/actions/info.png</iconset>
-   </property>
-   <property name="text">
-    <string>Info</string>
    </property>
   </action>
   <action name="showAccountInfoAction">
