@@ -35,13 +35,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="loadingLabel">
-        <property name="text">
-         <string>L</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="currentFolderIconLabel">
         <property name="minimumSize">
          <size>
@@ -90,6 +83,16 @@
        </spacer>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="loadingLabel">
+      <property name="text">
+       <string>L</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QListWidget" name="filesAndFoldersListWidget">

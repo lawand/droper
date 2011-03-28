@@ -84,7 +84,6 @@ MainWindow::MainWindow(
 
     //GUI initialization
     ui->setupUi(this);
-    ui->loadingLabel->setVisible(false);
     ui->upAction->setEnabled(false);
     ui->pasteAction->setEnabled(false);
         //toolbar
@@ -1184,16 +1183,13 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
 void MainWindow::showLoadingAnimation()
 {
-    ui->loadingLabel->setVisible(true);
     ui->currentFolderIconLabel->setVisible(false);
+    ui->currentFolderLabel->setVisible(false);
+    ui->filesAndFoldersListWidget->setVisible(false);
+    toolBar->setVisible(false);
 
+    ui->loadingLabel->setVisible(true);
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
-    loading->setScaledSize(
-            QSize(
-                    ui->currentFolderLabel->geometry().height(),
-                    ui->currentFolderLabel->geometry().height()
-                    )
-            );
     ui->loadingLabel->setMovie(loading);
     loading->start();
 }
@@ -1201,8 +1197,12 @@ void MainWindow::showLoadingAnimation()
 void MainWindow::hideLoadingAnimation()
 {
     ui->loadingLabel->setVisible(false);
-    ui->currentFolderIconLabel->setVisible(true);
     delete ui->loadingLabel->movie();
+
+    ui->currentFolderIconLabel->setVisible(true);
+    ui->currentFolderLabel->setVisible(true);
+    ui->filesAndFoldersListWidget->setVisible(true);
+    toolBar->setVisible(true);
 }
 
 void MainWindow::showOptionsMenu()
