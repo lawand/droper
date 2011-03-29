@@ -85,25 +85,6 @@ MainWindow::MainWindow(
     ui->setupUi(this);
     ui->upAction->setEnabled(false);
     ui->pasteAction->setEnabled(false);
-        //toolbar
-        toolBar = new QToolBar(this);
-        toolBar->addAction(ui->upAction);
-        toolBar->addAction(ui->refreshAction);
-        toolBar->addAction(ui->createFolderAction);
-        toolBar->addAction(ui->pasteAction);
-        toolBar->addAction(ui->optionsAction);
-        connect(
-                (QToolButton*)toolBar->widgetForAction(ui->optionsAction),
-                SIGNAL(pressed()),
-                SLOT(showOptionsMenu())
-                );
-        toolBar->setMovable(false);
-#ifdef Q_OS_SYMBIAN
-        toolBar->setIconSize(QSize(48, 48));
-        this->addToolBar(Qt::BottomToolBarArea, toolBar);
-#else
-        this->addToolBar(toolBar);
-#endif
 
     //initial connections
     connect(
@@ -143,6 +124,18 @@ MainWindow::MainWindow(
             SLOT(showProperties())
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
+
+    //tool buttons
+    ui->upToolButton->setDefaultAction(ui->upAction);
+    ui->refreshToolButton->setDefaultAction(ui->refreshAction);
+    ui->createFolderToolButton->setDefaultAction(ui->createFolderAction);
+    ui->pasteToolButton->setDefaultAction(ui->pasteAction);
+    ui->optionsToolButton->setDefaultAction(ui->optionsAction);
+    connect(
+            ui->optionsToolButton,
+            SIGNAL(pressed()),
+            SLOT(showOptionsMenu())
+            );
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -1136,7 +1129,11 @@ void MainWindow::showLoadingAnimation()
     ui->currentFolderIconLabel->setVisible(false);
     ui->currentFolderLabel->setVisible(false);
     ui->filesAndFoldersListWidget->setVisible(false);
-    toolBar->setVisible(false);
+    ui->upToolButton->setVisible(false);
+    ui->refreshToolButton->setVisible(false);
+    ui->createFolderToolButton->setVisible(false);
+    ui->pasteToolButton->setVisible(false);
+    ui->optionsToolButton->setVisible(false);
 
     ui->loadingLabel->setVisible(true);
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
@@ -1152,7 +1149,11 @@ void MainWindow::hideLoadingAnimation()
     ui->currentFolderIconLabel->setVisible(true);
     ui->currentFolderLabel->setVisible(true);
     ui->filesAndFoldersListWidget->setVisible(true);
-    toolBar->setVisible(true);
+    ui->upToolButton->setVisible(true);
+    ui->refreshToolButton->setVisible(true);
+    ui->createFolderToolButton->setVisible(true);
+    ui->pasteToolButton->setVisible(true);
+    ui->optionsToolButton->setVisible(true);
 }
 
 void MainWindow::showOptionsMenu()
@@ -1167,14 +1168,10 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->exitAction);
 #endif
     menu.exec(
-            toolBar->mapToGlobal(
-                    toolBar->widgetForAction(
-                            ui->optionsAction
-                            )->geometry().center()
-                    )
+            this->mapToGlobal(ui->optionsToolButton->geometry().center())
             );
 
-    ((QToolButton*)toolBar->widgetForAction(ui->optionsAction))->setDown(false);
+    ui->optionsToolButton->setDown(false);
 }
 
 QMenu* MainWindow::createPopupMenu()
