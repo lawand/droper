@@ -61,6 +61,11 @@ public:
             );
     ~MainWindow();
 
+#ifdef Q_OS_SYMBIAN
+private:
+    void resizeEvent(QResizeEvent* event);
+#endif
+
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
@@ -75,6 +80,8 @@ private:
     bool shouldPreserveClipboardContents;
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
+    bool usingRightButtons;
+    bool loadingAnimationActive;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);

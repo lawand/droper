@@ -72,7 +72,9 @@ MainWindow::MainWindow(
             dropbox,
             this
             ),
-    renameOperationBeingProcessed(false)
+    renameOperationBeingProcessed(false),
+    usingRightButtons(false),
+    loadingAnimationActive(false)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -125,14 +127,30 @@ MainWindow::MainWindow(
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
 
-    //tool buttons
-    ui->upToolButton->setDefaultAction(ui->upAction);
-    ui->refreshToolButton->setDefaultAction(ui->refreshAction);
-    ui->createFolderToolButton->setDefaultAction(ui->createFolderAction);
-    ui->pasteToolButton->setDefaultAction(ui->pasteAction);
-    ui->optionsToolButton->setDefaultAction(ui->optionsAction);
+    //right tool buttons
+    ui->rightUpToolButton->setDefaultAction(ui->upAction);
+    ui->rightRefreshToolButton->setDefaultAction(ui->refreshAction);
+    ui->rightCreateFolderToolButton->setDefaultAction(ui->createFolderAction);
+    ui->rightPasteToolButton->setDefaultAction(ui->pasteAction);
+    ui->rightOptionsToolButton->setDefaultAction(ui->optionsAction);
     connect(
-            ui->optionsToolButton,
+            ui->rightOptionsToolButton,
+            SIGNAL(pressed()),
+            SLOT(showOptionsMenu())
+            );
+    ui->rightUpToolButton->setVisible(false);
+    ui->rightRefreshToolButton->setVisible(false);
+    ui->rightCreateFolderToolButton->setVisible(false);
+    ui->rightPasteToolButton->setVisible(false);
+    ui->rightOptionsToolButton->setVisible(false);
+    //bottom tool buttons
+    ui->bottomUpToolButton->setDefaultAction(ui->upAction);
+    ui->bottomRefreshToolButton->setDefaultAction(ui->refreshAction);
+    ui->bottomCreateFolderToolButton->setDefaultAction(ui->createFolderAction);
+    ui->bottomPasteToolButton->setDefaultAction(ui->pasteAction);
+    ui->bottomOptionsToolButton->setDefaultAction(ui->optionsAction);
+    connect(
+            ui->bottomOptionsToolButton,
             SIGNAL(pressed()),
             SLOT(showOptionsMenu())
             );
@@ -164,6 +182,51 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+#ifdef Q_OS_SYMBIAN
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    if( this->geometry().height() >
+        this->geometry().width() )
+    {   //portait
+        usingRightButtons = false;
+
+        if(!loadingAnimationActive)
+        {
+            ui->rightUpToolButton->setVisible(false);
+            ui->rightRefreshToolButton->setVisible(false);
+            ui->rightCreateFolderToolButton->setVisible(false);
+            ui->rightPasteToolButton->setVisible(false);
+            ui->rightOptionsToolButton->setVisible(false);
+
+            ui->bottomUpToolButton->setVisible(true);
+            ui->bottomRefreshToolButton->setVisible(true);
+            ui->bottomCreateFolderToolButton->setVisible(true);
+            ui->bottomPasteToolButton->setVisible(true);
+            ui->bottomOptionsToolButton->setVisible(true);
+        }
+    }
+    else
+    {   //landscape
+        usingRightButtons = true;
+
+        if(!loadingAnimationActive)
+        {
+            ui->rightUpToolButton->setVisible(true);
+            ui->rightRefreshToolButton->setVisible(true);
+            ui->rightCreateFolderToolButton->setVisible(true);
+            ui->rightPasteToolButton->setVisible(true);
+            ui->rightOptionsToolButton->setVisible(true);
+
+            ui->bottomUpToolButton->setVisible(false);
+            ui->bottomRefreshToolButton->setVisible(false);
+            ui->bottomCreateFolderToolButton->setVisible(false);
+            ui->bottomPasteToolButton->setVisible(false);
+            ui->bottomOptionsToolButton->setVisible(false);
+        }
+    }
+}
+#endif
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
@@ -1126,14 +1189,28 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
 void MainWindow::showLoadingAnimation()
 {
+    loadingAnimationActive = true;
+
     ui->currentFolderIconLabel->setVisible(false);
     ui->currentFolderLabel->setVisible(false);
     ui->filesAndFoldersListWidget->setVisible(false);
-    ui->upToolButton->setVisible(false);
-    ui->refreshToolButton->setVisible(false);
-    ui->createFolderToolButton->setVisible(false);
-    ui->pasteToolButton->setVisible(false);
-    ui->optionsToolButton->setVisible(false);
+
+    if(usingRightButtons)
+    {
+        ui->rightUpToolButton->setVisible(false);
+        ui->rightRefreshToolButton->setVisible(false);
+        ui->rightCreateFolderToolButton->setVisible(false);
+        ui->rightPasteToolButton->setVisible(false);
+        ui->rightOptionsToolButton->setVisible(false);
+    }
+    else
+    {
+        ui->bottomUpToolButton->setVisible(false);
+        ui->bottomRefreshToolButton->setVisible(false);
+        ui->bottomCreateFolderToolButton->setVisible(false);
+        ui->bottomPasteToolButton->setVisible(false);
+        ui->bottomOptionsToolButton->setVisible(false);
+    }
 
     ui->loadingLabel->setVisible(true);
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
@@ -1149,11 +1226,25 @@ void MainWindow::hideLoadingAnimation()
     ui->currentFolderIconLabel->setVisible(true);
     ui->currentFolderLabel->setVisible(true);
     ui->filesAndFoldersListWidget->setVisible(true);
-    ui->upToolButton->setVisible(true);
-    ui->refreshToolButton->setVisible(true);
-    ui->createFolderToolButton->setVisible(true);
-    ui->pasteToolButton->setVisible(true);
-    ui->optionsToolButton->setVisible(true);
+
+    if(usingRightButtons)
+    {
+        ui->rightUpToolButton->setVisible(true);
+        ui->rightRefreshToolButton->setVisible(true);
+        ui->rightCreateFolderToolButton->setVisible(true);
+        ui->rightPasteToolButton->setVisible(true);
+        ui->rightOptionsToolButton->setVisible(true);
+    }
+    else
+    {
+        ui->bottomUpToolButton->setVisible(true);
+        ui->bottomRefreshToolButton->setVisible(true);
+        ui->bottomCreateFolderToolButton->setVisible(true);
+        ui->bottomPasteToolButton->setVisible(true);
+        ui->bottomOptionsToolButton->setVisible(true);
+    }
+
+    loadingAnimationActive = false;
 }
 
 void MainWindow::showOptionsMenu()
@@ -1167,9 +1258,25 @@ void MainWindow::showOptionsMenu()
 #ifdef Q_OS_SYMBIAN
     menu.addAction(ui->exitAction);
 #endif
-    menu.exec(
-            this->mapToGlobal(ui->optionsToolButton->geometry().center())
-            );
 
-    ui->optionsToolButton->setDown(false);
+    if(usingRightButtons)
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->rightOptionsToolButton->geometry().center()
+                        )
+                );
+
+        ui->rightOptionsToolButton->setDown(false);
+    }
+    else
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->bottomOptionsToolButton->geometry().center()
+                        )
+                );
+
+        ui->bottomOptionsToolButton->setDown(false);
+    }
 }

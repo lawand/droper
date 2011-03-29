@@ -18,8 +18,8 @@
     <normaloff>:/droper.svg</normaloff>:/droper.svg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <spacer name="horizontalSpacer">
@@ -84,7 +84,7 @@
       </item>
      </layout>
     </item>
-    <item>
+    <item row="1" column="0">
      <widget class="QLabel" name="loadingLabel">
       <property name="text">
        <string>L</string>
@@ -94,7 +94,7 @@
       </property>
      </widget>
     </item>
-    <item>
+    <item row="2" column="0">
      <widget class="QListWidget" name="filesAndFoldersListWidget">
       <property name="contextMenuPolicy">
        <enum>Qt::CustomContextMenu</enum>
@@ -110,10 +110,64 @@
       </property>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1" rowspan="3">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QToolButton" name="rightUpToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightRefreshToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightCreateFolderToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightPasteToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightOptionsToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="0">
      <layout class="QHBoxLayout" name="toolsHorizontalLayout">
       <item>
-       <widget class="QToolButton" name="upToolButton">
+       <widget class="QToolButton" name="bottomUpToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -123,7 +177,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="refreshToolButton">
+       <widget class="QToolButton" name="bottomRefreshToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -133,7 +187,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="createFolderToolButton">
+       <widget class="QToolButton" name="bottomCreateFolderToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -143,7 +197,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="pasteToolButton">
+       <widget class="QToolButton" name="bottomPasteToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -153,7 +207,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="optionsToolButton">
+       <widget class="QToolButton" name="bottomOptionsToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
