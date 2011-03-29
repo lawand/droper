@@ -166,7 +166,7 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
 
     userData->token = jsonResult["token"].toString();
     userData->secret = jsonResult["secret"].toString();
-    userData->email = ui->emailLineEdit->text();
+    userData->email = ui->emailLineEdit->text().toLower();
 
     accept();
 }
