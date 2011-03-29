@@ -1173,8 +1173,3 @@ void MainWindow::showOptionsMenu()
 
     ui->optionsToolButton->setDown(false);
 }
-
-QMenu* MainWindow::createPopupMenu()
-{
-    return NULL;
-}
