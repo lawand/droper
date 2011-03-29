@@ -87,6 +87,13 @@ MainWindow::MainWindow(
     ui->setupUi(this);
     ui->upAction->setEnabled(false);
     ui->pasteAction->setEnabled(false);
+#ifndef Q_OS_SYMBIAN
+    //draw window at screen's center
+    move(
+            QApplication::desktop()->availableGeometry().center() -
+            this->rect().center()
+            );
+#endif
 
     //initial connections
     connect(
