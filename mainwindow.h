@@ -120,7 +120,9 @@ private slots:
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     void showLoadingAnimation();
     void hideLoadingAnimation();
+    void showFileMenu();
     void showOptionsMenu();
+    void showInfoMenu();
 };
 
 #endif // MAINWINDOW_H

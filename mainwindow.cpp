@@ -136,31 +136,53 @@ MainWindow::MainWindow(
 
     //right tool buttons
     ui->rightUpToolButton->setDefaultAction(ui->upAction);
-    ui->rightRefreshToolButton->setDefaultAction(ui->refreshAction);
-    ui->rightCreateFolderToolButton->setDefaultAction(ui->createFolderAction);
-    ui->rightPasteToolButton->setDefaultAction(ui->pasteAction);
+    ui->rightFileToolButton->setDefaultAction(ui->fileAction);
+    connect(
+            ui->rightFileToolButton,
+            SIGNAL(pressed()),
+            SLOT(showFileMenu())
+            );
     ui->rightOptionsToolButton->setDefaultAction(ui->optionsAction);
     connect(
             ui->rightOptionsToolButton,
             SIGNAL(pressed()),
             SLOT(showOptionsMenu())
             );
-    ui->rightUpToolButton->setVisible(false);
-    ui->rightRefreshToolButton->setVisible(false);
-    ui->rightCreateFolderToolButton->setVisible(false);
-    ui->rightPasteToolButton->setVisible(false);
-    ui->rightOptionsToolButton->setVisible(false);
+    ui->rightInfoToolButton->setDefaultAction(ui->infoAction);
+    connect(
+            ui->rightInfoToolButton,
+            SIGNAL(pressed()),
+            SLOT(showInfoMenu())
+            );
+    ui->rightExitToolButton->setDefaultAction(ui->exitAction);
     //bottom tool buttons
     ui->bottomUpToolButton->setDefaultAction(ui->upAction);
-    ui->bottomRefreshToolButton->setDefaultAction(ui->refreshAction);
-    ui->bottomCreateFolderToolButton->setDefaultAction(ui->createFolderAction);
-    ui->bottomPasteToolButton->setDefaultAction(ui->pasteAction);
+    ui->bottomFileToolButton->setDefaultAction(ui->fileAction);
+    connect(
+            ui->bottomFileToolButton,
+            SIGNAL(pressed()),
+            SLOT(showFileMenu())
+            );
     ui->bottomOptionsToolButton->setDefaultAction(ui->optionsAction);
     connect(
             ui->bottomOptionsToolButton,
             SIGNAL(pressed()),
             SLOT(showOptionsMenu())
             );
+    ui->bottomInfoToolButton->setDefaultAction(ui->infoAction);
+    connect(
+            ui->bottomInfoToolButton,
+            SIGNAL(pressed()),
+            SLOT(showInfoMenu())
+            );
+    ui->bottomExitToolButton->setDefaultAction(ui->exitAction);
+
+    //the default buttons are the bottom ones
+    ui->rightUpToolButton->setVisible(false);
+    ui->rightFileToolButton->setVisible(false);
+    ui->rightOptionsToolButton->setVisible(false);
+    ui->rightInfoToolButton->setVisible(false);
+    ui->rightExitToolButton->setVisible(false);
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -201,16 +223,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
         if(!loadingAnimationActive)
         {
             ui->rightUpToolButton->setVisible(false);
-            ui->rightRefreshToolButton->setVisible(false);
-            ui->rightCreateFolderToolButton->setVisible(false);
-            ui->rightPasteToolButton->setVisible(false);
+            ui->rightFileToolButton->setVisible(false);
             ui->rightOptionsToolButton->setVisible(false);
+            ui->rightInfoToolButton->setVisible(false);
+            ui->rightExitToolButton->setVisible(false);
 
             ui->bottomUpToolButton->setVisible(true);
-            ui->bottomRefreshToolButton->setVisible(true);
-            ui->bottomCreateFolderToolButton->setVisible(true);
-            ui->bottomPasteToolButton->setVisible(true);
+            ui->bottomFileToolButton->setVisible(true);
             ui->bottomOptionsToolButton->setVisible(true);
+            ui->bottomInfoToolButton->setVisible(true);
+            ui->bottomExitToolButton->setVisible(true);
         }
     }
     else
@@ -220,16 +242,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
         if(!loadingAnimationActive)
         {
             ui->rightUpToolButton->setVisible(true);
-            ui->rightRefreshToolButton->setVisible(true);
-            ui->rightCreateFolderToolButton->setVisible(true);
-            ui->rightPasteToolButton->setVisible(true);
+            ui->rightFileToolButton->setVisible(true);
             ui->rightOptionsToolButton->setVisible(true);
+            ui->rightInfoToolButton->setVisible(true);
+            ui->rightExitToolButton->setVisible(true);
 
             ui->bottomUpToolButton->setVisible(false);
-            ui->bottomRefreshToolButton->setVisible(false);
-            ui->bottomCreateFolderToolButton->setVisible(false);
-            ui->bottomPasteToolButton->setVisible(false);
+            ui->bottomFileToolButton->setVisible(false);
             ui->bottomOptionsToolButton->setVisible(false);
+            ui->bottomInfoToolButton->setVisible(false);
+            ui->bottomExitToolButton->setVisible(false);
         }
     }
 }
@@ -1205,18 +1227,18 @@ void MainWindow::showLoadingAnimation()
     if(usingRightButtons)
     {
         ui->rightUpToolButton->setVisible(false);
-        ui->rightRefreshToolButton->setVisible(false);
-        ui->rightCreateFolderToolButton->setVisible(false);
-        ui->rightPasteToolButton->setVisible(false);
+        ui->rightFileToolButton->setVisible(false);
         ui->rightOptionsToolButton->setVisible(false);
+        ui->rightInfoToolButton->setVisible(false);
+        ui->rightExitToolButton->setVisible(false);
     }
     else
     {
         ui->bottomUpToolButton->setVisible(false);
-        ui->bottomRefreshToolButton->setVisible(false);
-        ui->bottomCreateFolderToolButton->setVisible(false);
-        ui->bottomPasteToolButton->setVisible(false);
+        ui->bottomFileToolButton->setVisible(false);
         ui->bottomOptionsToolButton->setVisible(false);
+        ui->bottomInfoToolButton->setVisible(false);
+        ui->bottomExitToolButton->setVisible(false);
     }
 
     ui->loadingLabel->setVisible(true);
@@ -1237,34 +1259,58 @@ void MainWindow::hideLoadingAnimation()
     if(usingRightButtons)
     {
         ui->rightUpToolButton->setVisible(true);
-        ui->rightRefreshToolButton->setVisible(true);
-        ui->rightCreateFolderToolButton->setVisible(true);
-        ui->rightPasteToolButton->setVisible(true);
+        ui->rightFileToolButton->setVisible(true);
         ui->rightOptionsToolButton->setVisible(true);
+        ui->rightInfoToolButton->setVisible(true);
+        ui->rightExitToolButton->setVisible(true);
     }
     else
     {
         ui->bottomUpToolButton->setVisible(true);
-        ui->bottomRefreshToolButton->setVisible(true);
-        ui->bottomCreateFolderToolButton->setVisible(true);
-        ui->bottomPasteToolButton->setVisible(true);
+        ui->bottomFileToolButton->setVisible(true);
         ui->bottomOptionsToolButton->setVisible(true);
+        ui->bottomInfoToolButton->setVisible(true);
+        ui->bottomExitToolButton->setVisible(true);
     }
 
     loadingAnimationActive = false;
 }
 
+void MainWindow::showFileMenu()
+{
+    QMenu menu(this);
+    menu.addAction(ui->refreshAction);
+    menu.addAction(ui->createFolderAction);
+    menu.addAction(ui->pasteAction);
+
+    if(usingRightButtons)
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->rightFileToolButton->geometry().center()
+                        )
+                );
+
+        ui->rightFileToolButton->setDown(false);
+    }
+    else
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->bottomFileToolButton->geometry().center()
+                        )
+                );
+
+        ui->bottomFileToolButton->setDown(false);
+    }
+}
+
 void MainWindow::showOptionsMenu()
 {
     QMenu menu(this);
-    menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->showActiveDownloadAction);
+    menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->forgetAuthenticationAction);
-    menu.addAction(ui->aboutAction);
-    menu.addAction(ui->aboutQtAction);
-#ifdef Q_OS_SYMBIAN
-    menu.addAction(ui->exitAction);
-#endif
 
     if(usingRightButtons)
     {
@@ -1285,5 +1331,33 @@ void MainWindow::showOptionsMenu()
                 );
 
         ui->bottomOptionsToolButton->setDown(false);
+    }
+}
+
+void MainWindow::showInfoMenu()
+{
+    QMenu menu(this);
+    menu.addAction(ui->aboutAction);
+    menu.addAction(ui->aboutQtAction);
+
+    if(usingRightButtons)
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->rightInfoToolButton->geometry().center()
+                        )
+                );
+
+        ui->rightInfoToolButton->setDown(false);
+    }
+    else
+    {
+        menu.exec(
+                this->mapToGlobal(
+                        ui->bottomInfoToolButton->geometry().center()
+                        )
+                );
+
+        ui->bottomInfoToolButton->setDown(false);
     }
 }

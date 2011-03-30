@@ -123,27 +123,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="rightRefreshToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="rightCreateFolderToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="rightPasteToolButton">
+       <widget class="QToolButton" name="rightFileToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -154,6 +134,26 @@
       </item>
       <item>
        <widget class="QToolButton" name="rightOptionsToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightInfoToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightExitToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -177,27 +177,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="bottomRefreshToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="bottomCreateFolderToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="bottomPasteToolButton">
+       <widget class="QToolButton" name="bottomFileToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -208,6 +188,26 @@
       </item>
       <item>
        <widget class="QToolButton" name="bottomOptionsToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="bottomInfoToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="bottomExitToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -231,10 +231,6 @@
    </property>
   </action>
   <action name="pasteAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/paste.png</normaloff>:/resources/actions/paste.png</iconset>
-   </property>
    <property name="text">
     <string>Paste</string>
    </property>
@@ -250,10 +246,6 @@
    </property>
   </action>
   <action name="createFolderAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/createFolder.png</normaloff>:/resources/actions/createFolder.png</iconset>
-   </property>
    <property name="text">
     <string>Create Folder</string>
    </property>
@@ -268,10 +260,6 @@
    </property>
   </action>
   <action name="refreshAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/refresh.png</normaloff>:/resources/actions/refresh.png</iconset>
-   </property>
    <property name="text">
     <string>Refresh</string>
    </property>
@@ -287,6 +275,10 @@
    </property>
   </action>
   <action name="exitAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/exit.png</normaloff>:/resources/actions/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -325,7 +317,38 @@
     <string>About Qt</string>
    </property>
   </action>
+  <action name="fileAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/file.png</normaloff>:/resources/actions/file.png</iconset>
+   </property>
+   <property name="text">
+    <string>File</string>
+   </property>
+  </action>
+  <action name="infoAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/info.png</normaloff>:/resources/actions/info.png</iconset>
+   </property>
+   <property name="text">
+    <string>Info</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>filesAndFoldersListWidget</tabstop>
+  <tabstop>bottomUpToolButton</tabstop>
+  <tabstop>bottomFileToolButton</tabstop>
+  <tabstop>bottomOptionsToolButton</tabstop>
+  <tabstop>bottomInfoToolButton</tabstop>
+  <tabstop>bottomExitToolButton</tabstop>
+  <tabstop>rightUpToolButton</tabstop>
+  <tabstop>rightFileToolButton</tabstop>
+  <tabstop>rightOptionsToolButton</tabstop>
+  <tabstop>rightInfoToolButton</tabstop>
+  <tabstop>rightExitToolButton</tabstop>
+ </tabstops>
  <resources>
   <include location="main.qrc"/>
  </resources>
