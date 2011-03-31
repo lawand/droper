@@ -72,9 +72,7 @@ MainWindow::MainWindow(
             dropbox,
             this
             ),
-    renameOperationBeingProcessed(false),
-    usingRightButtons(false),
-    loadingAnimationActive(false)
+    renameOperationBeingProcessed(false)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -134,55 +132,27 @@ MainWindow::MainWindow(
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
 
-    //right tool buttons
-    ui->rightUpToolButton->setDefaultAction(ui->upAction);
-    ui->rightFileToolButton->setDefaultAction(ui->fileAction);
+    //tool buttons
+    ui->upToolButton->setDefaultAction(ui->upAction);
+    ui->fileToolButton->setDefaultAction(ui->fileAction);
     connect(
-            ui->rightFileToolButton,
+            ui->fileToolButton,
             SIGNAL(pressed()),
             SLOT(showFileMenu())
             );
-    ui->rightOptionsToolButton->setDefaultAction(ui->optionsAction);
+    ui->optionsToolButton->setDefaultAction(ui->optionsAction);
     connect(
-            ui->rightOptionsToolButton,
+            ui->optionsToolButton,
             SIGNAL(pressed()),
             SLOT(showOptionsMenu())
             );
-    ui->rightInfoToolButton->setDefaultAction(ui->infoAction);
+    ui->infoToolButton->setDefaultAction(ui->infoAction);
     connect(
-            ui->rightInfoToolButton,
+            ui->infoToolButton,
             SIGNAL(pressed()),
             SLOT(showInfoMenu())
             );
-    ui->rightExitToolButton->setDefaultAction(ui->exitAction);
-    //bottom tool buttons
-    ui->bottomUpToolButton->setDefaultAction(ui->upAction);
-    ui->bottomFileToolButton->setDefaultAction(ui->fileAction);
-    connect(
-            ui->bottomFileToolButton,
-            SIGNAL(pressed()),
-            SLOT(showFileMenu())
-            );
-    ui->bottomOptionsToolButton->setDefaultAction(ui->optionsAction);
-    connect(
-            ui->bottomOptionsToolButton,
-            SIGNAL(pressed()),
-            SLOT(showOptionsMenu())
-            );
-    ui->bottomInfoToolButton->setDefaultAction(ui->infoAction);
-    connect(
-            ui->bottomInfoToolButton,
-            SIGNAL(pressed()),
-            SLOT(showInfoMenu())
-            );
-    ui->bottomExitToolButton->setDefaultAction(ui->exitAction);
-
-    //the default buttons are the bottom ones
-    ui->rightUpToolButton->setVisible(false);
-    ui->rightFileToolButton->setVisible(false);
-    ui->rightOptionsToolButton->setVisible(false);
-    ui->rightInfoToolButton->setVisible(false);
-    ui->rightExitToolButton->setVisible(false);
+    ui->exitToolButton->setDefaultAction(ui->exitAction);
 
     //initial directory listing
     requestDirectoryListing(currentDirectory);
@@ -211,51 +181,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-#ifdef Q_OS_SYMBIAN
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-    if( this->geometry().height() >
-        this->geometry().width() )
-    {   //portait
-        usingRightButtons = false;
-
-        if(!loadingAnimationActive)
-        {
-            ui->rightUpToolButton->setVisible(false);
-            ui->rightFileToolButton->setVisible(false);
-            ui->rightOptionsToolButton->setVisible(false);
-            ui->rightInfoToolButton->setVisible(false);
-            ui->rightExitToolButton->setVisible(false);
-
-            ui->bottomUpToolButton->setVisible(true);
-            ui->bottomFileToolButton->setVisible(true);
-            ui->bottomOptionsToolButton->setVisible(true);
-            ui->bottomInfoToolButton->setVisible(true);
-            ui->bottomExitToolButton->setVisible(true);
-        }
-    }
-    else
-    {   //landscape
-        usingRightButtons = true;
-
-        if(!loadingAnimationActive)
-        {
-            ui->rightUpToolButton->setVisible(true);
-            ui->rightFileToolButton->setVisible(true);
-            ui->rightOptionsToolButton->setVisible(true);
-            ui->rightInfoToolButton->setVisible(true);
-            ui->rightExitToolButton->setVisible(true);
-
-            ui->bottomUpToolButton->setVisible(false);
-            ui->bottomFileToolButton->setVisible(false);
-            ui->bottomOptionsToolButton->setVisible(false);
-            ui->bottomInfoToolButton->setVisible(false);
-            ui->bottomExitToolButton->setVisible(false);
-        }
-    }
-}
-#endif
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
@@ -1218,28 +1143,15 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
 void MainWindow::showLoadingAnimation()
 {
-    loadingAnimationActive = true;
-
     ui->currentFolderIconLabel->setVisible(false);
     ui->currentFolderLabel->setVisible(false);
     ui->filesAndFoldersListWidget->setVisible(false);
 
-    if(usingRightButtons)
-    {
-        ui->rightUpToolButton->setVisible(false);
-        ui->rightFileToolButton->setVisible(false);
-        ui->rightOptionsToolButton->setVisible(false);
-        ui->rightInfoToolButton->setVisible(false);
-        ui->rightExitToolButton->setVisible(false);
-    }
-    else
-    {
-        ui->bottomUpToolButton->setVisible(false);
-        ui->bottomFileToolButton->setVisible(false);
-        ui->bottomOptionsToolButton->setVisible(false);
-        ui->bottomInfoToolButton->setVisible(false);
-        ui->bottomExitToolButton->setVisible(false);
-    }
+    ui->upToolButton->setVisible(false);
+    ui->fileToolButton->setVisible(false);
+    ui->optionsToolButton->setVisible(false);
+    ui->infoToolButton->setVisible(false);
+    ui->exitToolButton->setVisible(false);
 
     ui->loadingLabel->setVisible(true);
     QMovie *loading = new QMovie(":/resources/animations/loading.gif");
@@ -1256,24 +1168,11 @@ void MainWindow::hideLoadingAnimation()
     ui->currentFolderLabel->setVisible(true);
     ui->filesAndFoldersListWidget->setVisible(true);
 
-    if(usingRightButtons)
-    {
-        ui->rightUpToolButton->setVisible(true);
-        ui->rightFileToolButton->setVisible(true);
-        ui->rightOptionsToolButton->setVisible(true);
-        ui->rightInfoToolButton->setVisible(true);
-        ui->rightExitToolButton->setVisible(true);
-    }
-    else
-    {
-        ui->bottomUpToolButton->setVisible(true);
-        ui->bottomFileToolButton->setVisible(true);
-        ui->bottomOptionsToolButton->setVisible(true);
-        ui->bottomInfoToolButton->setVisible(true);
-        ui->bottomExitToolButton->setVisible(true);
-    }
-
-    loadingAnimationActive = false;
+    ui->upToolButton->setVisible(true);
+    ui->fileToolButton->setVisible(true);
+    ui->optionsToolButton->setVisible(true);
+    ui->infoToolButton->setVisible(true);
+    ui->exitToolButton->setVisible(true);
 }
 
 void MainWindow::showFileMenu()
@@ -1283,26 +1182,13 @@ void MainWindow::showFileMenu()
     menu.addAction(ui->createFolderAction);
     menu.addAction(ui->pasteAction);
 
-    if(usingRightButtons)
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->rightFileToolButton->geometry().center()
-                        )
-                );
+    menu.exec(
+            this->mapToGlobal(
+                    ui->fileToolButton->geometry().center()
+                    )
+            );
 
-        ui->rightFileToolButton->setDown(false);
-    }
-    else
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->bottomFileToolButton->geometry().center()
-                        )
-                );
-
-        ui->bottomFileToolButton->setDown(false);
-    }
+    ui->fileToolButton->setDown(false);
 }
 
 void MainWindow::showOptionsMenu()
@@ -1312,26 +1198,13 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->forgetAuthenticationAction);
 
-    if(usingRightButtons)
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->rightOptionsToolButton->geometry().center()
-                        )
-                );
+    menu.exec(
+            this->mapToGlobal(
+                    ui->optionsToolButton->geometry().center()
+                    )
+            );
 
-        ui->rightOptionsToolButton->setDown(false);
-    }
-    else
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->bottomOptionsToolButton->geometry().center()
-                        )
-                );
-
-        ui->bottomOptionsToolButton->setDown(false);
-    }
+    ui->optionsToolButton->setDown(false);
 }
 
 void MainWindow::showInfoMenu()
@@ -1340,24 +1213,11 @@ void MainWindow::showInfoMenu()
     menu.addAction(ui->aboutAction);
     menu.addAction(ui->aboutQtAction);
 
-    if(usingRightButtons)
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->rightInfoToolButton->geometry().center()
-                        )
-                );
+    menu.exec(
+            this->mapToGlobal(
+                    ui->infoToolButton->geometry().center()
+                    )
+            );
 
-        ui->rightInfoToolButton->setDown(false);
-    }
-    else
-    {
-        menu.exec(
-                this->mapToGlobal(
-                        ui->bottomInfoToolButton->geometry().center()
-                        )
-                );
-
-        ui->bottomInfoToolButton->setDown(false);
-    }
+    ui->infoToolButton->setDown(false);
 }
