@@ -247,6 +247,10 @@ void DownloadDialog::handleReadyRead()
 
 void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
 {
+    //avoid arithmetic errors (division by zero)
+    if (received == 0)
+        return;
+
     // calculate the download speed
     double speed = received * 1000.0 / downloadTime.elapsed();
     QString unit;
