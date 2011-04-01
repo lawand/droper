@@ -457,10 +457,7 @@ void MainWindow::requestDirectoryListing(QString path)
 #endif
 
     QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
-
-    QPair<QString,QString> temp;
-    temp = qMakePair(QString("list"), QString("true"));
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("list", "true");
 
     QNetworkRequest networkRequest(url);
 
@@ -618,17 +615,9 @@ void MainWindow::requestCopying(QString source, QString destination)
         return;
 
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_COPY);
-
-    QPair<QString,QString> temp;
-
-    temp = qMakePair(QString("root"), QString("dropbox"));
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("from_path"), source);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("to_path"), destination);
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("root", "dropbox");
+    url.addQueryItem("from_path", source);
+    url.addQueryItem("to_path", destination);
 
     QNetworkRequest networkRequest(url);
 
@@ -656,17 +645,9 @@ void MainWindow::requestMoving(QString source, QString destination)
         return;
 
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_MOVE);
-
-    QPair<QString,QString> temp;
-
-    temp = qMakePair(QString("root"), QString("dropbox"));
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("from_path"), source);
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("to_path"), destination);
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("root", "dropbox");
+    url.addQueryItem("from_path", source);
+    url.addQueryItem("to_path", destination);
 
     QNetworkRequest networkRequest(url);
 
@@ -700,14 +681,8 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
 void MainWindow::requestDeleting(QString path)
 {
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_DELETE);
-
-    QPair<QString,QString> temp;
-
-    temp = qMakePair(QString("root"), QString("dropbox"));
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("path"), path);
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("root", "dropbox");
+    url.addQueryItem("path", path);
 
     QNetworkRequest networkRequest(url);
 
@@ -731,14 +706,8 @@ void MainWindow::handleDeleting(QNetworkReply* networkReply)
 void MainWindow::requestFolderCreation(QString path)
 {
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_CREATEFOLDER);
-
-    QPair<QString,QString> temp;
-
-    temp = qMakePair(QString("root"), QString("dropbox"));
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("path"), path);
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("root", "dropbox");
+    url.addQueryItem("path", path);
 
     QNetworkRequest networkRequest(url);
 

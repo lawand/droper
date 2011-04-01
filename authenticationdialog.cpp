@@ -92,17 +92,12 @@ void AuthenticationDialog::requestTokenAndSecret()
     ui->infoLabel->setVisible(true);
 
     QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
-
-    QPair<QString,QString> temp;
-
-    temp = oAuth->consumerKeyQueryItem();
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("email"), ui->emailLineEdit->text());
-    url.addQueryItem(temp.first, temp.second);
-
-    temp = qMakePair(QString("password"), ui->passwordLineEdit->text());
-    url.addQueryItem(temp.first, temp.second);
+    url.addQueryItem("email", ui->emailLineEdit->text());
+    url.addQueryItem("password", ui->passwordLineEdit->text());
+    url.addQueryItem(
+            oAuth->consumerKeyQueryItem().first,
+            oAuth->consumerKeyQueryItem().second
+            );
 
     networkAccessManager->get( QNetworkRequest( url ) );
 

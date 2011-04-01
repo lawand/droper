@@ -188,10 +188,7 @@ void UploadDialog::on_toggleStartPushButton_clicked()
                     dropbox->apiToUrl(Dropbox::FILES).toString() +
                     remoteFolder
                     ;
-
-            QPair<QString,QString> temp;
-            temp = qMakePair(QString("file"), localFileName);
-            url.addQueryItem(temp.first, temp.second);
+            url.addQueryItem("file", localFileName);
 
             QNetworkRequest networkRequest(url);
 
