@@ -160,7 +160,7 @@ void UploadDialog::on_toggleStartPushButton_clicked()
             multipartform.append(boundary.toAscii());
             multipartform.append(
                     QString("Content-Disposition: form-data; name=\"file\"; "
-                            "filename=\"" + localFileName + "\"" +
+                            "filename=\"" + localFileName.toUtf8() + "\"" +
                             crlf).toAscii()
                     );
             multipartform.append(
