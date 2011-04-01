@@ -107,7 +107,6 @@ void DownloadDialog::initialize()
     ui->localPathLineEdit->setEnabled(false);
     ui->localPathLineEdit->setText("");
     ui->browsePushButton->setEnabled(false);
-    ui->progressBar->setEnabled(false);
     ui->progressBar->setValue(0);
     ui->progressBar->setFormat("");
     ui->toggleStartPushButton->setEnabled(false);
