@@ -31,6 +31,7 @@
 
 //data members
 #include <downloaddialog.h>
+#include <uploaddialog.h>
 class QNetworkAccessManager;
 class QSettings;
 class QToolBar;
@@ -75,6 +76,7 @@ private:
     bool shouldPreserveClipboardContents;
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
+    UploadDialog uploadDialog;
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
@@ -108,6 +110,7 @@ private slots:
     void rename();
     void del();
     void download();
+    void upload();
     void createFolder();
     void showProperties();
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
@@ -116,6 +119,7 @@ private slots:
     void showFileMenu();
     void showOptionsMenu();
     void showInfoMenu();
+    void handleUploadDone(QString folder);
 };
 
 #endif // MAINWINDOW_H

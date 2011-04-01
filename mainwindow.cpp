@@ -48,7 +48,9 @@
 #include <QMovie>
 #include <QMenu>
 #include <QToolButton>
+#include <QDesktopServices>
 #include "downloaddialog.h"
+#include "uploaddialog.h"
 #include "json.h"
 #ifdef Q_OS_SYMBIAN
 #include <QtScroller>
@@ -66,6 +68,13 @@ MainWindow::MainWindow(
     ui(new Ui::MainWindow),
     currentDirectory("/"),
     downloadDialog(
+            networkAccessManager,
+            oAuth,
+            userData,
+            dropbox,
+            this
+            ),
+    uploadDialog(
             networkAccessManager,
             oAuth,
             userData,
@@ -106,6 +115,12 @@ MainWindow::MainWindow(
             SLOT(show())
             );
     connect(
+            ui->showActiveUploadAction,
+            SIGNAL(triggered()),
+            &uploadDialog,
+            SLOT(show())
+            );
+    connect(
             ui->forgetAuthenticationAction,
             SIGNAL(triggered()),
             SLOT(forgetAuthentication())
@@ -125,12 +140,21 @@ MainWindow::MainWindow(
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
     connect( ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()) );
     connect( ui->downloadAction, SIGNAL(triggered()), SLOT(download()) );
+    connect( ui->uploadAction, SIGNAL(triggered()), SLOT(upload()) );
     connect(
             ui->propertiesAction,
             SIGNAL(triggered()),
             SLOT(showProperties())
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
+
+    //this is necessary to refresh if upload was done and the user was
+    //navigating the same folder
+    connect(
+            &uploadDialog,
+            SIGNAL(done(QString)),
+            SLOT(handleUploadDone(QString))
+            );
 
     //tool buttons
     ui->upToolButton->setDefaultAction(ui->upAction);
@@ -984,6 +1008,37 @@ void MainWindow::download()
     }
 }
 
+void MainWindow::upload()
+{
+    if(uploadDialog.isActive())
+    {
+        QMessageBox::information(
+                this,
+                "Droper",
+                "There already is a file being "
+                "uploaded."
+                );
+    }
+    else
+    {
+        QString localFile = QFileDialog::getOpenFileName(
+                this,
+                "Select a file",
+                QDesktopServices::storageLocation(
+                        QDesktopServices::DesktopLocation
+                        )
+                );
+
+        //handle the case of the user not selecting any file
+        if(localFile.isEmpty())
+            return;
+
+        uploadDialog.setFileAndFolder(localFile, currentDirectory);
+
+        uploadDialog.show();
+    }
+}
+
 void MainWindow::createFolder()
 {
     QString folderName = QInputDialog::getText(
@@ -1181,6 +1236,7 @@ void MainWindow::showFileMenu()
     menu.addAction(ui->refreshAction);
     menu.addAction(ui->createFolderAction);
     menu.addAction(ui->pasteAction);
+    menu.addAction(ui->uploadAction);
 
     menu.exec(
             this->mapToGlobal(
@@ -1195,6 +1251,7 @@ void MainWindow::showOptionsMenu()
 {
     QMenu menu(this);
     menu.addAction(ui->showActiveDownloadAction);
+    menu.addAction(ui->showActiveUploadAction);
     menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->forgetAuthenticationAction);
 
@@ -1220,4 +1277,10 @@ void MainWindow::showInfoMenu()
             );
 
     ui->infoToolButton->setDown(false);
+}
+
+void MainWindow::handleUploadDone(QString folder)
+{
+    if(folder == currentDirectory)
+        refresh();
 }

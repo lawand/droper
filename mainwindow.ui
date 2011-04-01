@@ -281,6 +281,16 @@
     <string>Info</string>
    </property>
   </action>
+  <action name="uploadAction">
+   <property name="text">
+    <string>Upload</string>
+   </property>
+  </action>
+  <action name="showActiveUploadAction">
+   <property name="text">
+    <string>Show Active Upload</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>filesAndFoldersListWidget</tabstop>
