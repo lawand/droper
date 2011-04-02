@@ -43,6 +43,8 @@ OAuth::OAuth(ConsumerData* consumerData)
 {
     //member initialization
     this->consumerData = consumerData;
+
+    qsrand(QDateTime::currentDateTime().toTime_t());
 }
 
 void OAuth::signRequest(
@@ -90,7 +92,7 @@ QString OAuth::timestampAndNonceItems()
             +
             QString("%1=\"%2\"")
             .arg("oauth_nonce")
-            .arg(currentSecsSinceEpoch)
+            .arg(QString("%1").arg(qrand()))
             ;
 }
 
