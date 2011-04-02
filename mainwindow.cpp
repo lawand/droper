@@ -880,9 +880,6 @@ void MainWindow::rename()
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
-    //mark the current operation as a rename
-    renameOperationBeingProcessed = true;
-
     QListWidgetItem* currentItem =
             ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
@@ -923,6 +920,9 @@ void MainWindow::rename()
                 currentDirectory + "/" + newName
                 );
     }
+
+    //mark the current operation as a rename
+    renameOperationBeingProcessed = true;
 }
 
 void MainWindow::del()
