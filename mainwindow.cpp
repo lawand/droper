@@ -889,13 +889,39 @@ void MainWindow::rename()
             (path.length() - path.lastIndexOf("/")) - 1
             );
 
-    QString newName = QInputDialog::getText(
-            this,
-            "Rename",
-            "Enter a new name:",
-            QLineEdit::Normal,
-            oldName
-            );
+    bool ok = false;
+    QString newName;
+    while(!ok)
+    {
+        newName = QInputDialog::getText(
+                this,
+                "Rename",
+                "Enter a new name:",
+                QLineEdit::Normal,
+                oldName
+                );
+
+        //trim whitespace
+        newName = newName.trimmed();
+
+        //these symbols aren't allowed by Dropbox
+        QRegExp disallowedSymbols("[/:?*<>\"|]");
+        if(newName.contains(disallowedSymbols) || newName.contains("\\") ||
+           newName == "." || newName == "..")
+        {
+            QMessageBox::information(
+                    this,
+                    "Droper",
+                    "The following characters aren't allowed by Dropbox: \n"
+                    "\\ / : ? * < > \" | \n"
+                    "And you can't name a file or folder . or .."
+                    );
+        }
+        else
+        {
+            ok = true;
+        }
+    }
 
     //if no new value was entered, do nothing
     if(newName.isEmpty())
@@ -990,13 +1016,39 @@ void MainWindow::upload()
     }
     else
     {
-        QString localFile = QFileDialog::getOpenFileName(
-                this,
-                "Select a file",
-                QDesktopServices::storageLocation(
-                        QDesktopServices::DesktopLocation
-                        )
-                );
+        bool ok = false;
+        QString localFile;
+        while(!ok)
+        {
+            localFile = QFileDialog::getOpenFileName(
+                    this,
+                    "Select a file",
+                    QDesktopServices::storageLocation(
+                            QDesktopServices::DesktopLocation
+                            )
+                    );
+
+            QFileInfo fileInfo(localFile);
+            QString fileName = fileInfo.baseName();
+
+            //these symbols aren't allowed by Dropbox
+            QRegExp disallowedSymbols("[/:?*<>\"|]");
+            if(fileName.contains(disallowedSymbols) ||
+               fileName.contains("\\") || fileName == "." || fileName == "..")
+            {
+                QMessageBox::information(
+                        this,
+                        "Droper",
+                        "The following characters aren't allowed by Dropbox: \n"
+                        "\\ / : ? * < > \" | \n"
+                        "And you can't name a file or folder . or .."
+                        );
+            }
+            else
+            {
+                ok = true;
+            }
+        }
 
         //handle the case of the user not selecting any file
         if(localFile.isEmpty())
@@ -1010,11 +1062,37 @@ void MainWindow::upload()
 
 void MainWindow::createFolder()
 {
-    QString folderName = QInputDialog::getText(
-            this,
-            "Create Folder",
-            "Enter the folder's name:"
-            );
+    bool ok = false;
+    QString folderName;
+    while(!ok)
+    {
+        folderName = QInputDialog::getText(
+                this,
+                "Create Folder",
+                "Enter the folder's name:"
+                );
+
+        //trim whitespace
+        folderName = folderName.trimmed();
+
+        //these symbols aren't allowed by Dropbox
+        QRegExp disallowedSymbols("[/:?*<>\"|]");
+        if(folderName.contains(disallowedSymbols) ||
+           folderName.contains("\\") || folderName == "." || folderName == "..")
+        {
+            QMessageBox::information(
+                    this,
+                    "Droper",
+                    "The following characters aren't allowed by Dropbox: \n"
+                    "\\ / : ? * < > \" | \n"
+                    "And you can't name a file or folder . or .."
+                    );
+        }
+        else
+        {
+            ok = true;
+        }
+    }
 
     //if no folderName was entered, do nothing
     if( folderName.isEmpty() )
