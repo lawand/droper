@@ -210,7 +210,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 {
     Dropbox::Api api = dropbox->urlToApi(networkReply->url());
 
-    //files APIs are handled by the downloadDialog
+    //files APIs are handled by the downloadDialog and/or by the uploadDialog
     if(api == Dropbox::FILES)
         return;
 
