@@ -805,11 +805,8 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
 {
     //do nothing during scrolling or dragging
 #ifdef Q_OS_SYMBIAN
-    if(QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state()
-        == QtScroller::Dragging
-                ||
-       QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state()
-       == QtScroller::Scrolling)
+    if(int(QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state())
+        != 0)
         return;
 #endif
 
