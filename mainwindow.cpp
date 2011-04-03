@@ -232,28 +232,44 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
             //stop the loading animation
             hideLoadingAnimation();
 
-            QMessageBox messageBox;
-            messageBox.setWindowTitle("Droper");
-            messageBox.setIcon(QMessageBox::Information);
-            messageBox.setText("There was an error, try again later.");
-                QString json = networkReply->readAll();
-                QVariantMap jsonResult = Json::parse(json).toMap();
-                if(jsonResult.contains("error"))
-                {
-                    if(! jsonResult["error"].toString().contains("Nonce") )
-                    {
-#ifdef Q_OS_SYMBIAN
-                        messageBox.addButton(QMessageBox::Close);
-#endif
-                        messageBox.setDetailedText(
-                                jsonResult["error"].toString()
-                                );
-                    }
-                }
-            messageBox.exec();
-
             //reset for next time
             retryCount = 0;
+
+            if(networkReply->error() ==
+               QNetworkReply::AuthenticationRequiredError)
+            {
+                QMessageBox::critical(
+                        this,
+                        "Droper",
+                        "Droper's access to this account has been disabled, "
+                        "authentication will now be removed. \n"
+                        "Restart the application to re-authenticate..."
+                        );
+
+                settings->clear();
+            }
+            else
+            {
+                QMessageBox messageBox;
+                messageBox.setWindowTitle("Droper");
+                messageBox.setIcon(QMessageBox::Information);
+                messageBox.setText("There was an error, try again later.");
+                    QString json = networkReply->readAll();
+                    QVariantMap jsonResult = Json::parse(json).toMap();
+                    if(jsonResult.contains("error"))
+                    {
+                        if(! jsonResult["error"].toString().contains("Nonce") )
+                        {
+#ifdef Q_OS_SYMBIAN
+                            messageBox.addButton(QMessageBox::Close);
+#endif
+                            messageBox.setDetailedText(
+                                    jsonResult["error"].toString()
+                                    );
+                        }
+                    }
+                messageBox.exec();
+            }
 
 #ifdef Q_OS_SYMBIAN
             //regrabbing the gestures, for more info see
