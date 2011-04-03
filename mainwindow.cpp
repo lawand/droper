@@ -1328,7 +1328,9 @@ void MainWindow::showLoadingAnimation()
 {
     ui->currentFolderIconLabel->setVisible(false);
     ui->currentFolderLabel->setVisible(false);
-    ui->filesAndFoldersListWidget->setVisible(false);
+
+    //can't hide the filesAndFoldersListWidget because that effects the scroller
+    ui->filesAndFoldersListWidget->setMaximumSize(0, 0);
 
     ui->upToolButton->setVisible(false);
     ui->fileToolButton->setVisible(false);
@@ -1349,7 +1351,8 @@ void MainWindow::hideLoadingAnimation()
 
     ui->currentFolderIconLabel->setVisible(true);
     ui->currentFolderLabel->setVisible(true);
-    ui->filesAndFoldersListWidget->setVisible(true);
+
+    ui->filesAndFoldersListWidget->setMaximumSize(16777215, 16777215);
 
     ui->upToolButton->setVisible(true);
     ui->fileToolButton->setVisible(true);
