@@ -1084,6 +1084,47 @@ void MainWindow::upload()
         if(localFile.isEmpty())
             return;
 
+        //make sure there isn't any folder that has the same name that the
+        //file to be uploaded has and if there was a file with the same name,
+        //tell the user that this upload modifies that file and that the
+        //revision history can be viewed at dropbox.com
+        for(int row = 0; row < ui->filesAndFoldersListWidget->count(); ++row)
+        {
+            QListWidgetItem *item = ui->filesAndFoldersListWidget->item(row);
+
+            QVariantMap map = item->data(Qt::UserRole).toMap();
+            QString path = map["path"].toString();
+            QString name = path.right(
+                    (path.length() - path.lastIndexOf("/")) - 1
+                    );
+            if(name.toLower() == QFileInfo(localFile).baseName().toLower())
+            {
+                if(map["is_dir"].toBool() == true)
+                {
+                    QMessageBox::warning(
+                            this,
+                            "Droper",
+                            "Can't continue; there is a folder with the same "
+                            "name in the current directory."
+                            );
+
+                    return;
+                }
+                else
+                {
+                    QMessageBox::information(
+                            this,
+                            "Droper",
+                            "There is a file with the same name in the current "
+                            "directory, if you continue with the upload "
+                            "process, it will be overwritten. \n"
+                            "You can visit dropbox.com to see file revisions "
+                            "and restore earlier ones."
+                            );
+                }
+            }
+        }
+
         uploadDialog.setFileAndFolder(localFile, currentDirectory);
 
         uploadDialog.show();
