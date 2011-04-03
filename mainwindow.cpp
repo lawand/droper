@@ -565,7 +565,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     {
         QVariantMap subDir = subDirJson.toMap();
 
-        if(subDir["is_dir"] == true)
+        if(subDir["is_dir"].toBool() == true)
         {
             QListWidgetItem* subDirItem = new QListWidgetItem(
                     ui->filesAndFoldersListWidget
@@ -598,7 +598,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     {
         QVariantMap subDir = subDirJson.toMap();
 
-        if(subDir["is_dir"] == false)
+        if(subDir["is_dir"].toBool() == false)
         {
             QListWidgetItem* subDirItem = new QListWidgetItem(
                     ui->filesAndFoldersListWidget
@@ -805,7 +805,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
 {
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
-    if(map["is_dir"] == true)   //if the item is a directory
+    if(map["is_dir"].toBool() == true)   //if the item is a directory
     {
         //navigate to a sub directory
         requestDirectoryListing(
@@ -1291,7 +1291,7 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
         QVariantMap map = ui->filesAndFoldersListWidget->currentItem()
                           ->data(Qt::UserRole).toMap();
-        if(map["is_dir"] != true)   //if the item is not a directory
+        if(map["is_dir"].toBool() != true)   //if the item is not a directory
         {
             menu.addAction(ui->propertiesAction);
             menu.addAction(ui->downloadAction);
