@@ -76,6 +76,7 @@ private:
     QFile localFile;
     QNetworkReply* networkReply;
     QTime downloadTime;
+    qint64 fileBytes;  //file size in bytes
 
 private slots:
     void initialize();

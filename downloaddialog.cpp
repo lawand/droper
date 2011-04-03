@@ -50,7 +50,8 @@ DownloadDialog::DownloadDialog(
     ui(new Ui::DownloadDialog),
     active(false),
     remotePathAndFileName(""),
-    networkReply(0)
+    networkReply(0),
+    fileBytes(0)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -89,6 +90,8 @@ bool DownloadDialog::setFile(QVariantMap* fileMap)
              remotePathAndFileName.lastIndexOf("/")) - 1
             );
 
+    fileBytes = (*fileMap)["bytes"].toLongLong();
+
     ui->fileNameAndSizeLabel->setText(
             QString("%1 (%2)").arg(fileName).arg((*fileMap)["size"].toString())
                     );
@@ -115,6 +118,7 @@ void DownloadDialog::initialize()
     active = false;
     remotePathAndFileName = "";
     networkReply = 0;
+    fileBytes = 0;
 }
 
 void DownloadDialog::reject()
@@ -275,7 +279,12 @@ void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
 
 void DownloadDialog::handleFinished()
 {
-    if(networkReply->error() != QNetworkReply::NoError)
+    //set variables
+    localFile.close();
+    networkReply->deleteLater();
+
+    if(networkReply->error() != QNetworkReply::NoError ||
+       QFileInfo(localFile).size() != fileBytes)
     {
         //if the operation was canceled, do nothing
         if(networkReply->error() == QNetworkReply::OperationCanceledError)
@@ -297,7 +306,6 @@ void DownloadDialog::handleFinished()
         ui->speedLabel->clear();
         active = false;
         localFile.remove();
-        networkReply->deleteLater();
     }
     else
     {
@@ -307,10 +315,6 @@ void DownloadDialog::handleFinished()
                 "Droper",
                 "File download is done."
                 );
-
-        //set variables
-        localFile.close();
-        networkReply->deleteLater();
 
         //return to initial state
         initialize();
