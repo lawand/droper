@@ -803,6 +803,16 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
 {
+    //do nothing during scrolling or dragging
+#ifdef Q_OS_SYMBIAN
+    if(QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state()
+        == QtScroller::Dragging
+                ||
+       QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state()
+       == QtScroller::Scrolling)
+        return;
+#endif
+
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
     if(map["is_dir"].toBool() == true)   //if the item is a directory
