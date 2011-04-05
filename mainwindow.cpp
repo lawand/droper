@@ -1016,15 +1016,9 @@ void MainWindow::del()
 
 void MainWindow::download()
 {
-    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
-        return;
-
-    QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
-
-    if(downloadDialog.setFile(&map) != true)
+    //if there is another file being downloaded, state this to the user and do
+    //nothing else
+    if(downloadDialog.isActive())
     {
         QMessageBox::information(
                 this,
@@ -1032,11 +1026,66 @@ void MainWindow::download()
                 "There already is a file being "
                 "downloaded."
                 );
+
+        return;
     }
-    else
-    {
+
+    //if there is no item being selected, do nothing
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+        return;
+
+    //prepare fileMap
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap fileMap =
+            currentItem->data(Qt::UserRole).toMap();
+
+    //prepare target folder
+        bool ok = false;
+        QString directory;
+        while(!ok)
+        {
+            directory = QFileDialog::getExistingDirectory(
+                    this,
+                    "Select a directory",
+                    QDesktopServices::storageLocation(
+                            QDesktopServices::DesktopLocation
+                            )
+                    );
+
+            //if no directory selected, do nothing
+            if(directory.isEmpty())
+            {
+                return;
+            }
+
+            QString remotePathAndFileName = fileMap["path"].toString();
+            QString fileName = remotePathAndFileName.right(
+                    (remotePathAndFileName.length() -
+                     remotePathAndFileName.lastIndexOf("/")) - 1
+                    );
+            if(QFile(directory + "/" + fileName).exists())
+            {
+                QMessageBox::information(
+                        this,
+                        "Droper",
+                        QString(
+                                "This directory already has a file "
+                                "named '%1'. Choose another one."
+                                ).arg(fileName)
+                        );
+            }
+            else
+            {
+                ok = true;
+            }
+        }
+
+    //set the file map and the target folder
+        downloadDialog.setFileAndFolder(&fileMap, directory);
+
+    //show the download dialog
         downloadDialog.show();
-    }
 }
 
 void MainWindow::upload()
@@ -1103,11 +1152,14 @@ void MainWindow::upload()
             QString name = path.right(
                     (path.length() - path.lastIndexOf("/")) - 1
                     );
-            if(name.toLower() == QFileInfo(localFile).baseName().toLower())
+            QString localFileName = localFile.right(
+                    (localFile.length() - localFile.lastIndexOf("/")) - 1
+                    );
+            if(name.toLower() == localFileName.toLower())
             {
                 if(map["is_dir"].toBool() == true)
                 {
-                    QMessageBox::warning(
+                    QMessageBox::information(
                             this,
                             "Droper",
                             "Can't continue; there is a folder with the same "
@@ -1381,6 +1433,11 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->showActiveUploadAction);
     menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->forgetAuthenticationAction);
+
+    if(downloadDialog.isActive())
+        ui->showActiveDownloadAction->setEnabled(true);
+    else
+        ui->showActiveDownloadAction->setEnabled(false);
 
     if(uploadDialog.isActive())
         ui->showActiveUploadAction->setEnabled(true);
