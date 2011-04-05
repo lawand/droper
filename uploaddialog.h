@@ -81,7 +81,7 @@ private:
 
 private slots:
     void initialize();
-    void on_toggleStartPushButton_clicked();
+    void toggleStart();
     void handleUploadProgress(qint64 sent, qint64 total);
     void handleFinished();
     void reject();  //reimplementation

@@ -147,6 +147,11 @@
     </layout>
    </item>
   </layout>
+  <action name="toggleStartAction">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

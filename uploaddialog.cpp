@@ -67,6 +67,19 @@ UploadDialog::UploadDialog(
             SIGNAL(rejected()),
             SLOT(reject())
             );
+    connect(
+            ui->toggleStartPushButton,
+            SIGNAL(clicked()),
+            ui->toggleStartAction,
+            SLOT(trigger())
+            );
+    connect(ui->toggleStartAction, SIGNAL(triggered()), SLOT(toggleStart()));
+
+#ifdef Q_OS_SYMBIAN
+    ui->toggleStartAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    ui->toggleStartPushButton->setVisible(false);
+    addAction(ui->toggleStartAction);
+#endif
 
     //initial state
     initialize();
@@ -120,6 +133,7 @@ void UploadDialog::setFileAndFolder(
     ui->folderLabel->setText(remoteFolderName);
     ui->progressBar->setFormat("%p%");
     ui->toggleStartPushButton->setEnabled(true);
+    ui->toggleStartAction->setEnabled(true);
 }
 
 bool UploadDialog::isActive()
@@ -135,13 +149,15 @@ void UploadDialog::initialize()
     ui->progressBar->setValue(0);
     ui->progressBar->setFormat("");
     ui->toggleStartPushButton->setEnabled(false);
+    ui->toggleStartAction->setEnabled(false);
     ui->toggleStartPushButton->setText("Start");
+    ui->toggleStartAction->setText("Start");
     ui->speedLabel->clear();
     networkReply = 0;
     active = false;
 }
 
-void UploadDialog::on_toggleStartPushButton_clicked()
+void UploadDialog::toggleStart()
 {
     if(active == false)
     {
@@ -210,6 +226,7 @@ void UploadDialog::on_toggleStartPushButton_clicked()
 
         //update variables
             ui->toggleStartPushButton->setText("Cancel");
+            ui->toggleStartAction->setText("Cancel");
             ui->progressBar->setFormat("%p% (Starting...)");
             active = true;
             uploadTime.start();
@@ -232,6 +249,7 @@ void UploadDialog::on_toggleStartPushButton_clicked()
         ui->progressBar->setValue(0);
         ui->progressBar->setFormat("%p%");
         ui->toggleStartPushButton->setText("Start");
+        ui->toggleStartAction->setText("Start");
         ui->speedLabel->clear();
         if(networkReply != 0)
         {
@@ -290,6 +308,7 @@ void UploadDialog::handleFinished()
         ui->progressBar->setValue(0);
         ui->progressBar->setFormat("%p%");
         ui->toggleStartPushButton->setText("Start");
+        ui->toggleStartAction->setText("Start");
         ui->speedLabel->clear();
         networkReply->deleteLater();
         active = false;
