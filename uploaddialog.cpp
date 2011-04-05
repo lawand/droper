@@ -130,6 +130,7 @@ void UploadDialog::setFileAndFolder(
             );
     ui->folderLabel->setText(remoteFolderName);
     ui->progressBar->setFormat("%p%");
+    ui->stateLabel->setText("Ready to start");
     ui->toggleStartPushButton->setEnabled(true);
     ui->toggleStartAction->setEnabled(true);
 }
@@ -146,11 +147,11 @@ void UploadDialog::initialize()
     ui->folderLabel->setText("---");
     ui->progressBar->setValue(0);
     ui->progressBar->setFormat("");
+    ui->stateLabel->setText("---");
     ui->toggleStartPushButton->setEnabled(false);
     ui->toggleStartAction->setEnabled(false);
     ui->toggleStartPushButton->setText("Start");
     ui->toggleStartAction->setText("Start");
-    ui->speedLabel->clear();
     networkReply = 0;
     active = false;
 }
@@ -223,9 +224,9 @@ void UploadDialog::toggleStart()
                     );
 
         //update variables
+            ui->stateLabel->setText("Starting...");
             ui->toggleStartPushButton->setText("Cancel");
             ui->toggleStartAction->setText("Cancel");
-            ui->progressBar->setFormat("%p% (Starting...)");
             active = true;
             uploadTime.start();
 
@@ -245,10 +246,9 @@ void UploadDialog::toggleStart()
     {
         //update variables
         ui->progressBar->setValue(0);
-        ui->progressBar->setFormat("%p%");
+        ui->stateLabel->setText("Ready to start");
         ui->toggleStartPushButton->setText("Start");
         ui->toggleStartAction->setText("Start");
-        ui->speedLabel->clear();
         if(networkReply != 0)
         {
             networkReply->abort();
@@ -277,13 +277,11 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
         unit = "MB/s";
     }
 
-    ui->speedLabel->setText(
-            QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit)
-            );
-
-    ui->progressBar->setFormat("%p% (Uploading)");
-
+    //update variables
     ui->progressBar->setValue((sent*100)/total);
+    ui->stateLabel->setText(
+            QString("Uploading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
+            );
 }
 
 void UploadDialog::handleFinished()
@@ -304,10 +302,9 @@ void UploadDialog::handleFinished()
 
         //update variables
         ui->progressBar->setValue(0);
-        ui->progressBar->setFormat("%p%");
+        ui->stateLabel->setText("Ready to start");
         ui->toggleStartPushButton->setText("Start");
         ui->toggleStartAction->setText("Start");
-        ui->speedLabel->clear();
         networkReply->deleteLater();
         active = false;
     }
