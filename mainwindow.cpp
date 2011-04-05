@@ -1383,6 +1383,11 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->showAccountInfoAction);
     menu.addAction(ui->forgetAuthenticationAction);
 
+    if(uploadDialog.isActive())
+        ui->showActiveUploadAction->setEnabled(true);
+    else
+        ui->showActiveUploadAction->setEnabled(false);
+
     menu.exec(
             this->mapToGlobal(
                     ui->optionsToolButton->geometry().center()
