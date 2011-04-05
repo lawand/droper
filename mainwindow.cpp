@@ -1019,7 +1019,6 @@ void MainWindow::download()
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
         return;
 
-    //fill the clipboard
     QListWidgetItem* currentItem =
             ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
