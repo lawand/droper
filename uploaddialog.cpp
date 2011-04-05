@@ -36,8 +36,6 @@
 
 //implementation-specific
 #include <QFileInfo>
-
-
 #include <QMessageBox>
 
 UploadDialog::UploadDialog(
