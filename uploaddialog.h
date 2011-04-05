@@ -81,10 +81,10 @@ private:
 
 private slots:
     void initialize();
+    void reject();  //reimplementation
     void toggleStart();
     void handleUploadProgress(qint64 sent, qint64 total);
     void handleFinished();
-    void reject();  //reimplementation
 };
 
 #endif // UPLOADDIALOG_H

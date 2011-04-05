@@ -156,6 +156,16 @@ void UploadDialog::initialize()
     active = false;
 }
 
+void UploadDialog::reject()
+{
+    if(!active)
+    {
+        initialize();
+    }
+
+    QDialog::reject();
+}
+
 void UploadDialog::toggleStart()
 {
     if(active == false)
@@ -260,8 +270,8 @@ void UploadDialog::toggleStart()
 
 void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
 {
-    //avoid arithmetic errors (division by zero)
-    if(sent == 0)
+    //avoid errors
+    if(sent == 0 || total == 0 || uploadTime.elapsed() == 0)
         return;
 
     // calculate the download speed
@@ -339,14 +349,4 @@ void UploadDialog::handleFinished()
         //return to initial state
         initialize();
     }
-}
-
-void UploadDialog::reject()
-{
-    if(!active)
-    {
-        initialize();
-    }
-
-    QDialog::reject();
 }
