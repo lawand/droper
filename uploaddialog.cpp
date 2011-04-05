@@ -296,11 +296,24 @@ void UploadDialog::handleFinished()
     }
     else
     {
+        //compute remoteFolderName and localFileName
+        QString remoteFolderName = remoteFolder.right(
+                (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
+                 );
+        if(remoteFolderName == "")  //the case of the remoteFolder being "/"
+            remoteFolderName = "Dropbox (root)";
+        QString localFileName = localFile.right(
+                (localFile.length()-localFile.lastIndexOf("/"))-1
+                 );
+
         //notify the user
         QMessageBox::information(
                 this,
                 "Droper",
-                "File upload is done."
+                QString(
+                        "The file '%1' was successfully uploaded to the "
+                        "folder '%2'."
+                        ).arg(localFileName).arg(remoteFolderName)
                 );
 
         //notify the main window
