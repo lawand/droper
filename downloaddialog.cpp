@@ -49,9 +49,9 @@ DownloadDialog::DownloadDialog(
     QDialog(parent),
     ui(new Ui::DownloadDialog),
     active(false),
-    remotePathAndFileName(""),
+    remoteFile(""),
     networkReply(0),
-    fileBytes(0)
+    remoteFileBytes(0)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
@@ -63,11 +63,20 @@ DownloadDialog::DownloadDialog(
     ui->setupUi(this);
 
     //initial connections
+    connect(ui->buttonBox, SIGNAL(rejected()), SLOT(reject()));
+    connect(ui->toggleStartAction, SIGNAL(triggered()), SLOT(toggleStart()));
     connect(
-            ui->buttonBox,
-            SIGNAL(rejected()),
-            SLOT(reject())
+            ui->toggleStartPushButton,
+            SIGNAL(clicked()),
+            ui->toggleStartAction,
+            SLOT(trigger())
             );
+
+#ifdef Q_OS_SYMBIAN
+    ui->toggleStartAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    ui->toggleStartPushButton->setVisible(false);
+    addAction(ui->toggleStartAction);
+#endif
 
     //initial state
     initialize();
@@ -78,47 +87,58 @@ DownloadDialog::~DownloadDialog()
     delete ui;
 }
 
-bool DownloadDialog::setFile(QVariantMap* fileMap)
+void DownloadDialog::setFileAndFolder(
+        QVariantMap* fileMap,
+        QString localFolder
+        )
 {
-    //can't set a new file while actively downloading another
-    if(active)
-        return false;
-
-    remotePathAndFileName = (*fileMap)["path"].toString();
-    QString fileName = remotePathAndFileName.right(
-            (remotePathAndFileName.length() -
-             remotePathAndFileName.lastIndexOf("/")) - 1
+    this->localFolder = localFolder;
+    QString localFolderName = localFolder.right(
+            (localFolder.length() - localFolder.lastIndexOf("/")) - 1
             );
+    if(localFolderName == "")
+        localFolderName = "/";
 
-    fileBytes = (*fileMap)["bytes"].toLongLong();
+    remoteFile = (*fileMap)["path"].toString();
+    QString remoteFileName = remoteFile.right(
+            (remoteFile.length() -
+             remoteFile.lastIndexOf("/")) - 1
+            );
+    remoteFileBytes = (*fileMap)["bytes"].toLongLong();
+    QString remoteFileSize = (*fileMap)["size"].toString();
 
-    ui->fileNameAndSizeLabel->setText(
-            QString("%1 (%2)").arg(fileName).arg((*fileMap)["size"].toString())
+    //update variables
+    ui->fileLabel->setText(
+            QString("%1 (%2)").arg(remoteFileName).arg(remoteFileSize)
                     );
-    ui->localPathLineEdit->setEnabled(true);
-    ui->browsePushButton->setEnabled(true);
+    ui->folderLabel->setText(localFolderName);
     ui->progressBar->setFormat("%p%");
+    ui->stateLabel->setText("Ready to start");
+    ui->toggleStartPushButton->setEnabled(true);
+    ui->toggleStartAction->setEnabled(true);
+}
 
-    //report success
-    return true;
+bool DownloadDialog::isActive()
+{
+    return active;
 }
 
 void DownloadDialog::initialize()
 {
     //set variables
-    ui->fileNameAndSizeLabel->setText("No Active Downloads");
-    ui->localPathLineEdit->setEnabled(false);
-    ui->localPathLineEdit->setText("");
-    ui->browsePushButton->setEnabled(false);
+    ui->fileLabel->setText("---");
+    ui->folderLabel->setText("---");
     ui->progressBar->setValue(0);
     ui->progressBar->setFormat("");
+    ui->stateLabel->setText("---");
     ui->toggleStartPushButton->setEnabled(false);
+    ui->toggleStartAction->setEnabled(false);
     ui->toggleStartPushButton->setText("Start");
-    ui->speedLabel->clear();
+    ui->toggleStartAction->setText("Start");
     active = false;
-    remotePathAndFileName = "";
-    networkReply = 0;
-    fileBytes = 0;
+    remoteFile = "";
+    localFolder = "";
+    remoteFileBytes = 0;
 }
 
 void DownloadDialog::reject()
@@ -131,59 +151,20 @@ void DownloadDialog::reject()
     QDialog::reject();
 }
 
-void DownloadDialog::on_browsePushButton_clicked()
-{
-    QString directory = QFileDialog::getExistingDirectory(
-            this,
-            "Select a directory",
-            QDesktopServices::storageLocation(QDesktopServices::DesktopLocation)
-            );
-
-    QString fileName = remotePathAndFileName.right(
-            (remotePathAndFileName.length() -
-             remotePathAndFileName.lastIndexOf("/")) - 1
-            );
-
-    if(QFile(directory + "/" + fileName).exists())
-    {
-        QMessageBox::information(
-                this,
-                "Droper",
-                QString(
-                        "This directory already has a file "
-                        "named '%1'. Choose another one."
-                        ).arg(fileName)
-                );
-    }
-    else
-    {
-        ui->localPathLineEdit->setText(directory);
-    }
-}
-
-void DownloadDialog::on_localPathLineEdit_textChanged(QString text)
-{
-    ui->toggleStartPushButton->setEnabled(
-            !text.isEmpty()
-            );
-}
-
-void DownloadDialog::on_toggleStartPushButton_clicked()
+void DownloadDialog::toggleStart()
 {
     if(!active)
     {
-        QString fileName = remotePathAndFileName.right(
-                (remotePathAndFileName.length() -
-                 remotePathAndFileName.lastIndexOf("/")) - 1
+        QString remoteFileName = remoteFile.right(
+                (remoteFile.length() -
+                 remoteFile.lastIndexOf("/")) - 1
                 );
 
-        QString localPath = ui->localPathLineEdit->text();
-
-        localFile.setFileName(localPath + "/" + fileName);
+        file.setFileName(localFolder + "/" + remoteFileName);
 
         //check whether the file can be opened for writing,
         //opening it in the process
-        if(!localFile.open(QFile::WriteOnly | QFile::Append))
+        if(!file.open(QFile::WriteOnly | QFile::Append))
         {
             QMessageBox::warning(
                     this,
@@ -196,7 +177,7 @@ void DownloadDialog::on_toggleStartPushButton_clicked()
 
         QUrl url =
                 dropbox->apiToUrl(Dropbox::FILES).toString() +
-                remotePathAndFileName
+                remoteFile
                 ;
 
         QNetworkRequest networkRequest(url);
@@ -219,26 +200,23 @@ void DownloadDialog::on_toggleStartPushButton_clicked()
                 SIGNAL(finished()),
                 SLOT(handleFinished())
                 );
-        downloadTime.start();
 
-        ui->progressBar->setFormat("%p% (Starting...)");
-
-        ui->browsePushButton->setEnabled(false);
-
+        //update variables
+        ui->stateLabel->setText("Starting...");
         ui->toggleStartPushButton->setText("Cancel");
-
+        ui->toggleStartAction->setText("Cancel");
         active = true;
+        downloadTime.start();
     }
     else
     {
         //set variables
-        ui->browsePushButton->setEnabled(true);
         ui->progressBar->setValue(0);
-        ui->progressBar->setFormat("%p%");
+        ui->stateLabel->setText("Ready to start");
         ui->toggleStartPushButton->setText("Start");
-        ui->speedLabel->clear();
+        ui->toggleStartAction->setText("Start");
         active = false;
-        localFile.remove();
+        file.remove();
         networkReply->abort();
         networkReply->deleteLater();
     }
@@ -246,13 +224,13 @@ void DownloadDialog::on_toggleStartPushButton_clicked()
 
 void DownloadDialog::handleReadyRead()
 {
-    localFile.write(networkReply->readAll());
+    file.write(networkReply->readAll());
 }
 
 void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
 {
-    //avoid arithmetic errors (division by zero)
-    if (received == 0)
+    //avoid errors
+    if (received == 0 || total == 0 || downloadTime.elapsed() == 0)
         return;
 
     // calculate the download speed
@@ -268,23 +246,21 @@ void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
         unit = "MB/s";
     }
 
-    ui->speedLabel->setText(
-            QString::fromLatin1("%1 %2").arg(speed, 3, 'f', 1).arg(unit)
-            );
-
-    ui->progressBar->setFormat("%p% (Downloading)");
-
+    //update variables
     ui->progressBar->setValue((received*100)/total);
+    ui->stateLabel->setText(
+            QString("Downloading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
+            );
 }
 
 void DownloadDialog::handleFinished()
 {
-    //set variables
-    localFile.close();
+    //update variables
+    file.close();
     networkReply->deleteLater();
 
     if(networkReply->error() != QNetworkReply::NoError ||
-       QFileInfo(localFile).size() != fileBytes)
+       QFileInfo(file).size() != remoteFileBytes)
     {
         //if the operation was canceled, do nothing
         if(networkReply->error() == QNetworkReply::OperationCanceledError)
@@ -298,22 +274,35 @@ void DownloadDialog::handleFinished()
                 );
         show();
 
-        //set variables
-        ui->browsePushButton->setEnabled(true);
+        //update variables
         ui->progressBar->setValue(0);
-        ui->progressBar->setFormat("%p%");
+        ui->stateLabel->setText("Ready to start");
         ui->toggleStartPushButton->setText("Start");
-        ui->speedLabel->clear();
+        ui->toggleStartAction->setText("Start");
         active = false;
-        localFile.remove();
+        file.remove();
     }
     else
     {
+        //compute remoteFileName and localFolderName
+        QString remoteFileName = remoteFile.right(
+                (remoteFile.length() -
+                 remoteFile.lastIndexOf("/")) - 1
+                );
+        QString localFolderName = localFolder.right(
+                (localFolder.length() - localFolder.lastIndexOf("/")) - 1
+                );
+        if(localFolderName == "")
+            localFolderName = "/";
+
         //notify the user
         QMessageBox::information(
                 this,
                 "Droper",
-                "File download is done."
+                QString(
+                        "The file '%1' was successfully downloaded to the "
+                        "folder '%2'."
+                        ).arg(remoteFileName).arg(localFolderName)
                 );
 
         //return to initial state

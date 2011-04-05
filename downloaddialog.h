@@ -61,7 +61,11 @@ public:
     ~DownloadDialog();
 
 public:
-    bool setFile(QVariantMap* fileMap);
+    void setFileAndFolder(
+            QVariantMap* fileMap,
+            QString localFolder
+            );
+    bool isActive();
 
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
@@ -72,18 +76,17 @@ public: //shared objects
 private:
     Ui::DownloadDialog *ui;
     bool active;
-    QString remotePathAndFileName;
-    QFile localFile;
+    QString remoteFile;
+    QString localFolder;
+    QFile file;
     QNetworkReply* networkReply;
     QTime downloadTime;
-    qint64 fileBytes;  //file size in bytes
+    qint64 remoteFileBytes;  //file size in bytes
 
 private slots:
     void initialize();
     void reject();  //reimplementation
-    void on_browsePushButton_clicked();
-    void on_localPathLineEdit_textChanged(QString text);
-    void on_toggleStartPushButton_clicked();
+    void toggleStart();
     void handleReadyRead();
     void handleDownloadProgress(qint64 received, qint64 total);
     void handleFinished();
