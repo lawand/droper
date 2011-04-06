@@ -79,9 +79,10 @@ void SettingsDialog::on_kineticScrollingCheckBox_clicked()
         QMessageBox::information(
                 this,
                 "Droper",
-                "Important Note: This is an expirmental feature and might not "
-                "be as usable as other stable features. It might also not work "
-                "on all devices."
+                "This is an expirmental feature and might not "
+                "be as usable as other stable features, and might even not "
+                "work at all. \n"
+                "Note: Disabling the single tap option might help."
                 );
     }
 }
