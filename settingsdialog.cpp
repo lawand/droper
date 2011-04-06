@@ -55,11 +55,8 @@ SettingsDialog::SettingsDialog(
             );
 #else
     ui->guiGroupBox->setVisible(false);
-    resize(baseSize());
-#endif
-
-#ifndef Q_OS_SYMBIAN
     ui->buttonBox->setVisible(false);
+    resize(baseSize());
 #endif
 }
 
