@@ -797,7 +797,12 @@ void MainWindow::about()
 
             "<a href=\"http://lawand.github.com/droper/\">"
             "http://lawand.github.com/droper/"
-            "</a>"
+            "</a> <br><br>"
+
+            "<a href=\"http://www.facebook.com/pages/Droper/192916850745082\">"
+            "Follow on Facebook!</a> <br>"
+            "Subscribe to stay up to date with latest releases and "
+            "announcements."
             );
 
     QIcon droper(":/droper.svg");
