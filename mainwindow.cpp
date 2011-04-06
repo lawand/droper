@@ -262,7 +262,11 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                 QMessageBox messageBox;
                 messageBox.setWindowTitle("Droper");
                 messageBox.setIcon(QMessageBox::Information);
-                messageBox.setText("There was an error, try again later.");
+                QString text = "There was an error, try again later.";
+                if(networkReply->url().toString().contains(QRegExp("[;+~#]")))
+                    text += "\nNote that Droper currently has problems dealing "
+                            "with these four symbols ; + ~ #";
+                messageBox.setText(text);
                     QString json = networkReply->readAll();
                     QVariantMap jsonResult = Json::parse(json).toMap();
                     if(jsonResult.contains("error"))
