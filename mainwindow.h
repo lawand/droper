@@ -79,6 +79,7 @@ private:
     UploadDialog uploadDialog;
 #ifdef Q_OS_SYMBIAN
     bool kineticScrollingEnabled;
+    bool singleTapEnabled;
 #endif
 
 private slots:
@@ -99,9 +100,10 @@ private slots:
     void refreshCurrentDirectory();
 #ifdef Q_OS_SYMBIAN
     void on_filesAndFoldersListWidget_itemClicked(
-#else
-    void on_filesAndFoldersListWidget_itemDoubleClicked(
+            QListWidgetItem* item
+            );
 #endif
+    void on_filesAndFoldersListWidget_itemDoubleClicked(
             QListWidgetItem* item
             );
     void up();

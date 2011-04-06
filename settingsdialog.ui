@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>226</height>
+    <height>254</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -33,7 +33,17 @@
       <item>
        <widget class="QCheckBox" name="kineticScrollingCheckBox">
         <property name="text">
-         <string>Kinetic Scrolling</string>
+         <string>Enable kinetic scrolling</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="singleTapCheckBox">
+        <property name="text">
+         <string>Open folders with a single tap</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

@@ -53,6 +53,13 @@ SettingsDialog::SettingsDialog(
                         false
                         ).toBool()
             );
+
+    ui->singleTapCheckBox->setChecked(
+            settings->value(
+                        "gui/single_tap",
+                        true
+                        ).toBool()
+            );
 #else
     ui->guiGroupBox->setVisible(false);
     ui->buttonBox->setVisible(false);
@@ -102,6 +109,11 @@ void SettingsDialog::reject()
     settings->setValue(
             "gui/kinetic_scrolling",
             ui->kineticScrollingCheckBox->isChecked()
+            );
+
+    settings->setValue(
+            "gui/single_tap",
+            ui->singleTapCheckBox->isChecked()
             );
 #endif
 

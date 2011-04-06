@@ -194,6 +194,10 @@ MainWindow::MainWindow(
             "gui/kinetic_scrolling",
             false
             ).toBool();
+    singleTapEnabled = settings->value(
+            "gui/single_tap",
+            true
+            ).toBool();
 
     //enable kinetic scrolling
     if(kineticScrollingEnabled)
@@ -809,12 +813,49 @@ void MainWindow::refreshCurrentDirectory()
 
 #ifdef Q_OS_SYMBIAN
 void MainWindow::on_filesAndFoldersListWidget_itemClicked(
-#else
-void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
-#endif
         QListWidgetItem* item
         )
 {
+    //make sure single tap is enabled
+#ifdef Q_OS_SYMBIAN
+    if(!singleTapEnabled)
+        return;
+#endif
+
+    //do nothing during scrolling or dragging
+#ifdef Q_OS_SYMBIAN
+    if(
+       int(
+           QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())
+           ->state()
+                    )
+        != 0)
+        return;
+#endif
+
+    QVariantMap map = item->data(Qt::UserRole).toMap();
+
+    if(map["is_dir"].toBool() == true)   //if the item is a directory
+    {
+        //navigate to a sub directory
+        requestDirectoryListing(
+                map["path"].toString()
+                );
+    }
+}
+
+#endif
+
+void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
+        QListWidgetItem* item
+        )
+{
+    //check if single tap is enabled
+#ifdef Q_OS_SYMBIAN
+    if(singleTapEnabled)
+        return;
+#endif
+
     //do nothing during scrolling or dragging
 #ifdef Q_OS_SYMBIAN
     if(
@@ -1506,6 +1547,11 @@ void MainWindow::showSettings()
     kineticScrollingEnabled = settings->value(
             "gui/kinetic_scrolling",
             false
+            ).toBool();
+
+    singleTapEnabled = settings->value(
+            "gui/single_tap",
+            true
             ).toBool();
 #endif
 
