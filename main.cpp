@@ -61,12 +61,10 @@ int main(int argc, char *argv[])
                 "Droper",
                 QString(
                         "This device contains Qt %1, which is unsupported. \n"
-                        "4.6.x are the only supported versions."
+                        "It's highly recommended that you install one of "
+                        "Qt 4.6.x since they are the only supported versions."
                         ).arg(qVersion())
-
                 );
-
-        return -1;
     }
 #endif
 
