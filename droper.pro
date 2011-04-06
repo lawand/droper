@@ -14,7 +14,8 @@ SOURCES += main.cpp\
     consumerdata.cpp \
     dropbox.cpp \
     downloaddialog.cpp \
-    uploaddialog.cpp
+    uploaddialog.cpp \
+    settingsdialog.cpp
 
 HEADERS  += mainwindow.h \
     oauth.h \
@@ -24,12 +25,14 @@ HEADERS  += mainwindow.h \
     consumerdata.h \
     dropbox.h \
     downloaddialog.h \
-    uploaddialog.h
+    uploaddialog.h \
+    settingsdialog.h
 
 FORMS    += mainwindow.ui \
     authenticationdialog.ui \
     downloaddialog.ui \
-    uploaddialog.ui
+    uploaddialog.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     main.qrc

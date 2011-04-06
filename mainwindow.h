@@ -77,6 +77,9 @@ private:
     DownloadDialog downloadDialog;
     bool renameOperationBeingProcessed;
     UploadDialog uploadDialog;
+#ifdef Q_OS_SYMBIAN
+    bool kineticScrollingEnabled;
+#endif
 
 private slots:
     void handleNetworkReply(QNetworkReply* networkReply);
@@ -93,7 +96,6 @@ private slots:
     void requestFolderCreation(QString path);
     void handleFolderCreation(QNetworkReply* networkReply);
     void about();
-    void forgetAuthentication();
     void refreshCurrentDirectory();
 #ifdef Q_OS_SYMBIAN
     void on_filesAndFoldersListWidget_itemClicked(
@@ -120,6 +122,7 @@ private slots:
     void showOptionsMenu();
     void showInfoMenu();
     void handleUploadDone(QString folder);
+    void showSettings();
 };
 
 #endif // MAINWINDOW_H

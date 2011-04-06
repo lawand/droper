@@ -52,6 +52,7 @@
 #include "downloaddialog.h"
 #include "uploaddialog.h"
 #include "json.h"
+#include "settingsdialog.h"
 #ifdef Q_OS_SYMBIAN
 #include <QtScroller>
 #endif
@@ -120,11 +121,6 @@ MainWindow::MainWindow(
             &uploadDialog,
             SLOT(show())
             );
-    connect(
-            ui->forgetAuthenticationAction,
-            SIGNAL(triggered()),
-            SLOT(forgetAuthentication())
-            );
     connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );
     connect( ui->copyAction, SIGNAL(triggered()), SLOT(copy()) );
     connect( ui->pasteAction, SIGNAL(triggered()), SLOT(paste()) );
@@ -147,6 +143,7 @@ MainWindow::MainWindow(
             SLOT(showProperties())
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
+    connect( ui->settingsAction, SIGNAL(triggered()), SLOT(showSettings()) );
 
     //this is necessary to refresh if upload was done and the user was
     //navigating the same folder
@@ -193,11 +190,19 @@ MainWindow::MainWindow(
     ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
 
 #ifdef Q_OS_SYMBIAN
+    kineticScrollingEnabled = settings->value(
+            "gui/kinetic_scrolling",
+            false
+            ).toBool();
+
     //enable kinetic scrolling
-    QtScroller::grabGesture(
-        ui->filesAndFoldersListWidget->viewport(),
-        QtScroller::TouchGesture
-        );
+    if(kineticScrollingEnabled)
+    {
+        QtScroller::grabGesture(
+            ui->filesAndFoldersListWidget->viewport(),
+            QtScroller::TouchGesture
+            );
+    }
 #endif
 }
 
@@ -246,7 +251,7 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                         "Restart the application to re-authenticate..."
                         );
 
-                settings->clear();
+                settings->remove("user");
             }
             else
             {
@@ -274,12 +279,15 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
 #ifdef Q_OS_SYMBIAN
             //regrabbing the gestures, for more info see
             //requestDirectoryListing()
-            if(api==Dropbox::METADATA)
+            if(kineticScrollingEnabled)
             {
-                QtScroller::grabGesture(
-                    ui->filesAndFoldersListWidget->viewport(),
-                    QtScroller::TouchGesture
-                    );
+                if(api==Dropbox::METADATA)
+                {
+                    QtScroller::grabGesture(
+                        ui->filesAndFoldersListWidget->viewport(),
+                        QtScroller::TouchGesture
+                        );
+                }
             }
 #endif
         }
@@ -481,9 +489,12 @@ void MainWindow::requestDirectoryListing(QString path)
     //after the directory listing is handled successfully or after the operation
     //has ended reproducing an error. in other words, either in
     //handleNetworkReply() or in handleDirectoryListing()
-    QtScroller::ungrabGesture(
-        ui->filesAndFoldersListWidget->viewport()
-        );
+    if(kineticScrollingEnabled)
+    {
+        QtScroller::ungrabGesture(
+            ui->filesAndFoldersListWidget->viewport()
+            );
+    }
 #endif
 
     QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
@@ -516,10 +527,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 #ifdef Q_OS_SYMBIAN
         //regrabbing the gestures, for more info see
         //requestDirectoryListing()
-        QtScroller::grabGesture(
-            ui->filesAndFoldersListWidget->viewport(),
-            QtScroller::TouchGesture
-            );
+        if(kineticScrollingEnabled)
+        {
+            QtScroller::grabGesture(
+                ui->filesAndFoldersListWidget->viewport(),
+                QtScroller::TouchGesture
+                );
+        }
 #endif
 
         return;
@@ -631,10 +645,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 #ifdef Q_OS_SYMBIAN
     //regrabbing the gestures, for more info see
     //requestDirectoryListing()
-    QtScroller::grabGesture(
-        ui->filesAndFoldersListWidget->viewport(),
-        QtScroller::TouchGesture
-        );
+    if(kineticScrollingEnabled)
+    {
+        QtScroller::grabGesture(
+            ui->filesAndFoldersListWidget->viewport(),
+            QtScroller::TouchGesture
+            );
+    }
 #endif
 }
 
@@ -785,11 +802,6 @@ void MainWindow::about()
     messageBox.exec();
 }
 
-void MainWindow::forgetAuthentication()
-{
-    settings->clear();
-}
-
 void MainWindow::refreshCurrentDirectory()
 {
     requestDirectoryListing(currentDirectory);
@@ -805,7 +817,11 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
 {
     //do nothing during scrolling or dragging
 #ifdef Q_OS_SYMBIAN
-    if(int(QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())->state())
+    if(
+       int(
+           QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())
+           ->state()
+                    )
         != 0)
         return;
 #endif
@@ -1357,17 +1373,23 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
 #ifdef Q_OS_SYMBIAN
     //disable kinetic scrolling while the menu is being executed
-    QtScroller::ungrabGesture(
-        ui->filesAndFoldersListWidget->viewport()
-        );
+        if(kineticScrollingEnabled)
+        {
+            QtScroller::ungrabGesture(
+                ui->filesAndFoldersListWidget->viewport()
+                );
+        }
 #endif
         menu.exec(ui->filesAndFoldersListWidget->mapToGlobal(point));
 #ifdef Q_OS_SYMBIAN
     //enable kinetic scrolling back
-    QtScroller::grabGesture(
-        ui->filesAndFoldersListWidget->viewport(),
-        QtScroller::TouchGesture
-        );
+        if(kineticScrollingEnabled)
+        {
+            QtScroller::grabGesture(
+                ui->filesAndFoldersListWidget->viewport(),
+                QtScroller::TouchGesture
+                );
+        }
 #endif
     }
 }
@@ -1432,7 +1454,7 @@ void MainWindow::showOptionsMenu()
     menu.addAction(ui->showActiveDownloadAction);
     menu.addAction(ui->showActiveUploadAction);
     menu.addAction(ui->showAccountInfoAction);
-    menu.addAction(ui->forgetAuthenticationAction);
+    menu.addAction(ui->settingsAction);
 
     if(downloadDialog.isActive())
         ui->showActiveDownloadAction->setEnabled(true);
@@ -1472,4 +1494,35 @@ void MainWindow::handleUploadDone(QString folder)
 {
     if(folder == currentDirectory)
         refresh();
+}
+
+void MainWindow::showSettings()
+{
+    SettingsDialog settingsDialog(settings, this);
+    settingsDialog.exec();
+
+    //update variables
+#ifdef Q_OS_SYMBIAN
+    kineticScrollingEnabled = settings->value(
+            "gui/kinetic_scrolling",
+            false
+            ).toBool();
+#endif
+
+    //update mainWindows' state based on new variable values
+#ifdef Q_OS_SYMBIAN
+    if(kineticScrollingEnabled)
+    {
+        QtScroller::grabGesture(
+            ui->filesAndFoldersListWidget->viewport(),
+            QtScroller::TouchGesture
+            );
+    }
+    else
+    {
+        QtScroller::ungrabGesture(
+            ui->filesAndFoldersListWidget->viewport()
+            );
+    }
+#endif
 }
