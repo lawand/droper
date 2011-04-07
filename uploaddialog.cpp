@@ -240,6 +240,8 @@ void UploadDialog::toggleStart()
             ui->stateLabel->setText("Starting...");
             ui->toggleStartPushButton->setText("Cancel");
             ui->toggleStartAction->setText("Cancel");
+            ui->toggleStartPushButton->setEnabled(false);
+            ui->toggleStartAction->setEnabled(false);
             active = true;
             uploadTime.start();
 
@@ -295,6 +297,8 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
     ui->stateLabel->setText(
             QString("Uploading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
             );
+    ui->toggleStartPushButton->setEnabled(true);
+    ui->toggleStartAction->setEnabled(true);
 }
 
 void UploadDialog::handleFinished()
@@ -322,6 +326,8 @@ void UploadDialog::handleFinished()
         ui->stateLabel->setText("Ready to start");
         ui->toggleStartPushButton->setText("Start");
         ui->toggleStartAction->setText("Start");
+        ui->toggleStartPushButton->setEnabled(true);
+        ui->toggleStartAction->setEnabled(true);
         networkReply->deleteLater();
         active = false;
     }
