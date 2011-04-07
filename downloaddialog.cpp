@@ -116,6 +116,8 @@ void DownloadDialog::setFileAndFolder(
     ui->stateLabel->setText("Ready to start");
     ui->toggleStartPushButton->setEnabled(true);
     ui->toggleStartAction->setEnabled(true);
+
+    resize(sizeHint());
 }
 
 bool DownloadDialog::isActive()

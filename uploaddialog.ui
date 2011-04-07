@@ -16,6 +16,12 @@
     <height>0</height>
    </size>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>360</width>
+    <height>16777215</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Droper</string>
   </property>
@@ -33,6 +39,9 @@
       <widget class="QLabel" name="fileNameAndSizeLabel">
        <property name="text">
         <string>---</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -64,6 +73,9 @@
       <widget class="QLabel" name="folderLabel">
        <property name="text">
         <string>---</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
