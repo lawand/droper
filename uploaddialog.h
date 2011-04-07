@@ -33,6 +33,7 @@
 #include <QTime>
 class QNetworkReply;
 class QNetworkAccessManager;
+class QFile;
 class OAuth;
 class UserData;
 class Dropbox;
@@ -78,6 +79,8 @@ private:
     QNetworkReply* networkReply;
     bool active;
     QTime uploadTime;
+    QByteArray* multipartform;
+    QFile* file;
 
 private slots:
     void initialize();

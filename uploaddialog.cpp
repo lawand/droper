@@ -30,6 +30,7 @@
 //data members
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QFile>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
@@ -176,23 +177,23 @@ void UploadDialog::toggleStart()
                      );
 
         //prepare binary data
-            QByteArray multipartform;
+            multipartform = new QByteArray();
             QString crlf("\r\n");
             QString boundaryStr(
                     "---------------------------109074266748897678777839994"
                     );
             QString boundary="--"+boundaryStr+crlf;
-            multipartform.append(boundary.toAscii());
-            multipartform.append(
+            multipartform->append(boundary.toAscii());
+            multipartform->append(
                     QString("Content-Disposition: form-data; name=\"file\"; "
                             "filename=\"" + localFileName.toUtf8() + "\"" +
                             crlf).toAscii()
                     );
-            multipartform.append(
+            multipartform->append(
                     QString("Content-Type: text/plain" + crlf + crlf).toAscii()
                     );
-            QFile file(localFile);
-            if(file.open(QIODevice::ReadOnly) == false)
+            file = new QFile(localFile);
+            if(file->open(QIODevice::ReadOnly) == false)
             {
                 QMessageBox::critical(
                         this,
@@ -202,9 +203,9 @@ void UploadDialog::toggleStart()
 
                 return;
             }
-            multipartform.append(file.readAll());
-            file.close();
-            multipartform.append(
+            multipartform->append(file->readAll());
+            file->close();
+            multipartform->append(
                     QString(crlf + "--" + boundaryStr + "--" + crlf).toAscii()
                     );
 
@@ -230,7 +231,7 @@ void UploadDialog::toggleStart()
 
         //send request
             networkReply = networkAccessManager->post(
-                    networkRequest, multipartform
+                    networkRequest, *multipartform
                     );
 
         //update variables
@@ -296,6 +297,10 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
 
 void UploadDialog::handleFinished()
 {
+    //delete temporary data used during upload
+    delete multipartform;
+    delete file;
+
     if(networkReply->error() != QNetworkReply::NoError)
     {
         //if the operation was canceled, do nothing

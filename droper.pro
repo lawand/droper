@@ -46,4 +46,7 @@ symbian {
 
     #for kinetic scrolling
     include(kineticscroller/qtscroller.pri)
+
+    TARGET.EPOCHEAPSIZE =  0x00020000 0x25600000
+    TARGET.EPOCSTACKSIZE = 0x00014000
     }
