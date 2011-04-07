@@ -99,6 +99,7 @@ private slots:
     void about();
     void refreshCurrentDirectory();
 #ifdef Q_OS_SYMBIAN
+    void open();
     void on_filesAndFoldersListWidget_itemClicked(
             QListWidgetItem* item
             );

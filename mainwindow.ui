@@ -322,6 +322,11 @@
     <string>Settings</string>
    </property>
   </action>
+  <action name="openAction">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>filesAndFoldersListWidget</tabstop>

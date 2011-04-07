@@ -144,6 +144,9 @@ MainWindow::MainWindow(
             );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
     connect( ui->settingsAction, SIGNAL(triggered()), SLOT(showSettings()) );
+#ifdef Q_OS_SYMBIAN
+    connect(ui->openAction, SIGNAL(triggered()), SLOT(open()));
+#endif
 
     //this is necessary to refresh if upload was done and the user was
     //navigating the same folder
@@ -821,18 +824,35 @@ void MainWindow::refreshCurrentDirectory()
 }
 
 #ifdef Q_OS_SYMBIAN
+void MainWindow::open()
+{
+    //if no item is selected, do nothing
+    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
+        return;
+
+    QListWidgetItem* currentItem =
+            ui->filesAndFoldersListWidget->currentItem();
+
+    QVariantMap map = currentItem->data(Qt::UserRole).toMap();
+
+    if(map["is_dir"].toBool() == true)   //if the item is a directory
+    {
+        //navigate to a sub directory
+        requestDirectoryListing(
+                map["path"].toString()
+                );
+    }
+}
+
 void MainWindow::on_filesAndFoldersListWidget_itemClicked(
         QListWidgetItem* item
         )
 {
     //make sure single tap is enabled
-#ifdef Q_OS_SYMBIAN
     if(!singleTapEnabled)
         return;
-#endif
 
     //do nothing during scrolling or dragging
-#ifdef Q_OS_SYMBIAN
     if(
        int(
            QtScroller::scroller(ui->filesAndFoldersListWidget->viewport())
@@ -840,7 +860,6 @@ void MainWindow::on_filesAndFoldersListWidget_itemClicked(
                     )
         != 0)
         return;
-#endif
 
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
@@ -852,17 +871,15 @@ void MainWindow::on_filesAndFoldersListWidget_itemClicked(
                 );
     }
 }
-
 #endif
 
 void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
         QListWidgetItem* item
         )
 {
-    //check if single tap is enabled
+    //this is disabled on symbian
 #ifdef Q_OS_SYMBIAN
-    if(singleTapEnabled)
-        return;
+    return;
 #endif
 
     //do nothing during scrolling or dragging
@@ -1407,14 +1424,23 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 {
     if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
+        QVariantMap map = ui->filesAndFoldersListWidget->currentItem()
+                          ->data(Qt::UserRole).toMap();
+
         QMenu menu(this);
+#ifdef Q_OS_SYMBIAN
+        //add open action if single tap is disabled
+        if(map["is_dir"].toBool() == true)   //if the item is a directory
+        {
+            if(!singleTapEnabled)
+                menu.addAction(ui->openAction);
+        }
+#endif
         menu.addAction(ui->cutAction);
         menu.addAction(ui->copyAction);
         menu.addAction(ui->renameAction);
         menu.addAction(ui->deleteAction);
 
-        QVariantMap map = ui->filesAndFoldersListWidget->currentItem()
-                          ->data(Qt::UserRole).toMap();
         if(map["is_dir"].toBool() != true)   //if the item is not a directory
         {
             menu.addAction(ui->propertiesAction);
