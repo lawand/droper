@@ -1,6 +1,6 @@
 QT       += core gui network svg
 
-VERSION = 0.3.1
+VERSION = 0.3.2
 
 TARGET = Droper
 TEMPLATE = app
