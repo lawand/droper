@@ -1423,8 +1423,8 @@ void MainWindow::showProperties()
             );
     messageBox.setInformativeText(
             QString(
-                    "Size: %1\n"
-                    "Path: %2 \n"
+                    "Size: %1\n\n"
+                    "Path: %2 \n\n"
                     "Modified (in UTC): %3"
                     ).arg(size).arg(path).arg(modifiedString)
             );
