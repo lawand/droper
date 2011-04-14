@@ -62,6 +62,9 @@ public:
             );
     ~MainWindow();
 
+public slots:
+    void setup();
+
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;

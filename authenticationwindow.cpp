@@ -24,11 +24,12 @@
 ****************************************************************************/
 
 //corresponding headers
-#include "authenticationdialog.h"
-#include "ui_authenticationdialog.h"
+#include "authenticationwindow.h"
+#include "ui_authenticationwindow.h"
 
 //data members
 #include <QNetworkAccessManager>
+#include <QSettings>
 #include "oauth.h"
 #include "userdata.h"
 #include "dropbox.h"
@@ -41,55 +42,55 @@
 #include <QDesktopWidget>
 #include "json.h"
 
-AuthenticationDialog::AuthenticationDialog(
+AuthenticationWindow::AuthenticationWindow(
         QNetworkAccessManager* networkAccessManager,
         OAuth* oAuth,
         UserData* userData,
         Dropbox* dropbox,
+        QSettings* settings,
         QWidget *parent
         ) :
     QDialog(parent),
-    ui(new Ui::AuthenticationDialog)
+    ui(new Ui::AuthenticationWindow)
 {
     //member initialization
     this->networkAccessManager = networkAccessManager;
     this->oAuth = oAuth;
     this->userData = userData;
     this->dropbox = dropbox;
+    this->settings = settings;
 
     //GUI initialization
     ui->setupUi(this);
+#ifndef Q_OS_SYMBIAN
     //draw at screen's center
     move(
             QApplication::desktop()->availableGeometry().center() -
             this->rect().center()
             );
+#endif
 
     //initial connections
     connect(
-            ui->buttonBox,
-            SIGNAL(accepted()),
+            ui->okPushButton,
+            SIGNAL(clicked()),
             SLOT(requestTokenAndSecret())
             );
     connect(
-            ui->buttonBox,
-            SIGNAL(rejected()),
-            SLOT(reject())
+            ui->cancelPushButton,
+            SIGNAL(clicked()),
+            SLOT(close())
             );
-
-    //some initial values for data members
-    ui->infoLabel->setVisible(false);
 }
 
-AuthenticationDialog::~AuthenticationDialog()
+AuthenticationWindow::~AuthenticationWindow()
 {
     delete ui;
 }
 
-void AuthenticationDialog::requestTokenAndSecret()
+void AuthenticationWindow::requestTokenAndSecret()
 {
     ui->infoLabel->setText("Please Wait...");
-    ui->infoLabel->setVisible(true);
 
     QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
     url.addQueryItem("email", ui->emailLineEdit->text());
@@ -109,7 +110,7 @@ void AuthenticationDialog::requestTokenAndSecret()
             );
 }
 
-void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
+void AuthenticationWindow::handleTokenAndSecret(QNetworkReply* networkReply)
 {
     disconnect(
             this->networkAccessManager,
@@ -139,7 +140,7 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
                     );
         }
 
-        ui->infoLabel->setVisible(false);
+        ui->infoLabel->setText("Enter Your Dropbox Credentials.");
 
         return;
     }
@@ -163,5 +164,11 @@ void AuthenticationDialog::handleTokenAndSecret(QNetworkReply* networkReply)
     userData->secret = jsonResult["secret"].toString();
     userData->email = ui->emailLineEdit->text().toLower();
 
-    accept();
+    settings->setValue("user/token", userData->token);
+    settings->setValue("user/secret", userData->secret);
+    settings->setValue("user/email", userData->email);
+
+    emit done();
+
+    hide();
 }

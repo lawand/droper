@@ -28,7 +28,7 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QSslSocket>
-#include "authenticationdialog.h"
+#include "authenticationwindow.h"
 #include "consumerdata.h"
 #include "dropbox.h"
 #include "mainwindow.h"
@@ -76,34 +76,13 @@ int main(int argc, char *argv[])
 
     QSettings settings("lawand", "droper");
 
-    if(settings.value("user/token").isNull() ||
-       settings.value("user/secret").isNull() ||
-       settings.value("user/email").isNull())
-    {
-        AuthenticationDialog authenticationDialog(
-                &networkAccessManager,
-                &oAuth,
-                &userData,
-                &dropbox
-                );
-
-        if(authenticationDialog.exec() != QDialog::Accepted)
-        {
-            return 0;
-        }
-        else
-        {
-            settings.setValue("user/token", userData.token);
-            settings.setValue("user/secret", userData.secret);
-            settings.setValue("user/email", userData.email);
-        }
-    }
-    else
-    {
-        userData.token = settings.value("user/token").toString();
-        userData.secret = settings.value("user/secret").toString();
-        userData.email = settings.value("user/email").toString();
-    }
+    AuthenticationWindow authenticationWindow(
+            &networkAccessManager,
+            &oAuth,
+            &userData,
+            &dropbox,
+            &settings
+            );
 
     MainWindow mainWindow(
             &networkAccessManager,
@@ -112,11 +91,28 @@ int main(int argc, char *argv[])
             &dropbox,
             &settings
             );
+
+    if(settings.value("user/token").isNull() ||
+       settings.value("user/secret").isNull() ||
+       settings.value("user/email").isNull())
+    {
 #ifdef Q_OS_SYMBIAN
-    mainWindow.showFullScreen();
+        authenticationWindow.showFullScreen();
 #else
-    mainWindow.show();
+        authenticationWindow.show();
 #endif
+
+        QObject::connect(
+                &authenticationWindow,
+                SIGNAL(done()),
+                &mainWindow,
+                SLOT(setup())
+                );
+    }
+    else
+    {
+        mainWindow.setup();
+    }
 
     return application.exec();
 }

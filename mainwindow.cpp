@@ -102,6 +102,18 @@ MainWindow::MainWindow(
             this->rect().center()
             );
 #endif
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::setup()
+{
+    this->userData->token = settings->value("user/token").toString();
+    this->userData->secret = settings->value("user/secret").toString();
+    this->userData->email = settings->value("user/email").toString();
 
     //initial connections
     connect(
@@ -211,11 +223,12 @@ MainWindow::MainWindow(
             );
     }
 #endif
-}
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+#ifdef Q_OS_SYMBIAN
+    showFullScreen();
+#else
+    show();
+#endif
 }
 
 void MainWindow::handleNetworkReply(QNetworkReply* networkReply)

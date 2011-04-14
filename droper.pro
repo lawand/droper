@@ -9,30 +9,30 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     oauth.cpp \
     userdata.cpp \
-    authenticationdialog.cpp \
     json.cpp \
     consumerdata.cpp \
     dropbox.cpp \
     downloaddialog.cpp \
     uploaddialog.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    authenticationwindow.cpp
 
 HEADERS  += mainwindow.h \
     oauth.h \
     userdata.h \
-    authenticationdialog.h \
     json.h \
     consumerdata.h \
     dropbox.h \
     downloaddialog.h \
     uploaddialog.h \
-    settingsdialog.h
+    settingsdialog.h \
+    authenticationwindow.h
 
 FORMS    += mainwindow.ui \
-    authenticationdialog.ui \
     downloaddialog.ui \
     uploaddialog.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    authenticationwindow.ui
 
 RESOURCES += \
     main.qrc

@@ -23,14 +23,15 @@
 **
 ****************************************************************************/
 
-#ifndef AUTHENTICATIONDIALOG_H
-#define AUTHENTICATIONDIALOG_H
+#ifndef AUTHENTICATIONWINDOW_H
+#define AUTHENTICATIONWINDOW_H
 
 //base class
 #include <QDialog>
 
 //data members
 class QNetworkAccessManager;
+class QSettings;
 class OAuth;
 class UserData;
 class Dropbox;
@@ -39,35 +40,40 @@ class Dropbox;
 class QNetworkReply;
 
 namespace Ui {
-    class AuthenticationDialog;
+    class AuthenticationWindow;
 }
 
-class AuthenticationDialog : public QDialog
+class AuthenticationWindow : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AuthenticationDialog(
+    explicit AuthenticationWindow(
             QNetworkAccessManager* networkAccessManager,
             OAuth* oAuth,
             UserData* userData,
             Dropbox* dropbox,
+            QSettings* settings,
             QWidget *parent = 0
             );
-    ~AuthenticationDialog();
+    ~AuthenticationWindow();
+
+signals:
+    void done();
 
 public: //shared objects
     QNetworkAccessManager* networkAccessManager;
     OAuth* oAuth;
     UserData* userData;
     Dropbox* dropbox;
+    QSettings* settings;
 
 private:
-    Ui::AuthenticationDialog *ui;
+    Ui::AuthenticationWindow *ui;
 
 private slots:
     void requestTokenAndSecret();
     void handleTokenAndSecret(QNetworkReply* networkReply);
 };
 
-#endif // AUTHENTICATIONDIALOG_H
+#endif // AUTHENTICATIONWINDOW_H
