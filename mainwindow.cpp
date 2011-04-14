@@ -450,8 +450,8 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
                                 ;
 
     qreal unused = quotaInfo["quota"].toReal() -
-                   quotaInfo["normal"].toReal() +
-                   quotaInfo["shared"].toReal();
+                   (quotaInfo["normal"].toReal() +
+                   quotaInfo["shared"].toReal());
     QString unusedUnit;
     if (unused < 1024) {
         unusedUnit = "bytes";
