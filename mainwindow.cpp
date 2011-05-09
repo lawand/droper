@@ -819,7 +819,7 @@ void MainWindow::about()
             "http://lawand.github.com/droper/"
             "</a> <br><br>"
 
-            "<a href=\"http://www.facebook.com/pages/Droper/192916850745082\">"
+            "<a href=\"http://www.facebook.com/droper.ftw\">"
             "Follow on Facebook!</a> <br>"
             "Subscribe to stay up to date with latest releases and "
             "announcements."
