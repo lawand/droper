@@ -40,12 +40,12 @@
 #include <QMessageBox>
 
 UploadDialog::UploadDialog(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
-        QWidget *parent
-        ) :
+    QNetworkAccessManager* networkAccessManager,
+    OAuth* oAuth,
+    UserData* userData,
+    Dropbox* dropbox,
+    QWidget *parent
+    ) :
     QDialog(parent),
     ui(new Ui::UploadDialog),
     networkReply(0),
@@ -62,16 +62,16 @@ UploadDialog::UploadDialog(
 
     //initial connections
     connect(
-            ui->buttonBox,
-            SIGNAL(rejected()),
-            SLOT(reject())
-            );
+        ui->buttonBox,
+        SIGNAL(rejected()),
+        SLOT(reject())
+        );
     connect(
-            ui->toggleStartPushButton,
-            SIGNAL(clicked()),
-            ui->toggleStartAction,
-            SLOT(trigger())
-            );
+        ui->toggleStartPushButton,
+        SIGNAL(clicked()),
+        ui->toggleStartAction,
+        SLOT(trigger())
+        );
     connect(ui->toggleStartAction, SIGNAL(triggered()), SLOT(toggleStart()));
 
 #ifdef Q_OS_SYMBIAN
@@ -90,9 +90,9 @@ UploadDialog::~UploadDialog()
 }
 
 void UploadDialog::setFileAndFolder(
-        QString localFile,
-        QString remoteFolder
-        )
+    QString localFile,
+    QString remoteFolder
+    )
 {
     this->localFile = localFile;
     this->remoteFolder = remoteFolder;
@@ -115,20 +115,20 @@ void UploadDialog::setFileAndFolder(
         sizeUnit = "GB";
     }
     QString sizeString = QString("%1%2")
-                                .arg(size, 0, 'f', 1)
-                                .arg(sizeUnit)
-                                ;
+        .arg(size, 0, 'f', 1)
+        .arg(sizeUnit)
+        ;
 
     QString remoteFolderName = remoteFolder.right(
-            (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
-             );
+        (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
+        );
     if(remoteFolderName == "")  //the case of the remoteFolder being "/"
         remoteFolderName = "Dropbox (root)";
 
     //update variables
     ui->fileNameAndSizeLabel->setText(
-            QString("%1 (%2)").arg(fileInfo.fileName()).arg(sizeString)
-            );
+        QString("%1 (%2)").arg(fileInfo.fileName()).arg(sizeString)
+        );
     ui->folderLabel->setText(remoteFolderName);
     ui->progressBar->setFormat("%p%");
     ui->stateLabel->setText("Ready to start");
@@ -175,66 +175,66 @@ void UploadDialog::toggleStart()
     {
         //compute localFileName
             QString localFileName = localFile.right(
-                    (localFile.length()-localFile.lastIndexOf("/"))-1
-                     );
+                (localFile.length()-localFile.lastIndexOf("/"))-1
+                );
 
         //prepare binary data
             multipartform = new QByteArray();
             QString crlf("\r\n");
             QString boundaryStr(
-                    "---------------------------109074266748897678777839994"
-                    );
+                "---------------------------109074266748897678777839994"
+                );
             QString boundary="--"+boundaryStr+crlf;
             multipartform->append(boundary.toAscii());
             multipartform->append(
-                    QString("Content-Disposition: form-data; name=\"file\"; "
-                            "filename=\"" + localFileName.toUtf8() + "\"" +
-                            crlf).toAscii()
-                    );
+                QString("Content-Disposition: form-data; name=\"file\"; "
+                    "filename=\"" + localFileName.toUtf8() + "\"" + crlf
+                    ).toAscii()
+                );
             multipartform->append(
-                    QString("Content-Type: text/plain" + crlf + crlf).toAscii()
-                    );
+                QString("Content-Type: text/plain" + crlf + crlf).toAscii()
+                );
             file = new QFile(localFile);
             if(file->open(QIODevice::ReadOnly) == false)
             {
                 QMessageBox::critical(
-                        this,
-                        "Droper",
-                        "Can't open the file for reading!"
-                        );
+                    this,
+                    "Droper",
+                    "Can't open the file for reading!"
+                    );
 
                 return;
             }
             multipartform->append(file->readAll());
             file->close();
             multipartform->append(
-                    QString(crlf + "--" + boundaryStr + "--" + crlf).toAscii()
-                    );
+                QString(crlf + "--" + boundaryStr + "--" + crlf).toAscii()
+                );
 
         //prepare request
             QUrl url =
-                    dropbox->apiToUrl(Dropbox::FILES).toString() +
-                    remoteFolder
-                    ;
+                dropbox->apiToUrl(Dropbox::FILES).toString() +
+                remoteFolder
+                ;
             url.addQueryItem("file", localFileName);
 
             QNetworkRequest networkRequest(url);
 
             networkRequest.setHeader(
-                    QNetworkRequest::ContentTypeHeader,
-                    "multipart/form-data; boundary=" + boundaryStr
-                    );
+                QNetworkRequest::ContentTypeHeader,
+                "multipart/form-data; boundary=" + boundaryStr
+                );
 
             oAuth->signRequest(
-                    userData,
-                    "POST",
-                    &networkRequest
-                    );
+                userData,
+                "POST",
+                &networkRequest
+                );
 
         //send request
             networkReply = networkAccessManager->post(
-                    networkRequest, *multipartform
-                    );
+                networkRequest, *multipartform
+                );
 
         //update variables
             ui->stateLabel->setText("Starting...");
@@ -247,15 +247,15 @@ void UploadDialog::toggleStart()
 
         //establish connections
             connect(
-                    networkReply,
-                    SIGNAL(uploadProgress(qint64,qint64)),
-                    SLOT(handleUploadProgress(qint64,qint64))
-                    );
+                networkReply,
+                SIGNAL(uploadProgress(qint64,qint64)),
+                SLOT(handleUploadProgress(qint64,qint64))
+                );
             connect(
-                    networkReply,
-                    SIGNAL(finished()),
-                    SLOT(handleFinished())
-                    );
+                networkReply,
+                SIGNAL(finished()),
+                SLOT(handleFinished())
+                );
     }
     else
     {
@@ -295,8 +295,8 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
     //update variables
     ui->progressBar->setValue((sent*100)/total);
     ui->stateLabel->setText(
-            QString("Uploading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
-            );
+        QString("Uploading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
+        );
     ui->toggleStartPushButton->setEnabled(true);
     ui->toggleStartAction->setEnabled(true);
 }
@@ -315,10 +315,10 @@ void UploadDialog::handleFinished()
 
         //notify the user
         QMessageBox::critical(
-                this,
-                "Droper",
-                "File upload error!"
-                );
+            this,
+            "Droper",
+            "File upload error!"
+            );
         show();
 
         //update variables
@@ -335,23 +335,23 @@ void UploadDialog::handleFinished()
     {
         //compute remoteFolderName and localFileName
         QString remoteFolderName = remoteFolder.right(
-                (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
-                 );
+            (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
+            );
         if(remoteFolderName == "")  //the case of the remoteFolder being "/"
             remoteFolderName = "Dropbox (root)";
         QString localFileName = localFile.right(
-                (localFile.length()-localFile.lastIndexOf("/"))-1
-                 );
+            (localFile.length()-localFile.lastIndexOf("/"))-1
+            );
 
         //notify the user
         QMessageBox::information(
-                this,
-                "Droper",
-                QString(
-                        "The file '%1' was successfully uploaded to the "
-                        "folder '%2'."
-                        ).arg(localFileName).arg(remoteFolderName)
-                );
+            this,
+            "Droper",
+            QString(
+                "The file '%1' was successfully uploaded to the "
+                "folder '%2'."
+                ).arg(localFileName).arg(remoteFolderName)
+            );
 
         //notify the main window
         emit done(remoteFolder);

@@ -34,9 +34,9 @@
 #include <QMessageBox>
 
 SettingsDialog::SettingsDialog(
-        QSettings* settings,
-        QWidget *parent
-        ) :
+    QSettings* settings,
+    QWidget *parent
+    ) :
     QDialog(parent),
     ui(new Ui::SettingsDialog)
 {
@@ -48,18 +48,18 @@ SettingsDialog::SettingsDialog(
     ui->currentAccountLabel->setText(settings->value("user/email").toString());
 #ifdef Q_OS_SYMBIAN
     ui->kineticScrollingCheckBox->setChecked(
-            settings->value(
-                        "gui/kinetic_scrolling",
-                        false
-                        ).toBool()
-            );
+        settings->value(
+            "gui/kinetic_scrolling",
+            false
+            ).toBool()
+        );
 
     ui->singleTapCheckBox->setChecked(
-            settings->value(
-                        "gui/single_tap",
-                        true
-                        ).toBool()
-            );
+        settings->value(
+            "gui/single_tap",
+            true
+            ).toBool()
+        );
 #else
     ui->guiGroupBox->setVisible(false);
     ui->buttonBox->setVisible(false);
@@ -77,27 +77,27 @@ void SettingsDialog::on_kineticScrollingCheckBox_clicked()
     if(ui->kineticScrollingCheckBox->isChecked() == true)
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "This is an expirmental feature and might not "
-                "be as usable as other stable features, and might even not "
-                "work at all. \n"
-                "Note: Disabling the single tap option might help."
-                );
+            this,
+            "Droper",
+            "This is an expirmental feature and might not "
+            "be as usable as other stable features, and might even not "
+            "work at all. \n"
+            "Note: Disabling the single tap option might help."
+            );
     }
 }
 
 void SettingsDialog::on_forgetAuthenticationPushButton_clicked()
 {
     QMessageBox::StandardButton response = QMessageBox::question(
-            this,
-            "Droper",
-            "Are you sure you want to forget authentication? \n"
-            "(This means that you'll have to login the next time you use "
-            "Droper)",
-            QMessageBox::No|QMessageBox::Yes,
-            QMessageBox::No
-            );
+        this,
+        "Droper",
+        "Are you sure you want to forget authentication? \n"
+        "(This means that you'll have to login the next time you use "
+        "Droper)",
+        QMessageBox::No|QMessageBox::Yes,
+        QMessageBox::No
+        );
 
     if(response == QMessageBox::Yes)
         settings->remove("user");
@@ -108,14 +108,14 @@ void SettingsDialog::reject()
     //write settings
 #ifdef Q_OS_SYMBIAN
     settings->setValue(
-            "gui/kinetic_scrolling",
-            ui->kineticScrollingCheckBox->isChecked()
-            );
+        "gui/kinetic_scrolling",
+        ui->kineticScrollingCheckBox->isChecked()
+        );
 
     settings->setValue(
-            "gui/single_tap",
-            ui->singleTapCheckBox->isChecked()
-            );
+        "gui/single_tap",
+        ui->singleTapCheckBox->isChecked()
+        );
 #endif
 
     QDialog::reject();

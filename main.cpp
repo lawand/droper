@@ -43,11 +43,11 @@ int main(int argc, char *argv[])
     if( !QSslSocket::supportsSsl() )
     {
         QMessageBox::critical(
-                0,
-                "Droper",
-                "OpenSSL not detected, install it and "
-                "try again."
-                );
+            0,
+            "Droper",
+            "OpenSSL not detected, install it and "
+            "try again."
+            );
 
         return -1;
     }
@@ -57,14 +57,14 @@ int main(int argc, char *argv[])
     if( !QString(qVersion()).startsWith("4.6") )
     {
         QMessageBox::critical(
-                0,
-                "Droper",
-                QString(
-                        "This device contains Qt %1, which is unsupported. \n"
-                        "It's highly recommended that you install one of "
-                        "Qt 4.6.x since they are the only supported versions."
-                        ).arg(qVersion())
-                );
+            0,
+            "Droper",
+            QString(
+                "This device contains Qt %1, which is unsupported. \n"
+                "It's highly recommended that you install one of "
+                "Qt 4.6.x since they are the only supported versions."
+                ).arg(qVersion())
+            );
     }
 #endif
 
@@ -77,24 +77,25 @@ int main(int argc, char *argv[])
     QSettings settings("lawand", "droper");
 
     AuthenticationWindow authenticationWindow(
-            &networkAccessManager,
-            &oAuth,
-            &userData,
-            &dropbox,
-            &settings
-            );
+        &networkAccessManager,
+        &oAuth,
+        &userData,
+        &dropbox,
+        &settings
+        );
 
     MainWindow mainWindow(
-            &networkAccessManager,
-            &oAuth,
-            &userData,
-            &dropbox,
-            &settings
-            );
+        &networkAccessManager,
+        &oAuth,
+        &userData,
+        &dropbox,
+        &settings
+        );
 
     if(settings.value("user/token").isNull() ||
-       settings.value("user/secret").isNull() ||
-       settings.value("user/email").isNull())
+        settings.value("user/secret").isNull() ||
+        settings.value("user/email").isNull()
+        )
     {
 #ifdef Q_OS_SYMBIAN
         authenticationWindow.showFullScreen();
@@ -103,11 +104,11 @@ int main(int argc, char *argv[])
 #endif
 
         QObject::connect(
-                &authenticationWindow,
-                SIGNAL(done()),
-                &mainWindow,
-                SLOT(setup())
-                );
+            &authenticationWindow,
+            SIGNAL(done()),
+            &mainWindow,
+            SLOT(setup())
+            );
     }
     else
     {

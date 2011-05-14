@@ -58,30 +58,30 @@
 #endif
 
 MainWindow::MainWindow(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
-        QSettings* settings,
-        QWidget *parent
-        ) :
+    QNetworkAccessManager* networkAccessManager,
+    OAuth* oAuth,
+    UserData* userData,
+    Dropbox* dropbox,
+    QSettings* settings,
+    QWidget *parent
+    ) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     currentDirectory("/"),
     downloadDialog(
-            networkAccessManager,
-            oAuth,
-            userData,
-            dropbox,
-            this
-            ),
+        networkAccessManager,
+        oAuth,
+        userData,
+        dropbox,
+        this
+        ),
     uploadDialog(
-            networkAccessManager,
-            oAuth,
-            userData,
-            dropbox,
-            this
-            ),
+        networkAccessManager,
+        oAuth,
+        userData,
+        dropbox,
+        this
+        ),
     renameOperationBeingProcessed(false)
 {
     //member initialization
@@ -98,9 +98,9 @@ MainWindow::MainWindow(
 #ifndef Q_OS_SYMBIAN
     //draw window at screen's center
     move(
-            QApplication::desktop()->availableGeometry().center() -
-            this->rect().center()
-            );
+        QApplication::desktop()->availableGeometry().center() -
+        this->rect().center()
+        );
 #endif
 }
 
@@ -117,32 +117,32 @@ void MainWindow::setup()
 
     //initial connections
     connect(
-            ui->showAccountInfoAction,
-            SIGNAL(triggered()),
-            SLOT(requestAccountInformation())
-            );
+        ui->showAccountInfoAction,
+        SIGNAL(triggered()),
+        SLOT(requestAccountInformation())
+        );
     connect(
-            ui->showActiveDownloadAction,
-            SIGNAL(triggered()),
-            &downloadDialog,
-            SLOT(show())
-            );
+        ui->showActiveDownloadAction,
+        SIGNAL(triggered()),
+        &downloadDialog,
+        SLOT(show())
+        );
     connect(
-            ui->showActiveUploadAction,
-            SIGNAL(triggered()),
-            &uploadDialog,
-            SLOT(show())
-            );
+        ui->showActiveUploadAction,
+        SIGNAL(triggered()),
+        &uploadDialog,
+        SLOT(show())
+        );
     connect( ui->cutAction, SIGNAL(triggered()), SLOT(cut()) );
     connect( ui->copyAction, SIGNAL(triggered()), SLOT(copy()) );
     connect( ui->pasteAction, SIGNAL(triggered()), SLOT(paste()) );
     connect( ui->renameAction, SIGNAL(triggered()), SLOT(rename()) );
     connect( ui->deleteAction, SIGNAL(triggered()), SLOT(del()) );
     connect(
-            ui->createFolderAction,
-            SIGNAL(triggered()),
-            SLOT(createFolder())
-            );
+        ui->createFolderAction,
+        SIGNAL(triggered()),
+        SLOT(createFolder())
+        );
     connect( ui->upAction, SIGNAL(triggered()), SLOT(up()) );
     connect( ui->refreshAction, SIGNAL(triggered()), SLOT(refresh()) );
     connect( ui->aboutAction, SIGNAL(triggered()), SLOT(about()) );
@@ -150,10 +150,10 @@ void MainWindow::setup()
     connect( ui->downloadAction, SIGNAL(triggered()), SLOT(download()) );
     connect( ui->uploadAction, SIGNAL(triggered()), SLOT(upload()) );
     connect(
-            ui->propertiesAction,
-            SIGNAL(triggered()),
-            SLOT(showProperties())
-            );
+        ui->propertiesAction,
+        SIGNAL(triggered()),
+        SLOT(showProperties())
+        );
     connect( ui->exitAction, SIGNAL(triggered()), SLOT(close()) );
     connect( ui->settingsAction, SIGNAL(triggered()), SLOT(showSettings()) );
 #ifdef Q_OS_SYMBIAN
@@ -163,31 +163,31 @@ void MainWindow::setup()
     //this is necessary to refresh if upload was done and the user was
     //navigating the same folder
     connect(
-            &uploadDialog,
-            SIGNAL(done(QString)),
-            SLOT(handleUploadDone(QString))
-            );
+        &uploadDialog,
+        SIGNAL(done(QString)),
+        SLOT(handleUploadDone(QString))
+        );
 
     //tool buttons
     ui->upToolButton->setDefaultAction(ui->upAction);
     ui->fileToolButton->setDefaultAction(ui->fileAction);
     connect(
-            ui->fileToolButton,
-            SIGNAL(pressed()),
-            SLOT(showFileMenu())
-            );
+        ui->fileToolButton,
+        SIGNAL(pressed()),
+        SLOT(showFileMenu())
+        );
     ui->optionsToolButton->setDefaultAction(ui->optionsAction);
     connect(
-            ui->optionsToolButton,
-            SIGNAL(pressed()),
-            SLOT(showOptionsMenu())
-            );
+        ui->optionsToolButton,
+        SIGNAL(pressed()),
+        SLOT(showOptionsMenu())
+        );
     ui->infoToolButton->setDefaultAction(ui->infoAction);
     connect(
-            ui->infoToolButton,
-            SIGNAL(pressed()),
-            SLOT(showInfoMenu())
-            );
+        ui->infoToolButton,
+        SIGNAL(pressed()),
+        SLOT(showInfoMenu())
+        );
     ui->exitToolButton->setDefaultAction(ui->exitAction);
 
     //initial directory listing
@@ -195,24 +195,24 @@ void MainWindow::setup()
 
     //connect the networkAccessManager with the handler
     connect(
-            this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleNetworkReply(QNetworkReply*))
-            );
+        this->networkAccessManager,
+        SIGNAL(finished(QNetworkReply*)),
+        this,
+        SLOT(handleNetworkReply(QNetworkReply*))
+        );
 
     //set icon size
     ui->filesAndFoldersListWidget->setIconSize(QSize(32, 32));
 
 #ifdef Q_OS_SYMBIAN
     kineticScrollingEnabled = settings->value(
-            "gui/kinetic_scrolling",
-            false
-            ).toBool();
+        "gui/kinetic_scrolling",
+        false
+        ).toBool();
     singleTapEnabled = settings->value(
-            "gui/single_tap",
-            true
-            ).toBool();
+        "gui/single_tap",
+        true
+        ).toBool();
 
     //enable kinetic scrolling
     if(kineticScrollingEnabled)
@@ -264,12 +264,12 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                QNetworkReply::AuthenticationRequiredError)
             {
                 QMessageBox::critical(
-                        this,
-                        "Droper",
-                        "Droper's access to this account has been disabled, "
-                        "authentication will now be removed. \n"
-                        "Restart the application to re-authenticate..."
-                        );
+                    this,
+                    "Droper",
+                    "Droper's access to this account has been disabled, "
+                    "authentication will now be removed. \n"
+                    "Restart the application to re-authenticate..."
+                    );
 
                 settings->remove("user");
             }
@@ -281,7 +281,8 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                 QString text = "There was an error, try again later.";
                 if(networkReply->url().toString().contains(QRegExp("[;+~#]")))
                     text += "\nNote that Droper currently has problems dealing "
-                            "with these four symbols ; + ~ #";
+                        "with these four symbols ; + ~ #"
+                        ;
                 messageBox.setText(text);
                     QString json = networkReply->readAll();
                     QVariantMap jsonResult = Json::parse(json).toMap();
@@ -293,8 +294,8 @@ void MainWindow::handleNetworkReply(QNetworkReply* networkReply)
                             messageBox.addButton(QMessageBox::Close);
 #endif
                             messageBox.setDetailedText(
-                                    jsonResult["error"].toString()
-                                    );
+                                jsonResult["error"].toString()
+                                );
                         }
                     }
                 messageBox.exec();
@@ -361,10 +362,10 @@ void MainWindow::requestAccountInformation()
     QNetworkRequest networkRequest(url);
 
     oAuth->signRequest(
-            userData,
-            "GET",
-            &networkRequest
-            );
+        userData,
+        "GET",
+        &networkRequest
+        );
 
     networkAccessManager->get( networkRequest );
 
@@ -382,10 +383,10 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "There was an error, try again later."
-                );
+            this,
+            "Droper",
+            "There was an error, try again later."
+            );
 
         return;
     }
@@ -407,9 +408,9 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
         normalFilesUnit = "GB";
     }
     QString normalFilesString = QString("%1%2")
-                                .arg(normalFiles, 0, 'f', 1)
-                                .arg(normalFilesUnit)
-                                ;
+        .arg(normalFiles, 0, 'f', 1)
+        .arg(normalFilesUnit)
+        ;
 
     qreal sharedFiles = quotaInfo["shared"].toReal();
     QString sharedFilesUnit;
@@ -426,9 +427,9 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
         sharedFilesUnit = "GB";
     }
     QString sharedFilesString = QString("%1%2")
-                                .arg(sharedFiles, 0, 'f', 1)
-                                .arg(sharedFilesUnit)
-                                ;
+        .arg(sharedFiles, 0, 'f', 1)
+        .arg(sharedFilesUnit)
+        ;
 
     qreal quota = quotaInfo["quota"].toReal();
     QString quotaUnit;
@@ -445,9 +446,9 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
         quotaUnit = "GB";
     }
     QString quotaString = QString("%1%2")
-                                .arg(quota, 0, 'f', 1)
-                                .arg(quotaUnit)
-                                ;
+        .arg(quota, 0, 'f', 1)
+        .arg(quotaUnit)
+        ;
 
     qreal unused = quotaInfo["quota"].toReal() -
                    (quotaInfo["normal"].toReal() +
@@ -466,41 +467,40 @@ void MainWindow::handleAccountInformation(QNetworkReply* networkReply)
         unusedUnit = "GB";
     }
     QString unusedString = QString("%1%2")
-                                .arg(unused, 0, 'f', 1)
-                                .arg(unusedUnit)
-                                ;
-
+        .arg(unused, 0, 'f', 1)
+        .arg(unusedUnit)
+        ;
 
     QMessageBox messageBox(this);
 
     messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
-            QString("Showing account information for:\n%1").arg(userData->email)
-            );
+        QString("Showing account information for:\n%1").arg(userData->email)
+        );
 
     messageBox.setInformativeText(
-            QString(
-                        "Name: %1 \n"
-                        "Country: %2 \n"
-                        "UID: %3 \n"
-                        "\n"
-                        "Total Space: %4 \n"
-                        "Unused Space: %5 \n"
-                        "Regular files: %6 \n"
-                        "Shared files: %7 \n"
-                        "\n"
-                        "Total Space = Regular files + "
-                        "Shared files + Unused Space"
-                        )
-                        .arg(jsonResult["display_name"].toString())
-                        .arg(jsonResult["country"].toString())
-                        .arg(jsonResult["uid"].toString())
-                        .arg(quotaString)
-                        .arg(unusedString)
-                        .arg(normalFilesString)
-                        .arg(sharedFilesString)
-            );
+        QString(
+            "Name: %1 \n"
+            "Country: %2 \n"
+            "UID: %3 \n"
+            "\n"
+            "Total Space: %4 \n"
+            "Unused Space: %5 \n"
+            "Regular files: %6 \n"
+            "Shared files: %7 \n"
+            "\n"
+            "Total Space = Regular files + "
+            "Shared files + Unused Space"
+            )
+            .arg(jsonResult["display_name"].toString())
+            .arg(jsonResult["country"].toString())
+            .arg(jsonResult["uid"].toString())
+            .arg(quotaString)
+            .arg(unusedString)
+            .arg(normalFilesString)
+            .arg(sharedFilesString)
+        );
 
     messageBox.exec();
 }
@@ -543,10 +543,10 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "There was an error, try again later."
-                );
+            this,
+            "Droper",
+            "There was an error, try again later."
+            );
 
 #ifdef Q_OS_SYMBIAN
         //regrabbing the gestures, for more info see
@@ -569,24 +569,24 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
 
         //set current directory's icon
             QResource iconResource(
-                    QString(":/resources/icons/%1")
-                    .arg(jsonResult["icon"].toString())
-                    + ".png"
-                    );
+                QString(":/resources/icons/%1")
+                .arg(jsonResult["icon"].toString())
+                + ".png"
+                );
             if(iconResource.isValid())
                 ui->currentFolderIconLabel->setPixmap(
-                        QIcon(iconResource.fileName()).pixmap(16, 16)
-                        );
+                    QIcon(iconResource.fileName()).pixmap(16, 16)
+                    );
             else
                 ui->currentFolderIconLabel->setPixmap(
-                        QIcon(":/resources/icons/folder.png").pixmap(16, 16)
-                        );
+                    QIcon(":/resources/icons/folder.png").pixmap(16, 16)
+                    );
 
         //update currentDirectory and ui->currentFolderLabel
         currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
         QString currentFolder = currentDirectory.right(
-                (currentDirectory.length()-currentDirectory.lastIndexOf("/"))-1
-                 );
+            (currentDirectory.length()-currentDirectory.lastIndexOf("/"))-1
+             );
         if(!currentFolder.isEmpty())
             ui->currentFolderLabel->setText(currentFolder);
         else
@@ -606,21 +606,21 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         if(subDir["is_dir"].toBool() == true)
         {
             QListWidgetItem* subDirItem = new QListWidgetItem(
-                    ui->filesAndFoldersListWidget
-                    );
+                ui->filesAndFoldersListWidget
+                );
 
             QString subDirPath = subDir["path"].toString();
             QString subDirName = subDirPath.right(
-                    (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
-                     );
+                (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
+                 );
 
             subDirItem->setText(subDirName);
 
             QResource iconResource(
-                    QString(":/resources/icons/%1")
-                    .arg(subDir["icon"].toString())
-                    + ".png"
-                    );
+                QString(":/resources/icons/%1")
+                .arg(subDir["icon"].toString())
+                + ".png"
+                );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
@@ -639,23 +639,23 @@ void MainWindow::handleDirectoryListing(QNetworkReply* networkReply)
         if(subDir["is_dir"].toBool() == false)
         {
             QListWidgetItem* subDirItem = new QListWidgetItem(
-                    ui->filesAndFoldersListWidget
-                    );
+                ui->filesAndFoldersListWidget
+                );
 
             QString subDirPath = subDir["path"].toString();
             QString subDirName = subDirPath.right(
-                    (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
-                     );
+                (subDirPath.length() - subDirPath.lastIndexOf("/")) - 1
+                 );
 
             QString size =  subDir["size"].toString();
 
             subDirItem->setText(subDirName + "\n" + "  " + size);
 
             QResource iconResource(
-                    QString(":/resources/icons/%1")
-                    .arg(subDir["icon"].toString())
-                    + ".png"
-                    );
+                QString(":/resources/icons/%1")
+                .arg(subDir["icon"].toString())
+                + ".png"
+                );
 
             if(iconResource.isValid())
                 subDirItem->setIcon(QIcon(iconResource.fileName()));
@@ -693,10 +693,10 @@ void MainWindow::requestCopying(QString source, QString destination)
     QNetworkRequest networkRequest(url);
 
     oAuth->signRequest(
-            userData,
-            "GET",
-            &networkRequest
-            );
+        userData,
+        "GET",
+        &networkRequest
+        );
 
     networkAccessManager->get( networkRequest );
 
@@ -723,10 +723,10 @@ void MainWindow::requestMoving(QString source, QString destination)
     QNetworkRequest networkRequest(url);
 
     oAuth->signRequest(
-            userData,
-            "GET",
-            &networkRequest
-            );
+        userData,
+        "GET",
+        &networkRequest
+        );
 
     networkAccessManager->get( networkRequest );
 
@@ -758,10 +758,10 @@ void MainWindow::requestDeleting(QString path)
     QNetworkRequest networkRequest(url);
 
     oAuth->signRequest(
-            userData,
-            "GET",
-            &networkRequest
-            );
+        userData,
+        "GET",
+        &networkRequest
+        );
 
     networkAccessManager->get( networkRequest );
 
@@ -783,10 +783,10 @@ void MainWindow::requestFolderCreation(QString path)
     QNetworkRequest networkRequest(url);
 
     oAuth->signRequest(
-            userData,
-            "GET",
-            &networkRequest
-            );
+        userData,
+        "GET",
+        &networkRequest
+        );
 
     networkAccessManager->get( networkRequest );
 
@@ -806,24 +806,24 @@ void MainWindow::about()
     messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
-            "<b>Droper v0.3.2</b> - "
-            "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client."
-            );
+        "<b>Droper v0.3.2</b> - "
+        "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client."
+        );
 
     messageBox.setInformativeText(
-            "Copyright 2011 Omar Lawand Dalatieh. <br><br>"
+        "Copyright 2011 Omar Lawand Dalatieh. <br><br>"
 
-            "Licensed under the GNU GPLv3 license. <br><br>"
+        "Licensed under the GNU GPLv3 license. <br><br>"
 
-            "<a href=\"http://lawand.github.com/droper/\">"
-            "http://lawand.github.com/droper/"
-            "</a> <br><br>"
+        "<a href=\"http://lawand.github.com/droper/\">"
+        "http://lawand.github.com/droper/"
+        "</a> <br><br>"
 
-            "<a href=\"http://www.facebook.com/droper.ftw\">"
-            "Follow on Facebook!</a> <br>"
-            "Subscribe to stay up to date with latest releases and "
-            "announcements."
-            );
+        "<a href=\"http://www.facebook.com/droper.ftw\">"
+        "Follow on Facebook!</a> <br>"
+        "Subscribe to stay up to date with latest releases and "
+        "announcements."
+        );
 
     QIcon droper(":/droper.svg");
     messageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
@@ -844,7 +844,7 @@ void MainWindow::open()
         return;
 
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
 
     QVariantMap map = currentItem->data(Qt::UserRole).toMap();
 
@@ -852,14 +852,14 @@ void MainWindow::open()
     {
         //navigate to a sub directory
         requestDirectoryListing(
-                map["path"].toString()
-                );
+            map["path"].toString()
+            );
     }
 }
 
 void MainWindow::on_filesAndFoldersListWidget_itemClicked(
-        QListWidgetItem* item
-        )
+    QListWidgetItem* item
+    )
 {
     //make sure single tap is enabled
     if(!singleTapEnabled)
@@ -880,15 +880,15 @@ void MainWindow::on_filesAndFoldersListWidget_itemClicked(
     {
         //navigate to a sub directory
         requestDirectoryListing(
-                map["path"].toString()
-                );
+            map["path"].toString()
+            );
     }
 }
 #endif
 
 void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
-        QListWidgetItem* item
-        )
+    QListWidgetItem* item
+    )
 {
     //this is disabled on symbian
 #ifdef Q_OS_SYMBIAN
@@ -912,8 +912,8 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
     {
         //navigate to a sub directory
         requestDirectoryListing(
-                map["path"].toString()
-                );
+            map["path"].toString()
+            );
     }
 }
 
@@ -947,9 +947,9 @@ void MainWindow::cut()
 
     //fill the clipboard
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
+        currentItem->data(Qt::UserRole).toMap();
     clipboard = map["path"].toString();
     ui->pasteAction->setEnabled(true);
 }
@@ -965,9 +965,9 @@ void MainWindow::copy()
 
     //fill the clipboard
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
+        currentItem->data(Qt::UserRole).toMap();
     clipboard = map["path"].toString();
     ui->pasteAction->setEnabled(true);
 }
@@ -980,8 +980,8 @@ void MainWindow::paste()
 
     //get file or folder name
     QString name = clipboard.right(
-            (clipboard.length() - clipboard.lastIndexOf("/")) - 1
-            );
+        (clipboard.length() - clipboard.lastIndexOf("/")) - 1
+        );
 
     if(shouldPreserveClipboardContents) //if this is a cut operation
     {
@@ -1014,25 +1014,25 @@ void MainWindow::rename()
         return;
 
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
+        currentItem->data(Qt::UserRole).toMap();
     QString path = map["path"].toString();
     QString oldName = path.right(
-            (path.length() - path.lastIndexOf("/")) - 1
-            );
+        (path.length() - path.lastIndexOf("/")) - 1
+        );
 
     bool ok = false;
     QString newName;
     while(!ok)
     {
         newName = QInputDialog::getText(
-                this,
-                "Rename",
-                "Enter a new name:",
-                QLineEdit::Normal,
-                oldName
-                );
+            this,
+            "Rename",
+            "Enter a new name:",
+            QLineEdit::Normal,
+            oldName
+            );
 
         //trim whitespace
         newName = newName.trimmed();
@@ -1040,15 +1040,16 @@ void MainWindow::rename()
         //these symbols aren't allowed by Dropbox
         QRegExp disallowedSymbols("[/:?*<>\"|]");
         if(newName.contains(disallowedSymbols) || newName.contains("\\") ||
-           newName == "." || newName == "..")
+            newName == "." || newName == ".."
+            )
         {
             QMessageBox::information(
-                    this,
-                    "Droper",
-                    "The following characters aren't allowed by Dropbox: \n"
-                    "\\ / : ? * < > \" | \n"
-                    "And you can't name a file or folder . or .."
-                    );
+                this,
+                "Droper",
+                "The following characters aren't allowed by Dropbox: \n"
+                "\\ / : ? * < > \" | \n"
+                "And you can't name a file or folder . or .."
+                );
         }
         else
         {
@@ -1068,16 +1069,16 @@ void MainWindow::rename()
     if(currentDirectory == "/")
     {
         requestMoving(
-                currentDirectory + oldName,
-                currentDirectory + newName
-                );
+            currentDirectory + oldName,
+            currentDirectory + newName
+            );
     }
     else
     {
         requestMoving(
-                currentDirectory + "/" + oldName,
-                currentDirectory + "/" + newName
-                );
+            currentDirectory + "/" + oldName,
+            currentDirectory + "/" + newName
+            );
     }
 
     //mark the current operation as a rename
@@ -1091,19 +1092,19 @@ void MainWindow::del()
         return;
 
     QMessageBox::StandardButton response = QMessageBox::question(
-            this,
-            "Droper",
-            "Are you sure you want to delete the file/folder?",
-            QMessageBox::No|QMessageBox::Yes,
-            QMessageBox::No
-            );
+        this,
+        "Droper",
+        "Are you sure you want to delete the file/folder?",
+        QMessageBox::No|QMessageBox::Yes,
+        QMessageBox::No
+        );
 
     if(response == QMessageBox::Yes)
     {
         QListWidgetItem* currentItem =
-                ui->filesAndFoldersListWidget->currentItem();
+            ui->filesAndFoldersListWidget->currentItem();
         QVariantMap map =
-                currentItem->data(Qt::UserRole).toMap();
+            currentItem->data(Qt::UserRole).toMap();
         QString path = map["path"].toString();
 
         requestDeleting(path);
@@ -1117,11 +1118,11 @@ void MainWindow::download()
     if(downloadDialog.isActive())
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "There already is a file being "
-                "downloaded."
-                );
+            this,
+            "Droper",
+            "There already is a file being "
+            "downloaded."
+            );
 
         return;
     }
@@ -1132,9 +1133,9 @@ void MainWindow::download()
 
     //prepare fileMap
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
     QVariantMap fileMap =
-            currentItem->data(Qt::UserRole).toMap();
+        currentItem->data(Qt::UserRole).toMap();
 
     //prepare target folder
         bool ok = false;
@@ -1142,12 +1143,12 @@ void MainWindow::download()
         while(!ok)
         {
             directory = QFileDialog::getExistingDirectory(
-                    this,
-                    "Select a directory",
-                    QDesktopServices::storageLocation(
-                            QDesktopServices::DesktopLocation
-                            )
-                    );
+                this,
+                "Select a directory",
+                QDesktopServices::storageLocation(
+                    QDesktopServices::DesktopLocation
+                    )
+                );
 
             //if no directory selected, do nothing
             if(directory.isEmpty())
@@ -1157,19 +1158,19 @@ void MainWindow::download()
 
             QString remotePathAndFileName = fileMap["path"].toString();
             QString fileName = remotePathAndFileName.right(
-                    (remotePathAndFileName.length() -
-                     remotePathAndFileName.lastIndexOf("/")) - 1
-                    );
+                (remotePathAndFileName.length() -
+                 remotePathAndFileName.lastIndexOf("/")) - 1
+                );
             if(QFile(directory + "/" + fileName).exists())
             {
                 QMessageBox::information(
-                        this,
-                        "Droper",
-                        QString(
-                                "This directory already has a file "
-                                "named '%1'. Choose another one."
-                                ).arg(fileName)
-                        );
+                    this,
+                    "Droper",
+                    QString(
+                        "This directory already has a file "
+                        "named '%1'. Choose another one."
+                        ).arg(fileName)
+                    );
             }
             else
             {
@@ -1189,11 +1190,11 @@ void MainWindow::upload()
     if(uploadDialog.isActive())
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "There already is a file being "
-                "uploaded."
-                );
+            this,
+            "Droper",
+            "There already is a file being "
+            "uploaded."
+            );
     }
     else
     {
@@ -1202,12 +1203,12 @@ void MainWindow::upload()
         while(!ok)
         {
             localFile = QFileDialog::getOpenFileName(
-                    this,
-                    "Select a file",
-                    QDesktopServices::storageLocation(
-                            QDesktopServices::DesktopLocation
-                            )
-                    );
+                this,
+                "Select a file",
+                QDesktopServices::storageLocation(
+                    QDesktopServices::DesktopLocation
+                    )
+                );
 
             QFileInfo fileInfo(localFile);
             QString fileName = fileInfo.baseName();
@@ -1215,15 +1216,16 @@ void MainWindow::upload()
             //these symbols aren't allowed by Dropbox
             QRegExp disallowedSymbols("[/:?*<>\"|]");
             if(fileName.contains(disallowedSymbols) ||
-               fileName.contains("\\") || fileName == "." || fileName == "..")
+                fileName.contains("\\") || fileName == "." || fileName == ".."
+                )
             {
                 QMessageBox::information(
-                        this,
-                        "Droper",
-                        "The following characters aren't allowed by Dropbox: \n"
-                        "\\ / : ? * < > \" | \n"
-                        "And you can't name a file or folder . or .."
-                        );
+                    this,
+                    "Droper",
+                    "The following characters aren't allowed by Dropbox: \n"
+                    "\\ / : ? * < > \" | \n"
+                    "And you can't name a file or folder . or .."
+                    );
             }
             else
             {
@@ -1246,35 +1248,35 @@ void MainWindow::upload()
             QVariantMap map = item->data(Qt::UserRole).toMap();
             QString path = map["path"].toString();
             QString name = path.right(
-                    (path.length() - path.lastIndexOf("/")) - 1
-                    );
+                (path.length() - path.lastIndexOf("/")) - 1
+                );
             QString localFileName = localFile.right(
-                    (localFile.length() - localFile.lastIndexOf("/")) - 1
-                    );
+                (localFile.length() - localFile.lastIndexOf("/")) - 1
+                );
             if(name.toLower() == localFileName.toLower())
             {
                 if(map["is_dir"].toBool() == true)
                 {
                     QMessageBox::information(
-                            this,
-                            "Droper",
-                            "Can't continue; there is a folder with the same "
-                            "name in the current directory."
-                            );
+                        this,
+                        "Droper",
+                        "Can't continue; there is a folder with the same "
+                        "name in the current directory."
+                        );
 
                     return;
                 }
                 else
                 {
                     QMessageBox::information(
-                            this,
-                            "Droper",
-                            "There is a file with the same name in the current "
-                            "directory, if you continue with the upload "
-                            "process, it will be overwritten. \n"
-                            "You can visit dropbox.com to see file revisions "
-                            "and restore earlier ones."
-                            );
+                        this,
+                        "Droper",
+                        "There is a file with the same name in the current "
+                        "directory, if you continue with the upload "
+                        "process, it will be overwritten. \n"
+                        "You can visit dropbox.com to see file revisions "
+                        "and restore earlier ones."
+                        );
                 }
             }
         }
@@ -1292,10 +1294,10 @@ void MainWindow::createFolder()
     while(!ok)
     {
         folderName = QInputDialog::getText(
-                this,
-                "Create Folder",
-                "Enter the folder's name:"
-                );
+            this,
+            "Create Folder",
+            "Enter the folder's name:"
+            );
 
         //trim whitespace
         folderName = folderName.trimmed();
@@ -1303,15 +1305,16 @@ void MainWindow::createFolder()
         //these symbols aren't allowed by Dropbox
         QRegExp disallowedSymbols("[/:?*<>\"|]");
         if(folderName.contains(disallowedSymbols) ||
-           folderName.contains("\\") || folderName == "." || folderName == "..")
+            folderName.contains("\\") || folderName == "." || folderName == ".."
+            )
         {
             QMessageBox::information(
-                    this,
-                    "Droper",
-                    "The following characters aren't allowed by Dropbox: \n"
-                    "\\ / : ? * < > \" | \n"
-                    "And you can't name a file or folder . or .."
-                    );
+                this,
+                "Droper",
+                "The following characters aren't allowed by Dropbox: \n"
+                "\\ / : ? * < > \" | \n"
+                "And you can't name a file or folder . or .."
+                );
         }
         else
         {
@@ -1340,9 +1343,9 @@ void MainWindow::showProperties()
 
     //get raw info
     QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
+        ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
+        currentItem->data(Qt::UserRole).toMap();
 
     //size
     QString size = map["size"].toString();
@@ -1355,16 +1358,16 @@ void MainWindow::showProperties()
     //path and name
     QString path = map["path"].toString();
     QString name = path.right(
-            (path.length() - path.lastIndexOf("/")) - 1
-            );
+        (path.length() - path.lastIndexOf("/")) - 1
+        );
 
     //modified date and time
     QString modifiedString = map["modified"].toString();
     modifiedString.chop(6);     //chop() removes the time zone
     QDateTime modifiedTimeDate = QDateTime::fromString(
-            modifiedString,
-            "ddd, dd MMM yyyy HH:mm:ss"
-            );
+        modifiedString,
+        "ddd, dd MMM yyyy HH:mm:ss"
+        );
     modifiedTimeDate.setTimeSpec(Qt::UTC);
     QDateTime current = QDateTime::currentDateTime().toUTC();
     int secs = modifiedTimeDate.secsTo(current);
@@ -1377,38 +1380,38 @@ void MainWindow::showProperties()
     if(secs < 60)
     {
         friendlyModifiedString = QString(
-                "about %1 second(s) ago"
-                ).arg(secs);
+            "about %1 second(s) ago"
+            ).arg(secs);
     }
     else if(mins < 60)
     {
         friendlyModifiedString = QString(
-                "about %1 minute(s) ago"
-                ).arg(mins);
+            "about %1 minute(s) ago"
+            ).arg(mins);
     }
     else if(hours < 24)
     {
         friendlyModifiedString = QString(
-                "about %1 hour(s) ago"
-                ).arg(hours);
+            "about %1 hour(s) ago"
+            ).arg(hours);
     }
     else if(days < 30)
     {
         friendlyModifiedString = QString(
-                "about %1 day(s) ago"
-                ).arg(days);
+            "about %1 day(s) ago"
+            ).arg(days);
     }
     else if(months < 12)
     {
         friendlyModifiedString = QString(
-                "about %1 month(s) ago"
-                ).arg(months);
+            "about %1 month(s) ago"
+            ).arg(months);
     }
     else
     {
         friendlyModifiedString = QString(
-                "about %1 year(s) ago"
-                ).arg(years);
+            "about %1 year(s) ago"
+            ).arg(years);
     }
     modifiedString += QString(" (%1)").arg(friendlyModifiedString);
 
@@ -1416,29 +1419,29 @@ void MainWindow::showProperties()
     QMessageBox messageBox(this);
     messageBox.setWindowTitle("Droper");
     messageBox.setText(
-            QString(
-                    "Showing details for file: \n"
-                    "%1"
-                    ).arg(name)
-            );
+        QString(
+            "Showing details for file: \n"
+            "%1"
+            ).arg(name)
+        );
     messageBox.setInformativeText(
-            QString(
-                    "Size: %1\n\n"
-                    "Path: %2 \n\n"
-                    "Modified (in UTC): %3"
-                    ).arg(size).arg(path).arg(modifiedString)
-            );
+        QString(
+            "Size: %1\n\n"
+            "Path: %2 \n\n"
+            "Modified (in UTC): %3"
+            ).arg(size).arg(path).arg(modifiedString)
+        );
     messageBox.exec();
 }
 
 void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
-        QPoint point
-        )
+    QPoint point
+    )
 {
     if(! ui->filesAndFoldersListWidget->selectedItems().isEmpty())
     {
         QVariantMap map = ui->filesAndFoldersListWidget->currentItem()
-                          ->data(Qt::UserRole).toMap();
+            ->data(Qt::UserRole).toMap();
 
         QMenu menu(this);
 #ifdef Q_OS_SYMBIAN
@@ -1529,10 +1532,10 @@ void MainWindow::showFileMenu()
     menu.addAction(ui->uploadAction);
 
     menu.exec(
-            this->mapToGlobal(
-                    ui->fileToolButton->geometry().center()
-                    )
-            );
+        this->mapToGlobal(
+            ui->fileToolButton->geometry().center()
+            )
+        );
 
     ui->fileToolButton->setDown(false);
 }
@@ -1556,10 +1559,10 @@ void MainWindow::showOptionsMenu()
         ui->showActiveUploadAction->setEnabled(false);
 
     menu.exec(
-            this->mapToGlobal(
-                    ui->optionsToolButton->geometry().center()
-                    )
-            );
+        this->mapToGlobal(
+            ui->optionsToolButton->geometry().center()
+            )
+        );
 
     ui->optionsToolButton->setDown(false);
 }
@@ -1571,10 +1574,10 @@ void MainWindow::showInfoMenu()
     menu.addAction(ui->aboutQtAction);
 
     menu.exec(
-            this->mapToGlobal(
-                    ui->infoToolButton->geometry().center()
-                    )
-            );
+        this->mapToGlobal(
+            ui->infoToolButton->geometry().center()
+            )
+        );
 
     ui->infoToolButton->setDown(false);
 }
@@ -1593,14 +1596,14 @@ void MainWindow::showSettings()
     //update variables
 #ifdef Q_OS_SYMBIAN
     kineticScrollingEnabled = settings->value(
-            "gui/kinetic_scrolling",
-            false
-            ).toBool();
+        "gui/kinetic_scrolling",
+        false
+        ).toBool();
 
     singleTapEnabled = settings->value(
-            "gui/single_tap",
-            true
-            ).toBool();
+        "gui/single_tap",
+        true
+        ).toBool();
 #endif
 
     //update mainWindows' state based on new variable values

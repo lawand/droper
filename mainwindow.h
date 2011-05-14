@@ -53,13 +53,13 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(
-            QNetworkAccessManager* networkAccessManager,
-            OAuth* oAuth,
-            UserData* userData,
-            Dropbox* dropbox,
-            QSettings* settings,
-            QWidget *parent = 0
-            );
+        QNetworkAccessManager* networkAccessManager,
+        OAuth* oAuth,
+        UserData* userData,
+        Dropbox* dropbox,
+        QSettings* settings,
+        QWidget *parent = 0
+        );
     ~MainWindow();
 
 public slots:
@@ -104,12 +104,12 @@ private slots:
 #ifdef Q_OS_SYMBIAN
     void open();
     void on_filesAndFoldersListWidget_itemClicked(
-            QListWidgetItem* item
-            );
+        QListWidgetItem* item
+        );
 #endif
     void on_filesAndFoldersListWidget_itemDoubleClicked(
-            QListWidgetItem* item
-            );
+        QListWidgetItem* item
+        );
     void up();
     void refresh();
     void cut();

@@ -49,13 +49,13 @@ class AuthenticationWindow : public QDialog
 
 public:
     explicit AuthenticationWindow(
-            QNetworkAccessManager* networkAccessManager,
-            OAuth* oAuth,
-            UserData* userData,
-            Dropbox* dropbox,
-            QSettings* settings,
-            QWidget *parent = 0
-            );
+        QNetworkAccessManager* networkAccessManager,
+        OAuth* oAuth,
+        UserData* userData,
+        Dropbox* dropbox,
+        QSettings* settings,
+        QWidget *parent = 0
+        );
     ~AuthenticationWindow();
 
 signals:

@@ -48,19 +48,19 @@ class UploadDialog : public QDialog
 
 public:
     explicit UploadDialog(
-            QNetworkAccessManager* networkAccessManager,
-            OAuth* oAuth,
-            UserData* userData,
-            Dropbox* dropbox,
-            QWidget *parent = 0
-            );
+        QNetworkAccessManager* networkAccessManager,
+        OAuth* oAuth,
+        UserData* userData,
+        Dropbox* dropbox,
+        QWidget *parent = 0
+        );
     ~UploadDialog();
 
 public:
     void setFileAndFolder(
-            QString localFile,
-            QString remoteFolder
-            );
+        QString localFile,
+        QString remoteFolder
+        );
     bool isActive();
 
 signals:

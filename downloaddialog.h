@@ -52,19 +52,19 @@ class DownloadDialog : public QDialog
 
 public:
     explicit DownloadDialog(
-            QNetworkAccessManager* networkAccessManager,
-            OAuth* oAuth,
-            UserData* userData,
-            Dropbox* dropbox,
-            QWidget *parent = 0
-            );
+        QNetworkAccessManager* networkAccessManager,
+        OAuth* oAuth,
+        UserData* userData,
+        Dropbox* dropbox,
+        QWidget *parent = 0
+        );
     ~DownloadDialog();
 
 public:
     void setFileAndFolder(
-            QVariantMap* fileMap,
-            QString localFolder
-            );
+        QVariantMap* fileMap,
+        QString localFolder
+        );
     bool isActive();
 
 public: //shared objects

@@ -43,10 +43,10 @@ public:
 
 public:
     void signRequest(
-            UserData* userData,
-            QString method,
-            QNetworkRequest* networkRequest
-            );
+        UserData* userData,
+        QString method,
+        QNetworkRequest* networkRequest
+        );
     void addConsumerKeyQueryItem(QNetworkRequest* networkRequest);
 
 public: //shared objects
@@ -59,11 +59,11 @@ private:
     QString userTokenItem(UserData* userData);
     QString versionItem();
     QString signatureItem(
-            UserData* userData,
-            QString method,
-            QUrl* url,
-            QString oAuthHeader
-            );
+        UserData* userData,
+        QString method,
+        QUrl* url,
+        QString oAuthHeader
+        );
 
     //calculates a HMAC-SHA1 checksum
     QString hmacSha1(QString base, QString key);

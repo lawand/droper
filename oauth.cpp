@@ -48,10 +48,10 @@ OAuth::OAuth(ConsumerData* consumerData)
 }
 
 void OAuth::signRequest(
-        UserData* userData,
-        QString method,
-        QNetworkRequest* networkRequest
-        )
+    UserData* userData,
+    QString method,
+    QNetworkRequest* networkRequest
+    )
 {
     QString header = "OAuth ";
 
@@ -61,11 +61,11 @@ void OAuth::signRequest(
     header += userTokenItem(userData) + ",";
     header += versionItem() + ",";
     header += signatureItem(
-            userData,
-            method,
-            &networkRequest->url(),
-            header
-            ) + ",";
+        userData,
+        method,
+        &networkRequest->url(),
+        header
+        ) + ",";
 
     header.chop(1); //remove the last ","
 
@@ -76,9 +76,9 @@ void OAuth::addConsumerKeyQueryItem(QNetworkRequest* networkRequest)
 {
     QUrl url = networkRequest->url();
     url.addQueryItem(
-                "oauth_consumer_key",
-                consumerData->key
-                );
+        "oauth_consumer_key",
+        consumerData->key
+        );
     networkRequest->setUrl(url);
 }
 
@@ -87,63 +87,63 @@ QString OAuth::timestampAndNonceItems()
     int currentSecsSinceEpoch = QDateTime::currentDateTime().toUTC().toTime_t();
 
     return QString("%1=\"%2\"")
-            .arg("oauth_timestamp")
-            .arg(currentSecsSinceEpoch)
-            +
-            ","
-            +
-            QString("%1=\"%2\"")
-            .arg("oauth_nonce")
-            .arg(QString("%1").arg(qrand()))
-            ;
+        .arg("oauth_timestamp")
+        .arg(currentSecsSinceEpoch)
+        +
+        ","
+        +
+        QString("%1=\"%2\"")
+        .arg("oauth_nonce")
+        .arg(QString("%1").arg(qrand()))
+        ;
 }
 
 QString OAuth::consumerKeyItem()
 {
     return QString("%1=\"%2\"")
-            .arg("oauth_consumer_key")
-            .arg(consumerData->key)
-            ;
+        .arg("oauth_consumer_key")
+        .arg(consumerData->key)
+        ;
 }
 
 QString OAuth::signatureMethodItem()
 {
     return QString("%1=\"%2\"")
-            .arg("oauth_signature_method")
-            .arg("HMAC-SHA1")
-            ;
+        .arg("oauth_signature_method")
+        .arg("HMAC-SHA1")
+        ;
 }
 
 QString OAuth::userTokenItem(UserData* userData)
 {
     return QString("%1=\"%2\"")
-            .arg("oauth_token")
-            .arg(userData->token)
-            ;
+        .arg("oauth_token")
+        .arg(userData->token)
+        ;
 }
 
 QString OAuth::versionItem()
 {
     return QString("%1=\"%2\"")
-            .arg("oauth_version")
-            .arg("1.0")
-            ;
+        .arg("oauth_version")
+        .arg("1.0")
+        ;
 }
 
 QString OAuth::signatureItem(
-        UserData* userData,
-        QString method,
-        QUrl* url,
-        QString oAuthHeader
-        )
+    UserData* userData,
+    QString method,
+    QUrl* url,
+    QString oAuthHeader
+    )
 {
     //prepare URL
         QString urlSchemeAndHost = url->toString(
-                QUrl::RemovePort |
-                QUrl::RemovePath |
-                QUrl::RemoveQuery |
-                QUrl::RemoveFragment
-                );
+            QUrl::RemovePort |
+            QUrl::RemovePath |
+            QUrl::RemoveQuery |
+            QUrl::RemoveFragment
+            );
         QString urlPath = url->path();
 
         //url path parts need to be UTF-8 encoded and percent encoded
@@ -155,7 +155,7 @@ QString OAuth::signatureItem(
         urlPath = urlPathParts.join("/");
 
         QByteArray readyForUseUrl =
-               (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
+            (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
     //prepare parameters
         QList< QPair<QString,QString> > parameters;
@@ -165,7 +165,7 @@ QString OAuth::signatureItem(
         //extract header parameters and add them to the parameters list
             oAuthHeader.remove("OAuth ");
             QStringList oAuthParameters =
-                    oAuthHeader.split(",", QString::SkipEmptyParts);
+                 oAuthHeader.split(",", QString::SkipEmptyParts);
             foreach(QString oAuthParameter, oAuthParameters)
             {
                 QStringList oAuthParameterParts = oAuthParameter.split("=");
@@ -173,9 +173,9 @@ QString OAuth::signatureItem(
                 QString second = oAuthParameterParts.at(1);
                 second.remove("\"");
                 QPair<QString, QString> parameter = qMakePair(
-                        first,
-                        second
-                        );
+                    first,
+                    second
+                    );
                 parameters.append(parameter);
             }
 
@@ -199,26 +199,26 @@ QString OAuth::signatureItem(
         parametersString.chop(1);
 
         QString readyForUseParametersString =
-                parametersString.toAscii().toPercentEncoding();
+            parametersString.toAscii().toPercentEncoding();
 
     //generate base string
         QString base = method+
-                       "&"+
-                       readyForUseUrl+
-                       "&"+
-                       readyForUseParametersString;
+           "&"+
+           readyForUseUrl+
+           "&"+
+           readyForUseParametersString;
 
     //calculate the hash
         QString hash = hmacSha1(
-                base,
-                consumerData->secret + "&" + userData->secret
-                );
+            base,
+            consumerData->secret + "&" + userData->secret
+            );
 
     //return the result
         return QString("%1=\"%2\"")
-                .arg("oauth_signature")
-                .arg(hash)
-                ;
+            .arg("oauth_signature")
+            .arg(hash)
+            ;
 }
 
 QString OAuth::hmacSha1(QString base, QString key)
@@ -245,15 +245,15 @@ QString OAuth::hmacSha1(QString base, QString key)
 
     //Hashes inner pad
     QByteArray innerSha1 = QCryptographicHash::hash(
-            ipad + base.toAscii(),
-            QCryptographicHash::Sha1
-            );
+        ipad + base.toAscii(),
+        QCryptographicHash::Sha1
+        );
 
     //Hashes outer pad
     QByteArray outerSha1 = QCryptographicHash::hash(
-            opad + innerSha1,
-            QCryptographicHash::Sha1
-            );
+        opad + innerSha1,
+        QCryptographicHash::Sha1
+        );
 
     return outerSha1.toBase64();
 }

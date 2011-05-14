@@ -37,82 +37,82 @@ QUrl Dropbox::apiToUrl(Dropbox::Api api)
     {
     case Dropbox::TOKEN:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/token"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/token"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::ACCOUNT_INFO:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/account/info"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/account/info"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::ACCOUNT:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/account"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/account"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::FILES:
         return QUrl(
-                QString(
-                        "https://api-content.dropbox.com/%1/files/dropbox"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api-content.dropbox.com/%1/files/dropbox"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::METADATA:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/metadata/dropbox"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/metadata/dropbox"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::THUMBNAILS:
         return QUrl(
-                QString(
-                        "https://api-content.dropbox.com/%1/thumbnails/dropbox"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api-content.dropbox.com/%1/thumbnails/dropbox"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::FILEOPS_COPY:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/fileops/copy"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/fileops/copy"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::FILEOPS_CREATEFOLDER:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/fileops/create_folder"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/fileops/create_folder"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::FILEOPS_DELETE:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/fileops/delete"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/fileops/delete"
+                ).arg(apiVersion)
+            );
         break;
 
     case Dropbox::FILEOPS_MOVE:
         return QUrl(
-                QString(
-                        "https://api.dropbox.com/%1/fileops/move"
-                        ).arg(apiVersion)
-                );
+            QString(
+                "https://api.dropbox.com/%1/fileops/move"
+                ).arg(apiVersion)
+            );
         break;
     }
 }
@@ -181,8 +181,8 @@ QString Dropbox::metaDataPathFromUrl(QUrl url)
 
     QString metaDataPath = path;
     metaDataPath = metaDataPath.remove(
-            QString("/%1/metadata/dropbox").arg(apiVersion)
-            );
+        QString("/%1/metadata/dropbox").arg(apiVersion)
+        );
 
     return metaDataPath;
 }
@@ -193,8 +193,8 @@ QString Dropbox::filePathFromUrl(QUrl url)
 
     QString filePath = path;
     filePath = filePath.remove(
-            QString("/%1/files/dropbox").arg(apiVersion)
-            );
+        QString("/%1/files/dropbox").arg(apiVersion)
+        );
 
     return filePath;
 }

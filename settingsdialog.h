@@ -42,9 +42,9 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(
-            QSettings* settings,
-            QWidget *parent = 0
-            );
+        QSettings* settings,
+        QWidget *parent = 0
+        );
     ~SettingsDialog();
 
 public: //shared objects

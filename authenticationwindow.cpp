@@ -43,13 +43,13 @@
 #include "json.h"
 
 AuthenticationWindow::AuthenticationWindow(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
-        QSettings* settings,
-        QWidget *parent
-        ) :
+    QNetworkAccessManager* networkAccessManager,
+    OAuth* oAuth,
+    UserData* userData,
+    Dropbox* dropbox,
+    QSettings* settings,
+    QWidget *parent
+    ) :
     QDialog(parent),
     ui(new Ui::AuthenticationWindow)
 {
@@ -65,22 +65,22 @@ AuthenticationWindow::AuthenticationWindow(
 #ifndef Q_OS_SYMBIAN
     //draw at screen's center
     move(
-            QApplication::desktop()->availableGeometry().center() -
-            this->rect().center()
-            );
+        QApplication::desktop()->availableGeometry().center() -
+        this->rect().center()
+        );
 #endif
 
     //initial connections
     connect(
-            ui->okPushButton,
-            SIGNAL(clicked()),
-            SLOT(requestTokenAndSecret())
-            );
+        ui->okPushButton,
+        SIGNAL(clicked()),
+        SLOT(requestTokenAndSecret())
+        );
     connect(
-            ui->cancelPushButton,
-            SIGNAL(clicked()),
-            SLOT(close())
-            );
+        ui->cancelPushButton,
+        SIGNAL(clicked()),
+        SLOT(close())
+        );
 }
 
 AuthenticationWindow::~AuthenticationWindow()
@@ -103,21 +103,21 @@ void AuthenticationWindow::requestTokenAndSecret()
     networkAccessManager->get( networkRequest );
 
     connect(
-            this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleTokenAndSecret(QNetworkReply*))
-            );
+        this->networkAccessManager,
+        SIGNAL(finished(QNetworkReply*)),
+        this,
+        SLOT(handleTokenAndSecret(QNetworkReply*))
+        );
 }
 
 void AuthenticationWindow::handleTokenAndSecret(QNetworkReply* networkReply)
 {
     disconnect(
-            this->networkAccessManager,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(handleTokenAndSecret(QNetworkReply*))
-            );
+        this->networkAccessManager,
+        SIGNAL(finished(QNetworkReply*)),
+        this,
+        SLOT(handleTokenAndSecret(QNetworkReply*))
+        );
 
     networkReply->deleteLater();
 
@@ -126,18 +126,18 @@ void AuthenticationWindow::handleTokenAndSecret(QNetworkReply* networkReply)
         if(networkReply->error() == QNetworkReply::AuthenticationRequiredError)
         {
             QMessageBox::critical(
-                    this,
-                    "Droper",
-                    "The provided user information is not valid."
-                    );
+                this,
+                "Droper",
+                "The provided user information is not valid."
+                );
         }
         else
         {
             QMessageBox::information(
-                    this,
-                    "Droper",
-                    "There was an error, try again later."
-                    );
+                this,
+                "Droper",
+                "There was an error, try again later."
+                );
         }
 
         ui->infoLabel->setText("Enter Your Dropbox Credentials.");
@@ -152,10 +152,10 @@ void AuthenticationWindow::handleTokenAndSecret(QNetworkReply* networkReply)
     if(!ok)
     {
         QMessageBox::information(
-                this,
-                "Droper",
-                "There was an error, try again later."
-                );
+            this,
+            "Droper",
+            "There was an error, try again later."
+            );
 
         return;
     }
