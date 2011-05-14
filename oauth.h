@@ -47,7 +47,7 @@ public:
             QString method,
             QNetworkRequest* networkRequest
             );
-    QPair<QString,QString> consumerKeyQueryItem();
+    void addConsumerKeyQueryItem(QNetworkRequest* networkRequest);
 
 public: //shared objects
     ConsumerData* consumerData;

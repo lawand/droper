@@ -72,12 +72,14 @@ void OAuth::signRequest(
     networkRequest->setRawHeader("Authorization", header.toAscii());
 }
 
-QPair<QString,QString> OAuth::consumerKeyQueryItem()
+void OAuth::addConsumerKeyQueryItem(QNetworkRequest* networkRequest)
 {
-    return qMakePair(
-            QString("oauth_consumer_key"),
-            QString("%1").arg(consumerData->key)
-            );
+    QUrl url = networkRequest->url();
+    url.addQueryItem(
+                "oauth_consumer_key",
+                consumerData->key
+                );
+    networkRequest->setUrl(url);
 }
 
 QString OAuth::timestampAndNonceItems()

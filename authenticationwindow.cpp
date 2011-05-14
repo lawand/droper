@@ -95,12 +95,12 @@ void AuthenticationWindow::requestTokenAndSecret()
     QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
     url.addQueryItem("email", ui->emailLineEdit->text());
     url.addQueryItem("password", ui->passwordLineEdit->text());
-    url.addQueryItem(
-            oAuth->consumerKeyQueryItem().first,
-            oAuth->consumerKeyQueryItem().second
-            );
 
-    networkAccessManager->get( QNetworkRequest( url ) );
+    QNetworkRequest networkRequest(url);
+
+    oAuth->addConsumerKeyQueryItem(&networkRequest);
+
+    networkAccessManager->get( networkRequest );
 
     connect(
             this->networkAccessManager,
