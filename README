@@ -1,36 +1,237 @@
-Introduction
+Droper 0.3.2
+------------
 
-Droper is a cross-platform application which helps Dropbox users access and
-modify their synced files and folders.
+Droper is a Qt4 GPLv3 open source cross-platform application which helps
+Dropbox users access and modify their synced files and folders.
+
+It is designed for mobile phones (running the Symbian platform), but is also
+ported for desktop platforms like Windows, in which case it can be used as a
+simple, light-weight Dropbox client.
+
 For more info about Dropbox, see http://www.dropbox.com/
 
 
+Changelog
+---------
 
-Official Site
+0.3.2
+*Under Development*
 
-http://lawand.github.com/droper/
+0.3.1
+Added an option to upload files, made lots of GUI enhancements including an
+experimental kinetic scrolling feature for Symbian, added an option to view
+file properties which include the date of last modification.
 
 
+Installation
+------------
 
-License
+Symbian:
 
-Droper is free software: you can redistribute it and/or modify it under the 
+Compatible with all Nokia Symbian smartphones running Symbian^3 or S60v5 (in
+other words, all Nokia Symbian smartphones equipped with a touch screen). For
+more info about your device, check out Forum Nokia
+[http://www.forum.nokia.com/Devices/].
+
+Requires installing Qt 4.6.3 first for S60v5 devices (but not for Symbian^3
+devices). You can get Qt 4.6.3 here
+[http://download.qt.nokia.com/qt/symbian/4.6.3/qt_installer.sis].
+
+Windows:
+
+OpenSSL [http://www.slproweb.com/products/Win32OpenSSL.html] (version 0.9.7 or
+later) should be installed first. (Using default options during install is
+required)
+
+
+General Usage Tips
+------------------
+
+When downloading or uploading files, you can close the progress dialog and the
+operation won't be interrupted, and you can check the progress later by
+selecting the Show Active Download or the Show Active Upload option.
+
+You can block Droper's access to your account (in case you forget to remove the
+authentication information when using Droper on a friend's device, for
+instance) by logging into your Dropbox account in dropbox.com and selecting the
+"My Apps" option in the account's settings and removing Droper's access. You
+can give the access back by logging in again using Droper.
+
+Uninstalling Droper doesn't remove the authentication, you must do so manually,
+using the "Forget Authentication" option in the settings dialog, for more info
+check out the tutorial.
+
+There currently seem to be some issues when dealing with some files and folders
+which names contain these four symbols ; + ~ #
+
+The current version isn't optimized for minimal network traffic. The use of
+WLAN networks when using Droper on a mobile device is more cost efficient.
+
+
+Program Settings
+----------------
+
+To view and modify program settings, tap the Options button and choose
+"Settings".
+
+A dialog containing the settings should appear shortly.
+
+The first options is the kinetic scrolling (in other words, scrolling by
+holding an item and then dragging it in the direction the opposes the one where
+you want to go to). To enable it, tap the "Enable kinetic scrolling" check box.
+
+A message box stating that this feature is not completely stable currently
+should appear soon. It mentions that disabling the single tap option might help
+improve the usability of the GUI when kinetic scrolling is enabled. To do so,
+tap the "Open folders with a single tap" check box.
+
+If you did actually enable the "Open folders with a single tap" option, then
+you can no longer tap folders to navigate into them, instead you should tap a
+folder and hold until you see the menu, then choose the newly enabled "Open"
+option.
+
+
+Authentication Removal
+----------------------
+
+The last settings option is the authentication removal option, it helps you to
+make the application forget your authentication information, which means that
+you have to login the next time you use it. To remove authentication, go to the
+settings dialog and tap the Forget Authentication button.
+
+Confirm by tapping Yes.
+
+The authentication information will still be loaded and you can still use the
+program. Don't forget to close the program to make sure you don't accidentally
+leave your authentication information loaded and available for usage. To close
+the program, tap the Exit button.
+
+
+Developing
+----------
+
+General Notes:
+
+Droper is a C++/Qt4 application.
+
+If you try to compile Droper, you'll notice that the consumerdata.cpp file is missing, it is a simple file that contains the values of the consumer key and secret. This file wasn't uploaded to the repository for security reasons. For more info search for and learn about OAuth and Dropbox API.
+
+On all platforms, you can ignore build warnings when building Droper.
+
+Building For Symbian:
+
+Note: The only version of Qt for Symbian that was tested is 4.6.3, which is
+shipped with Nokia Qt SDK 1.0.2.
+
+To build Droper for Symbian on Windows using Nokia Qt SDK you should prepare
+the kinetic scroller component like this:
+    Navigate into Droper's source directory.
+    Open kineticscroller\qtscroller.pro with Qt Creator.
+    Select only the "Symbian Device" target.
+    Switch to the "Projects" mode.
+    Select the "Release" build configuration.
+    Remove the "Create SIS Package" step from build steps.
+    Build the project (ignoring build warnings if any).
+    Close Qt Creator.
+
+You can now open droper.pro with Qt Creator and build and/or run it as you do
+with normal Qt projects.
+
+Running On Symbian:
+
+A 4.6.x version of Qt is recommended, unless you modify the GUI.
+
+Distributing For Symbian:
+
+Distributing a custom build requires renaming the application (so that it can
+be installed along with Droper), and (as it is with all Symbian applications)
+specifying a UID.
+
+Building For Windows:
+
+The only version of Qt for Windows that was tested is 4.7.0.
+
+Running On Windows:
+
+Running Droper on Windows requires installing OpenSSL (which is also required
+by Qt [http://doc.qt.nokia.com/4.7/requirements.html]).
+
+
+Legal Notes
+-----------
+
+License:
+
+Droper is free software: you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
 Foundation, either version 3 of the License, or (at your option) any later
 version.
 
-Droper is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+For more information, check out the Copying file.
+
+Disclaimers:
+
+Droper is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+Windows is a registered trademark of Microsoft Corporation in the United States
+and other countries.
+
+Nokia and Qt are trademarks of Nokia Corporation in Finland and/or other
+countries worldwide.
+
+All other trademarks are property of their respective owners.
+
+
+Official Site
+-------------
+
+http://coinonedge.com/droper/
+
+
+License
+-------
+
+Droper is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Droper is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-For more information, check out the GNU General Public license found in the 
+For more information, check out the GNU General Public license found in the
 COPYING file.
 
 
-
 Contact
+-------
 
-Droper - Copyright 2011 Omar Lawand Dalatieh <lawand87@gmail.com>
+Feature Requests And Bug Reports:
+
+To report bugs or request features, visit the Droper issues page at Github
+[https://github.com/lawand/droper/issues/].
+
+Contact:
+
+Droper - Copyright 2011 Omar Lawand Dalatieh (lawand87@gmail.com |
+http://github.com/lawand)
 
 
+Credits
+-------
+
+Droper was programmed using Qt and Qt SDK.
+
+Droper uses UPX for executable compression.
+
+Program icon was designed using the Inkscape SVG graphics editor.
+
+The Silk Icon Set by Mark James is used by Droper.
+
+Tango Icon Library is used by Droper.
+
+Thanks to all Dropbox Forums members for helping with development.
 
