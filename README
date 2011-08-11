@@ -1,4 +1,4 @@
-Droper 0.3.4
+Droper 0.3.5
 ------------
 
 Droper is a Qt4 GPLv3 open source cross-platform application which helps
@@ -13,6 +13,9 @@ For more info about Dropbox, see http://www.dropbox.com/
 
 Changelog
 ---------
+
+0.3.5
+*Under Development*
 
 0.3.4
 Updated the readme file.
