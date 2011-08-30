@@ -5,7 +5,7 @@ QT += core gui network
 
 TARGET = Droper
 TEMPLATE = app
-VERSION = 0.4.0
+VERSION = 0.4.1
 
 
 SOURCES += main.cpp\
