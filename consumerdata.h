@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -31,9 +30,12 @@
 
 class ConsumerData
 {
+//member functions
 public:
     ConsumerData();
 
+//data members
+public:
     QString key;
     QString secret;
 };

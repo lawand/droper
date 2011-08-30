@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -30,14 +29,13 @@
 #include <QDialog>
 
 //data members
-#include <QString>
 #include <QFile>
 #include <QTime>
-class QNetworkReply;
 class QNetworkAccessManager;
+class QNetworkReply;
+class Dropbox;
 class OAuth;
 class UserData;
-class Dropbox;
 
 //member functions
 #include <QVariantMap>
@@ -50,46 +48,61 @@ class DownloadDialog : public QDialog
 {
     Q_OBJECT
 
+//shared data members
+public:
+    QNetworkAccessManager *networkAccessManager;
+    Dropbox *dropbox;
+    OAuth *oAuth;
+    UserData *userData;
+
+//enumerations
+private:
+    enum State
+    {
+        INITIAL,
+        READY_TO_START,
+        DOWNLOADING,
+        FINISHED,
+        NOT_FINISHED
+    };
+
+//member functions
 public:
     explicit DownloadDialog(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
+        QNetworkAccessManager *networkAccessManager,
+        Dropbox *dropbox,
+        OAuth *oAuth,
+        UserData *userData,
         QWidget *parent = 0
         );
     ~DownloadDialog();
-
-public:
-    void setFileAndFolder(
-        QVariantMap* fileMap,
-        QString localFolder
+    bool isDownloading();
+    void setFileAndFolderInformation(
+        QVariantMap fileInfo,
+        QString folderPath
         );
-    bool isActive();
-
-public: //shared objects
-    QNetworkAccessManager* networkAccessManager;
-    OAuth* oAuth;
-    UserData* userData;
-    Dropbox* dropbox;
-
-private:
-    Ui::DownloadDialog *ui;
-    bool active;
-    QString remoteFile;
-    QString localFolder;
-    QFile file;
-    QNetworkReply* networkReply;
-    QTime downloadTime;
-    qint64 remoteFileBytes;  //file size in bytes
-
 private slots:
-    void initialize();
-    void reject();  //reimplementation
-    void toggleStart();
+    void startStopRestart();
+    void setState(DownloadDialog::State state);
     void handleReadyRead();
     void handleDownloadProgress(qint64 received, qint64 total);
-    void handleFinished();
+public slots:
+    void handleNetworkReply(QNetworkReply *networkReply);
+
+//private data members
+private:
+    Ui::DownloadDialog *ui;
+    State state;
+    QAction *startStopRestartAction;
+    QAction *closeAction;
+    QFile file;
+    QString filePath;
+    QString fileName;
+    QString fileSize;
+    QString folderPath;
+    QString folderName;
+    QNetworkReply *networkReply;
+    QTime downloadTime;
 };
 
 #endif // DOWNLOADDIALOG_H

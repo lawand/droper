@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/actions/exit.png</file>
-        <file>resources/actions/file.png</file>
-        <file>resources/actions/info.png</file>
-        <file>resources/actions/options.png</file>
-        <file>resources/actions/up.png</file>
-        <file>resources/animations/loading.gif</file>
         <file>resources/icons/folder.png</file>
         <file>resources/icons/folder_gray.png</file>
         <file>resources/icons/folder_photos.png</file>
@@ -39,6 +33,12 @@
         <file>resources/icons/page_white_visualstudio.png</file>
         <file>resources/icons/page_white_word.png</file>
         <file>resources/icons/page_white_zip.png</file>
+        <file>resources/animations/loading.gif</file>
+        <file>resources/actions/create-folder.png</file>
+        <file>resources/actions/paste.png</file>
+        <file>resources/actions/refresh.png</file>
+        <file>resources/actions/up.png</file>
+        <file>resources/actions/upload.png</file>
         <file>droper.svg</file>
     </qresource>
 </RCC>

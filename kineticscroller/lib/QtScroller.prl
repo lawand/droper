@@ -1,5 +1,0 @@
-QMAKE_PRL_BUILD_DIR = C:/desktop/kineticscroller2/src
-QMAKE_PRO_INPUT = src.pro
-QMAKE_PRL_TARGET = QtScroller
-QMAKE_PRL_CONFIG = incredibuild_xge lex yacc warn_on uic resources qt warn_on release incremental stl exceptions rtti def_files staticlib create_prl release static staticlib qtmain moc thread
-QMAKE_PRL_LIBS = -llibstdcpp.dll -lQtWebKit -lQtGui -lQtCore  

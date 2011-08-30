@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -28,60 +27,48 @@
 #include "ui_uploaddialog.h"
 
 //data members
-#include <QNetworkReply>
 #include <QNetworkAccessManager>
-#include <QFile>
+#include <QNetworkReply>
+#include "dropbox.h"
 #include "oauth.h"
 #include "userdata.h"
-#include "dropbox.h"
 
 //implementation-specific
-#include <QFileInfo>
 #include <QMessageBox>
 
 UploadDialog::UploadDialog(
-    QNetworkAccessManager* networkAccessManager,
-    OAuth* oAuth,
-    UserData* userData,
-    Dropbox* dropbox,
+    QNetworkAccessManager *networkAccessManager,
+    Dropbox *dropbox,
+    OAuth *oAuth,
+    UserData *userData,
     QWidget *parent
     ) :
     QDialog(parent),
     ui(new Ui::UploadDialog),
-    networkReply(0),
-    active(false)
+    startStopRestartAction(new QAction("Start", this)),
+    closeAction(new QAction("Close", this))
 {
-    //member initialization
+    //shared data members initialization
     this->networkAccessManager = networkAccessManager;
+    this->dropbox = dropbox;
     this->oAuth = oAuth;
     this->userData = userData;
-    this->dropbox = dropbox;
 
-    //GUI initialization
+    //private data members initialization
     ui->setupUi(this);
-
-    //initial connections
+    startStopRestartAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    this->addAction(startStopRestartAction);
     connect(
-        ui->buttonBox,
-        SIGNAL(rejected()),
-        SLOT(reject())
+        startStopRestartAction,
+        SIGNAL(triggered()),
+        SLOT(startStopRestart())
         );
-    connect(
-        ui->toggleStartPushButton,
-        SIGNAL(clicked()),
-        ui->toggleStartAction,
-        SLOT(trigger())
-        );
-    connect(ui->toggleStartAction, SIGNAL(triggered()), SLOT(toggleStart()));
+    closeAction->setSoftKeyRole(QAction::NegativeSoftKey);
+    this->addAction(closeAction);
+    connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
-#ifdef Q_OS_SYMBIAN
-    ui->toggleStartAction->setSoftKeyRole(QAction::PositiveSoftKey);
-    ui->toggleStartPushButton->setVisible(false);
-    addAction(ui->toggleStartAction);
-#endif
-
-    //initial state
-    initialize();
+    //initialize the state
+    setState(UploadDialog::INITIAL);
 }
 
 UploadDialog::~UploadDialog()
@@ -89,96 +76,87 @@ UploadDialog::~UploadDialog()
     delete ui;
 }
 
-void UploadDialog::setFileAndFolder(
-    QString localFile,
-    QString remoteFolder
+void UploadDialog::setFileAndFolderInformation(
+    QString filePath,
+    QString fileSize,
+    QString folderPath
     )
 {
-    this->localFile = localFile;
-    this->remoteFolder = remoteFolder;
-
-    QFileInfo fileInfo(this->localFile);
-    int bytes = fileInfo.size();
-
-    qreal size = (qreal)bytes;
-    QString sizeUnit;
-    if (size < 1024) {
-        sizeUnit = "bytes";
-    } else if (size < 1024*1024) {
-        size /= 1024;
-        sizeUnit = "kB";
-    } else if (size < 1024*1024*1024){
-        size /= 1024*1024;
-        sizeUnit = "MB";
-    } else {
-        size /= 1024*1024*1024;
-        sizeUnit = "GB";
-    }
-    QString sizeString = QString("%1%2")
-        .arg(size, 0, 'f', 1)
-        .arg(sizeUnit)
-        ;
-
-    QString remoteFolderName = remoteFolder.right(
-        (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
+    //file information
+    this->filePath = filePath;
+    fileName = this->filePath.right(
+        (this->filePath.length() - this->filePath.lastIndexOf("/")) - 1
         );
-    if(remoteFolderName == "")  //the case of the remoteFolder being "/"
-        remoteFolderName = "Dropbox (root)";
+    this->fileSize = fileSize;
 
-    //update variables
-    ui->fileNameAndSizeLabel->setText(
-        QString("%1 (%2)").arg(fileInfo.fileName()).arg(sizeString)
+    //folder information
+    this->folderPath = folderPath;
+    folderName = this->folderPath.right(
+        (this->folderPath.length() - this->folderPath.lastIndexOf("/")) - 1
         );
-    ui->folderLabel->setText(remoteFolderName);
-    ui->progressBar->setFormat("%p%");
-    ui->stateLabel->setText("Ready to start");
-    ui->toggleStartPushButton->setEnabled(true);
-    ui->toggleStartAction->setEnabled(true);
+    if(folderName.isEmpty())
+        folderName = "/ (root)";
 
-    resize(sizeHint());
+    //update the state
+    setState(UploadDialog::READY_TO_START);
 }
 
-bool UploadDialog::isActive()
+void UploadDialog::startStopRestart()
 {
-    return active;
-}
-
-void UploadDialog::initialize()
-{
-    //update variables
-    ui->fileNameAndSizeLabel->setText("---");
-    ui->folderLabel->setText("---");
-    ui->progressBar->setValue(0);
-    ui->progressBar->setFormat("");
-    ui->stateLabel->setText("---");
-    ui->toggleStartPushButton->setEnabled(false);
-    ui->toggleStartAction->setEnabled(false);
-    ui->toggleStartPushButton->setText("Start");
-    ui->toggleStartAction->setText("Start");
-    networkReply = 0;
-    active = false;
-}
-
-void UploadDialog::reject()
-{
-    if(!active)
+    switch(state)
     {
-        initialize();
+    case READY_TO_START:
+        setState(UploadDialog::UPLOADING);
+        break;
+
+    case UPLOADING:
+        networkReply->abort();
+        break;
+
+    case NOT_FINISHED:
+        setState(UploadDialog::UPLOADING);
+        break;
+
+    default:
+        break;
     }
-
-    QDialog::reject();
 }
 
-void UploadDialog::toggleStart()
+void UploadDialog::setState(UploadDialog::State state)
 {
-    if(active == false)
-    {
-        //compute localFileName
-            QString localFileName = localFile.right(
-                (localFile.length()-localFile.lastIndexOf("/"))-1
-                );
+    this->state = state;
 
-        //prepare binary data
+    switch(this->state)
+    {
+    case INITIAL:
+        ui->fileNameAndSizeLabel->setText("---");
+        ui->folderNameLabel->setText("---");
+        ui->progressBar->setValue(-1);
+        ui->progressBar->setFormat("%p%");
+        startStopRestartAction->setVisible(false);
+        break;
+
+    case READY_TO_START:
+        ui->fileNameAndSizeLabel->setText(
+            QString("%1 (%2)").arg(fileName).arg(fileSize)
+            );
+        ui->folderNameLabel->setText(folderName);
+        ui->progressBar->setValue(0);
+        ui->progressBar->setFormat("Ready To Start");
+        startStopRestartAction->setText("Start");
+        startStopRestartAction->setVisible(true);
+        break;
+
+    case UPLOADING:
+        {
+            ui->progressBar->setValue(0);
+            ui->progressBar->setFormat("%p% Uploading");
+            startStopRestartAction->setText("Stop");
+            startStopRestartAction->setVisible(true);
+            uploadTime.start();
+
+            //prepare the local file
+
             multipartform = new QByteArray();
             QString crlf("\r\n");
             QString boundaryStr(
@@ -188,178 +166,117 @@ void UploadDialog::toggleStart()
             multipartform->append(boundary.toAscii());
             multipartform->append(
                 QString("Content-Disposition: form-data; name=\"file\"; "
-                    "filename=\"" + localFileName.toUtf8() + "\"" + crlf
+                    "filename=\"" + fileName.toUtf8() + "\"" + crlf
                     ).toAscii()
                 );
             multipartform->append(
                 QString("Content-Type: text/plain" + crlf + crlf).toAscii()
                 );
-            file = new QFile(localFile);
-            if(file->open(QIODevice::ReadOnly) == false)
+            file.setFileName(filePath);
+
+            //check whether the file can be opened for reading,
+            //opening it in the process
+            if(!file.open(QFile::ReadOnly))
             {
                 QMessageBox::critical(
                     this,
                     "Droper",
-                    "Can't open the file for reading!"
+                    "Failed to open the file for reading."
                     );
+
+                setState(UploadDialog::NOT_FINISHED);
 
                 return;
             }
-            multipartform->append(file->readAll());
-            file->close();
+
+            multipartform->append(file.readAll());
+            file.close();
             multipartform->append(
                 QString(crlf + "--" + boundaryStr + "--" + crlf).toAscii()
                 );
 
-        //prepare request
-            QUrl url =
-                dropbox->apiToUrl(Dropbox::FILES).toString() +
-                remoteFolder
-                ;
-            url.addQueryItem("file", localFileName);
-
+            //send the content of the local file
+            QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString()+folderPath;
+            url.addQueryItem("file", fileName);
             QNetworkRequest networkRequest(url);
-
             networkRequest.setHeader(
                 QNetworkRequest::ContentTypeHeader,
                 "multipart/form-data; boundary=" + boundaryStr
                 );
-
-            oAuth->signRequest(
-                userData,
-                "POST",
-                &networkRequest
-                );
-
-        //send request
+            oAuth->signRequest(userData, "POST", &networkRequest);
             networkReply = networkAccessManager->post(
-                networkRequest, *multipartform
-                );
-
-        //update variables
-            ui->stateLabel->setText("Starting...");
-            ui->toggleStartPushButton->setText("Cancel");
-            ui->toggleStartAction->setText("Cancel");
-            ui->toggleStartPushButton->setEnabled(false);
-            ui->toggleStartAction->setEnabled(false);
-            active = true;
-            uploadTime.start();
-
-        //establish connections
-            connect(
-                networkReply,
-                SIGNAL(uploadProgress(qint64,qint64)),
-                SLOT(handleUploadProgress(qint64,qint64))
+                networkRequest,
+                *multipartform
                 );
             connect(
                 networkReply,
-                SIGNAL(finished()),
-                SLOT(handleFinished())
+                SIGNAL(uploadProgress(qint64, qint64)),
+                SLOT(handleUploadProgress(qint64, qint64))
                 );
-    }
-    else
-    {
-        //update variables
-        ui->progressBar->setValue(0);
-        ui->stateLabel->setText("Ready to start");
-        ui->toggleStartPushButton->setText("Start");
-        ui->toggleStartAction->setText("Start");
-        if(networkReply != 0)
-        {
-            networkReply->abort();
-            networkReply->deleteLater();
         }
-        active = false;
+
+        break;
+
+    case FINISHED:
+        ui->progressBar->setFormat("Finished");
+        startStopRestartAction->setVisible(false);
+        delete multipartform;
+        emit itemUploadedToDirectory(folderPath);
+        break;
+
+    case NOT_FINISHED:
+        ui->progressBar->setFormat("Not Finished");
+        startStopRestartAction->setText("Restart");
+        startStopRestartAction->setVisible(true);
+        delete multipartform;
+        break;
+
+    default:
+        break;
     }
+}
+
+bool UploadDialog::isUploading()
+{
+    if(state == UploadDialog::UPLOADING)
+        return true;
+    else
+        return false;
 }
 
 void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
 {
     //avoid errors
-    if(sent == 0 || total == 0 || uploadTime.elapsed() == 0)
+    if (sent == 0 || total == 0 || uploadTime.elapsed() == 0)
         return;
 
-    // calculate the download speed
+    //calculate upload speed
     double speed = sent * 1000.0 / uploadTime.elapsed();
     QString unit;
     if (speed < 1024) {
-        unit = "bytes/sec";
+        unit = "bps";
     } else if (speed < 1024*1024) {
         speed /= 1024;
-        unit = "kB/s";
+        unit = "kbps";
     } else {
         speed /= 1024*1024;
-        unit = "MB/s";
+        unit = "mbps";
     }
 
-    //update variables
-    ui->progressBar->setValue((sent*100)/total);
-    ui->stateLabel->setText(
-        QString("Uploading at %1%2").arg(speed, 3, 'f', 1).arg(unit)
+    //update progress bar
+    ui->progressBar->setFormat(
+        QString("%p% Upl. at %1%2").arg(speed, 0, 'f', 1).arg(unit)
         );
-    ui->toggleStartPushButton->setEnabled(true);
-    ui->toggleStartAction->setEnabled(true);
+    ui->progressBar->setValue( (sent*100) / total );
 }
 
-void UploadDialog::handleFinished()
+void UploadDialog::handleNetworkReply(QNetworkReply *networkReply)
 {
-    //delete temporary data used during upload
-    delete multipartform;
-    delete file;
+    if(networkReply != this->networkReply)
+        return;
 
     if(networkReply->error() != QNetworkReply::NoError)
-    {
-        //if the operation was canceled, do nothing
-        if(networkReply->error() == QNetworkReply::OperationCanceledError)
-            return;
-
-        //notify the user
-        QMessageBox::critical(
-            this,
-            "Droper",
-            "File upload error!"
-            );
-        show();
-
-        //update variables
-        ui->progressBar->setValue(0);
-        ui->stateLabel->setText("Ready to start");
-        ui->toggleStartPushButton->setText("Start");
-        ui->toggleStartAction->setText("Start");
-        ui->toggleStartPushButton->setEnabled(true);
-        ui->toggleStartAction->setEnabled(true);
-        networkReply->deleteLater();
-        active = false;
-    }
+        setState(UploadDialog::NOT_FINISHED);
     else
-    {
-        //compute remoteFolderName and localFileName
-        QString remoteFolderName = remoteFolder.right(
-            (remoteFolder.length()-remoteFolder.lastIndexOf("/"))-1
-            );
-        if(remoteFolderName == "")  //the case of the remoteFolder being "/"
-            remoteFolderName = "Dropbox (root)";
-        QString localFileName = localFile.right(
-            (localFile.length()-localFile.lastIndexOf("/"))-1
-            );
-
-        //notify the user
-        QMessageBox::information(
-            this,
-            "Droper",
-            QString(
-                "The file '%1' was successfully uploaded to the "
-                "folder '%2'."
-                ).arg(localFileName).arg(remoteFolderName)
-            );
-
-        //notify the main window
-        emit done(remoteFolder);
-
-        //discard reply
-        networkReply->deleteLater();
-
-        //return to initial state
-        initialize();
-    }
+        setState(UploadDialog::FINISHED);
 }

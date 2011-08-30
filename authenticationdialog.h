@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -23,57 +22,67 @@
 **
 ****************************************************************************/
 
-#ifndef AUTHENTICATIONWINDOW_H
-#define AUTHENTICATIONWINDOW_H
+#ifndef AUTHENTICATIONDIALOG_H
+#define AUTHENTICATIONDIALOG_H
 
 //base class
 #include <QDialog>
 
 //data members
 class QNetworkAccessManager;
-class QSettings;
-class OAuth;
-class UserData;
 class Dropbox;
+class OAuth;
 
 //member functions
 class QNetworkReply;
+class QNetworkRequest;
 
 namespace Ui {
-    class AuthenticationWindow;
+    class AuthenticationDialog;
 }
 
-class AuthenticationWindow : public QDialog
+class AuthenticationDialog : public QDialog
 {
     Q_OBJECT
 
+//shared data members
 public:
-    explicit AuthenticationWindow(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
-        QSettings* settings,
+    QNetworkAccessManager *networkAccessManager;
+    Dropbox *dropbox;
+    OAuth *oAuth;
+
+//member functions
+public:
+    explicit AuthenticationDialog(
+        QNetworkAccessManager *networkAccessManager,
+        Dropbox *dropbox,
+        OAuth *oAuth,
         QWidget *parent = 0
         );
-    ~AuthenticationWindow();
-
-signals:
-    void done();
-
-public: //shared objects
-    QNetworkAccessManager* networkAccessManager;
-    OAuth* oAuth;
-    UserData* userData;
-    Dropbox* dropbox;
-    QSettings* settings;
-
-private:
-    Ui::AuthenticationWindow *ui;
-
+    ~AuthenticationDialog();
+    void switchToSignIn();
+    void switchToSignUp();
 private slots:
-    void requestTokenAndSecret();
-    void handleTokenAndSecret(QNetworkReply* networkReply);
+    void on_buttonBox_accepted();
+    void requestSignIn(QString email, QString password);
+    void requestSignUp(
+        QString email,
+        QString first_name,
+        QString last_name,
+        QString password
+        );
+    void requestNetworkRequest(QNetworkRequest *networkRequest);
+public slots:
+    void handleNetworkReply(QNetworkReply *networkReply);
+private slots:
+    void handleSignIn(QNetworkReply *networkReply);
+    void handleSignUp(QNetworkReply *networkReply);
+    void clearLineEdits();
+
+//private data members
+private:
+    Ui::AuthenticationDialog *ui;
+    QWidget *tempPage;
 };
 
-#endif // AUTHENTICATIONWINDOW_H
+#endif // AUTHENTICATIONDIALOG_H

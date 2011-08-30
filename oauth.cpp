@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -39,18 +38,19 @@
 #include <QDateTime>
 #include <QStringList>
 
-OAuth::OAuth(ConsumerData* consumerData)
+OAuth::OAuth(ConsumerData *consumerData)
 {
-    //member initialization
+    //shared data members initialization
     this->consumerData = consumerData;
 
+    //qrand seed
     qsrand(QDateTime::currentDateTime().toTime_t());
 }
 
 void OAuth::signRequest(
-    UserData* userData,
+    UserData *userData,
     QString method,
-    QNetworkRequest* networkRequest
+    QNetworkRequest *networkRequest
     )
 {
     QString header = "OAuth ";
@@ -67,12 +67,13 @@ void OAuth::signRequest(
         header
         ) + ",";
 
-    header.chop(1); //remove the last ","
+    //remove the last ","
+    header.chop(1);
 
     networkRequest->setRawHeader("Authorization", header.toAscii());
 }
 
-void OAuth::addConsumerKeyQueryItem(QNetworkRequest* networkRequest)
+void OAuth::addConsumerKeyQueryItem(QNetworkRequest *networkRequest)
 {
     QUrl url = networkRequest->url();
     url.addQueryItem(
@@ -114,7 +115,7 @@ QString OAuth::signatureMethodItem()
         ;
 }
 
-QString OAuth::userTokenItem(UserData* userData)
+QString OAuth::userTokenItem(UserData *userData)
 {
     return QString("%1=\"%2\"")
         .arg("oauth_token")
@@ -131,94 +132,94 @@ QString OAuth::versionItem()
 }
 
 QString OAuth::signatureItem(
-    UserData* userData,
+    UserData *userData,
     QString method,
-    QUrl* url,
+    QUrl *url,
     QString oAuthHeader
     )
 {
     //prepare URL
-        QString urlSchemeAndHost = url->toString(
-            QUrl::RemovePort |
-            QUrl::RemovePath |
-            QUrl::RemoveQuery |
-            QUrl::RemoveFragment
-            );
-        QString urlPath = url->path();
+    QString urlSchemeAndHost = url->toString(
+        QUrl::RemovePort |
+        QUrl::RemovePath |
+        QUrl::RemoveQuery |
+        QUrl::RemoveFragment
+        );
+    QString urlPath = url->path();
 
-        //url path parts need to be UTF-8 encoded and percent encoded
-        QStringList urlPathParts = urlPath.split("/");
-        for(int i = 0; i < urlPathParts.length(); ++i)
-        {
-            urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
-        }
-        urlPath = urlPathParts.join("/");
+    //url path parts need to be UTF-8 encoded and percent encoded
+    QStringList urlPathParts = urlPath.split("/");
+    for(int i = 0; i < urlPathParts.length(); ++i)
+    {
+        urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
+    }
+    urlPath = urlPathParts.join("/");
 
-        QByteArray readyForUseUrl =
-            (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
+    QByteArray readyForUseUrl =
+        (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
     //prepare parameters
-        QList< QPair<QString,QString> > parameters;
+    QList< QPair<QString,QString> > parameters;
 
-        parameters.append(url->queryItems());
+    parameters.append(url->queryItems());
 
-        //extract header parameters and add them to the parameters list
-            oAuthHeader.remove("OAuth ");
-            QStringList oAuthParameters =
-                 oAuthHeader.split(",", QString::SkipEmptyParts);
-            foreach(QString oAuthParameter, oAuthParameters)
-            {
-                QStringList oAuthParameterParts = oAuthParameter.split("=");
-                QString first = oAuthParameterParts.at(0);
-                QString second = oAuthParameterParts.at(1);
-                second.remove("\"");
-                QPair<QString, QString> parameter = qMakePair(
-                    first,
-                    second
-                    );
-                parameters.append(parameter);
-            }
+    //extract header parameters and add them to the parameters list
+    oAuthHeader.remove("OAuth ");
+    QStringList oAuthParameters =
+        oAuthHeader.split(",", QString::SkipEmptyParts);
+    foreach(QString oAuthParameter, oAuthParameters)
+    {
+        QStringList oAuthParameterParts = oAuthParameter.split("=");
+        QString first = oAuthParameterParts.at(0);
+        QString second = oAuthParameterParts.at(1);
+        second.remove("\"");
+        QPair<QString, QString> parameter = qMakePair(
+            first,
+            second
+            );
+        parameters.append(parameter);
+    }
 
-        //parameters need to be UTF-8 encoded and percent encoded
-        for(int i = 0; i < parameters.length(); ++i)
-        {
-            QPair<QString,QString> parameter = parameters[i];
-            parameter.second = parameter.second.toUtf8().toPercentEncoding();
-            parameters[i] = parameter;
-        }
+    //parameters need to be UTF-8 encoded and percent encoded
+    for(int i = 0; i < parameters.length(); ++i)
+    {
+        QPair<QString,QString> parameter = parameters[i];
+        parameter.second = parameter.second.toUtf8().toPercentEncoding();
+        parameters[i] = parameter;
+    }
 
-        qSort(parameters);
+    qSort(parameters);
 
-        QString parametersString;
-        QPair<QString,QString> parameter;
-        foreach(parameter, parameters)
-        {
-            parametersString += parameter.first + "=" + parameter.second + "&";
-        }
-        //remove last "&"
-        parametersString.chop(1);
+    QString parametersString;
+    QPair<QString,QString> parameter;
+    foreach(parameter, parameters)
+    {
+        parametersString += parameter.first + "=" + parameter.second + "&";
+    }
+    //remove last "&"
+    parametersString.chop(1);
 
-        QString readyForUseParametersString =
-            parametersString.toAscii().toPercentEncoding();
+    QString readyForUseParametersString =
+        parametersString.toAscii().toPercentEncoding();
 
     //generate base string
-        QString base = method+
-           "&"+
-           readyForUseUrl+
-           "&"+
-           readyForUseParametersString;
+    QString base = method+
+        "&"+
+        readyForUseUrl+
+        "&"+
+        readyForUseParametersString;
 
     //calculate the hash
-        QString hash = hmacSha1(
-            base,
-            consumerData->secret + "&" + userData->secret
-            );
+    QString hash = hmacSha1(
+        base,
+        consumerData->secret + "&" + userData->secret
+        );
 
     //return the result
-        return QString("%1=\"%2\"")
-            .arg("oauth_signature")
-            .arg(hash)
-            ;
+    return QString("%1=\"%2\"")
+        .arg("oauth_signature")
+        .arg(hash)
+        ;
 }
 
 QString OAuth::hmacSha1(QString base, QString key)

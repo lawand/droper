@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -27,108 +26,148 @@
 #define MAINWINDOW_H
 
 //base class
-#include <QMainWindow>
+#include <QWidget>
 
 //data members
-#include <downloaddialog.h>
-#include <uploaddialog.h>
+#include "authenticationdialog.h"
+#include "downloaddialog.h"
+#include "uploaddialog.h"
+#include "userdata.h"
 class QNetworkAccessManager;
-class QSettings;
-class QToolBar;
-class OAuth;
-class UserData;
+class QToolButton;
 class Dropbox;
+class OAuth;
 
 //member functions
 class QNetworkReply;
 class QListWidgetItem;
+class QNetworkRequest;
+class QResizeEvent;
 
 namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
+//shared data members
+public:
+    QNetworkAccessManager *networkAccessManager;
+    Dropbox *dropbox;
+    OAuth *oAuth;
+
+//member functions
 public:
     explicit MainWindow(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
-        QSettings* settings,
+        QNetworkAccessManager *networkAccessManager,
+        Dropbox *dropbox,
+        OAuth *oAuth,
         QWidget *parent = 0
         );
     ~MainWindow();
-
-public slots:
-    void setup();
-
-public: //shared objects
-    QNetworkAccessManager* networkAccessManager;
-    OAuth* oAuth;
-    UserData* userData;
-    Dropbox* dropbox;
-    QSettings* settings;
-
-private:
-    Ui::MainWindow *ui;
-    QString currentDirectory;
-    QString clipboard;
-    bool shouldPreserveClipboardContents;
-    DownloadDialog downloadDialog;
-    bool renameOperationBeingProcessed;
-    UploadDialog uploadDialog;
-#ifdef Q_OS_SYMBIAN
-    bool kineticScrollingEnabled;
-    bool singleTapEnabled;
-#endif
-
+protected:
+    void resizeEvent(QResizeEvent *resizeEvent);
+    void keyPressEvent(QKeyEvent *event);
 private slots:
-    void handleNetworkReply(QNetworkReply* networkReply);
-    void requestAccountInformation();
-    void handleAccountInformation(QNetworkReply* networkReply);
-    void requestDirectoryListing(QString path);
-    void handleDirectoryListing(QNetworkReply* networkReply);
-    void requestCopying(QString source, QString destination);
-    void handleCopying(QNetworkReply* networkReply);
-    void requestMoving(QString source, QString destination);
-    void handleMoving(QNetworkReply* networkReply);
-    void requestDeleting(QString path);
-    void handleDeleting(QNetworkReply* networkReply);
-    void requestFolderCreation(QString path);
-    void handleFolderCreation(QNetworkReply* networkReply);
+    //initialization
+    void initializationStepOne();
+    void readTokenAndSecret();
+    void initializationStepTwo();
+    void readUidAndReferralLink();
+    void initializationStepThree();
+    //misc
+    bool s60v3();
+    void setupActions();
+    void readUserDataAndSignIn();
+    void setCurrentPage(QWidget *page);
+    void showContextMenu(QPoint point);
+    void handleItemUploadedToDirectory(QString directory);
+    //ui slots
+    void on_filesAndFoldersListWidget_itemActivated(QListWidgetItem *item);
+    void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem *item);
+    void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
+    //action slots
+    void navigateItem(QListWidgetItem *item);
+    void signUp();
+    void signIn();
+    void referralLink();
+    void signOut();
     void about();
-    void refreshCurrentDirectory();
-#ifdef Q_OS_SYMBIAN
-    void open();
-    void on_filesAndFoldersListWidget_itemClicked(
-        QListWidgetItem* item
-        );
-#endif
-    void on_filesAndFoldersListWidget_itemDoubleClicked(
-        QListWidgetItem* item
-        );
-    void up();
-    void refresh();
     void cut();
     void copy();
-    void paste();
     void rename();
-    void del();
+    void remove();
+    void publicLink();
     void download();
-    void upload();
+    void propeties();
+    void up();
+    void refresh();
+    void paste();
     void createFolder();
-    void showProperties();
-    void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
-    void showLoadingAnimation();
-    void hideLoadingAnimation();
-    void showFileMenu();
-    void showOptionsMenu();
-    void showInfoMenu();
-    void handleUploadDone(QString folder);
-    void showSettings();
+    void upload();
+    void activeDownload();
+    void activeUpload();
+    //network slots
+    void requestUidAndReferralLink();
+    void requestDirectoryListing(QString path);
+    void requestAccountInfo();
+    void requestFolderCreation(QString path);
+    void requestCopying(QString source, QString destination);
+    void requestMoving(QString source, QString destination);
+    void requestDeletion(QString path);
+    void requestNetworkRequest(QNetworkRequest *networkRequest);
+    void globalHandleNetworkReply(QNetworkReply *networkReply);
+    void handleNetworkReply(QNetworkReply *networkReply);
+    void handleUidAndReferralLink(QNetworkReply* networkReply);
+    void handleDirectoryListing(QNetworkReply *networkReply);
+    void handleAccountInfo(QNetworkReply *networkReply);
+    void handleFolderCreation(QNetworkReply* networkReply);
+    void handleCopying(QNetworkReply* networkReply);
+    void handleMoving(QNetworkReply* networkReply);
+    void handleDeletion(QNetworkReply* networkReply);
+
+//private data members
+private:
+    Ui::MainWindow *ui;
+    AuthenticationDialog authenticationDialog;
+    DownloadDialog downloadDialog;
+    UploadDialog uploadDialog;
+    QString currentDirectory;
+    UserData userData;
+    QWidget *tempPage;
+    bool shouldPreserveClipboardContents;
+    bool renameOperationBeingProcessed;
+    bool requestingUidAndReferralLink;
+    QString clipboard;
+
+    QLayout *toolButtonsLayout;
+    QToolButton *upToolButton;
+    QToolButton *refreshToolButton;
+    QToolButton *pasteToolButton;
+    QToolButton *createFolderToolButton;
+    QToolButton *uploadToolButton;
+
+    QAction *cutAction;
+    QAction *copyAction;
+    QAction *renameAction;
+    QAction *removeAction;
+    QAction *publicLinkAction;
+    QAction *downloadAction;
+    QAction *propertiesAction;
+    QAction *upAction;
+    QAction *refreshAction;
+    QAction *pasteAction;
+    QAction *createFolderAction;
+    QAction *uploadAction;
+    QAction *activeDownloadAction;
+    QAction *activeUploadAction;
+    QAction *accountInfoAction;
+    QAction *referralLinkAction;
+    QAction *signOutAction;
+    QAction *aboutAction;
+    QAction *aboutQtAction;
 };
 
 #endif // MAINWINDOW_H

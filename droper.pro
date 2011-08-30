@@ -1,52 +1,60 @@
-QT       += core gui network svg
+include(json/json.pri)
+include(QsKineticScroller/QsKineticScroller.pri)
 
-VERSION = 0.3.5
+QT += core gui network
 
 TARGET = Droper
 TEMPLATE = app
+VERSION = 0.3.5
+
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
+    authenticationdialog.cpp \
+    dropbox.cpp \
     oauth.cpp \
     userdata.cpp \
-    json.cpp \
     consumerdata.cpp \
-    dropbox.cpp \
     downloaddialog.cpp \
-    uploaddialog.cpp \
-    settingsdialog.cpp \
-    authenticationwindow.cpp
+    uploaddialog.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS += mainwindow.h \
+    authenticationdialog.h \
+    dropbox.h \
     oauth.h \
     userdata.h \
-    json.h \
     consumerdata.h \
-    dropbox.h \
     downloaddialog.h \
-    uploaddialog.h \
-    settingsdialog.h \
-    authenticationwindow.h
+    uploaddialog.h
 
-FORMS    += mainwindow.ui \
+FORMS += mainwindow.ui \
+    authenticationdialog.ui \
     downloaddialog.ui \
-    uploaddialog.ui \
-    settingsdialog.ui \
-    authenticationwindow.ui
+    uploaddialog.ui
 
 RESOURCES += \
     main.qrc
 
-RC_FILE = main.rc
-
 symbian {
+    TARGET.UID3 = 0xA89FD852
     TARGET.CAPABILITY = NetworkServices
-
     ICON = droper.svg
 
-    #for kinetic scrolling
-    include(kineticscroller/qtscroller.pri)
+    # platform dependencies
+        # remove default platform dependencies
+        default_deployment.pkg_prerules -= pkg_platform_dependencies
 
-    TARGET.EPOCHEAPSIZE =  0x00020000 0x25600000
-    TARGET.EPOCSTACKSIZE = 0x00014000
+        # setup custom platform dependencies
+        pkg_custom_platform_dependencies = \
+        "[0x102032BE],0,0,0,{\"S60ProductID\"}" \    # S60 3rd Edition FP1
+        "[0x102752AE],0,0,0,{\"S60ProductID\"}" \    # S60 3rd Edition FP2
+        "[0x1028315F],0,0,0,{\"S60ProductID\"}" \    # Symbian^1
+        "[0x20022E6D],0,0,0,{\"S60ProductID\"}"      # Symbian^3
+
+        # add custom platform dependencies
+        custom_platform_dependencies_deployment.pkg_prerules += pkg_custom_platform_dependencies
+        DEPLOYMENT += custom_platform_dependencies_deployment
+
+    # allow uploads of large files
+    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
     }

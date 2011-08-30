@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>626</width>
-    <height>403</height>
-   </rect>
-  </property>
+ <widget class="QWidget" name="MainWindow">
   <property name="windowTitle">
    <string>Droper</string>
   </property>
@@ -17,331 +9,212 @@
    <iconset resource="main.qrc">
     <normaloff>:/droper.svg</normaloff>:/droper.svg</iconset>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>13</width>
-          <height>13</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="currentFolderIconLabel">
-        <property name="minimumSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="main.qrc">:/resources/icons/folder.png</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="currentFolderLabel">
-        <property name="maximumSize">
-         <size>
-          <width>320</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Dropbox</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>13</width>
-          <height>13</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="loadingLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>L</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="authenticationPage">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="signUpPushButton">
+         <property name="text">
+          <string>Sign Up</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="signUpLabel">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="text">
+          <string>If you want to create a Dropbox account.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="signInPushButton">
+         <property name="text">
+          <string>Sign In</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="signInLabel">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="text">
+          <string>If you already have a Dropbox account.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QListWidget" name="filesAndFoldersListWidget">
-      <property name="contextMenuPolicy">
-       <enum>Qt::CustomContextMenu</enum>
-      </property>
-      <property name="verticalScrollMode">
-       <enum>QAbstractItemView::ScrollPerPixel</enum>
-      </property>
-      <property name="horizontalScrollMode">
-       <enum>QAbstractItemView::ScrollPerPixel</enum>
-      </property>
-      <property name="spacing">
-       <number>1</number>
-      </property>
+     <widget class="QWidget" name="mainPage">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="currentFolderIconLabel">
+             <property name="maximumSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="main.qrc">:/resources/icons/folder.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="currentFolderLabel">
+             <property name="text">
+              <string>Dropbox</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QListWidget" name="filesAndFoldersListWidget">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="verticalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="spacing">
+            <number>1</number>
+           </property>
+           <property name="uniformItemSizes">
+            <bool>true</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item row="3" column="0">
-     <layout class="QHBoxLayout" name="toolsHorizontalLayout">
-      <item>
-       <widget class="QToolButton" name="upToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/actions/up.png</normaloff>:/resources/actions/up.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="fileToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/actions/file.png</normaloff>:/resources/actions/file.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="optionsToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/actions/options.png</normaloff>:/resources/actions/options.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="infoToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/actions/info.png</normaloff>:/resources/actions/info.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="exitToolButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="icon">
-         <iconset resource="main.qrc">
-          <normaloff>:/resources/actions/exit.png</normaloff>:/resources/actions/exit.png</iconset>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
-  <action name="cutAction">
-   <property name="text">
-    <string>Cut</string>
-   </property>
-  </action>
-  <action name="copyAction">
-   <property name="text">
-    <string>Copy</string>
-   </property>
-  </action>
-  <action name="pasteAction">
-   <property name="text">
-    <string>Paste</string>
-   </property>
-  </action>
-  <action name="renameAction">
-   <property name="text">
-    <string>Rename</string>
-   </property>
-  </action>
-  <action name="deleteAction">
-   <property name="text">
-    <string>Delete</string>
-   </property>
-  </action>
-  <action name="createFolderAction">
-   <property name="text">
-    <string>Create Folder</string>
-   </property>
-  </action>
-  <action name="upAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/up.png</normaloff>:/resources/actions/up.png</iconset>
-   </property>
-   <property name="text">
-    <string>Up</string>
-   </property>
-  </action>
-  <action name="refreshAction">
-   <property name="text">
-    <string>Refresh</string>
-   </property>
-  </action>
-  <action name="downloadAction">
-   <property name="text">
-    <string>Download</string>
-   </property>
-  </action>
-  <action name="propertiesAction">
-   <property name="text">
-    <string>Properties</string>
-   </property>
-  </action>
-  <action name="exitAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/exit.png</normaloff>:/resources/actions/exit.png</iconset>
-   </property>
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
-  <action name="optionsAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/options.png</normaloff>:/resources/actions/options.png</iconset>
-   </property>
-   <property name="text">
-    <string>Options</string>
-   </property>
-  </action>
-  <action name="showAccountInfoAction">
-   <property name="text">
-    <string>Show Account Info</string>
-   </property>
-  </action>
-  <action name="showActiveDownloadAction">
-   <property name="text">
-    <string>Show Active Download</string>
-   </property>
-  </action>
-  <action name="forgetAuthenticationAction">
-   <property name="text">
-    <string>Forget Authentication</string>
-   </property>
-  </action>
-  <action name="aboutAction">
-   <property name="text">
-    <string>About</string>
-   </property>
-  </action>
-  <action name="aboutQtAction">
-   <property name="text">
-    <string>About Qt</string>
-   </property>
-  </action>
-  <action name="fileAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/file.png</normaloff>:/resources/actions/file.png</iconset>
-   </property>
-   <property name="text">
-    <string>File</string>
-   </property>
-  </action>
-  <action name="infoAction">
-   <property name="icon">
-    <iconset resource="main.qrc">
-     <normaloff>:/resources/actions/info.png</normaloff>:/resources/actions/info.png</iconset>
-   </property>
-   <property name="text">
-    <string>Info</string>
-   </property>
-  </action>
-  <action name="uploadAction">
-   <property name="text">
-    <string>Upload</string>
-   </property>
-  </action>
-  <action name="showActiveUploadAction">
-   <property name="text">
-    <string>Show Active Upload</string>
-   </property>
-  </action>
-  <action name="settingsAction">
-   <property name="text">
-    <string>Settings</string>
-   </property>
-  </action>
-  <action name="openAction">
-   <property name="text">
-    <string>Open</string>
-   </property>
-  </action>
+     <widget class="QWidget" name="loadingPage">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="loadingLabel">
+         <property name="text">
+          <string>Loading</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <tabstops>
-  <tabstop>filesAndFoldersListWidget</tabstop>
-  <tabstop>upToolButton</tabstop>
-  <tabstop>fileToolButton</tabstop>
-  <tabstop>optionsToolButton</tabstop>
-  <tabstop>infoToolButton</tabstop>
-  <tabstop>exitToolButton</tabstop>
- </tabstops>
  <resources>
   <include location="main.qrc"/>
  </resources>

@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -33,6 +32,7 @@
 class Dropbox
 {
 
+//enumerations
 public:
     enum Api
     {
@@ -48,15 +48,15 @@ public:
         FILEOPS_MOVE
     };
 
+//member functions
 public:
     Dropbox(int apiVersion = 0);
-
     QUrl apiToUrl(Dropbox::Api api);
     Dropbox::Api urlToApi(QUrl url);
-
     QString metaDataPathFromUrl(QUrl url);
     QString filePathFromUrl(QUrl url);
 
+//private data members
 private:
     int apiVersion;
 };

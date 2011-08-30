@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -38,35 +37,32 @@ class UserData;
 
 class OAuth
 {
+//shared data members
 public:
-    OAuth(ConsumerData* consumerData);
+    ConsumerData *consumerData;
 
+//member functions
 public:
+    OAuth(ConsumerData *consumerData);
     void signRequest(
-        UserData* userData,
+        UserData *userData,
         QString method,
-        QNetworkRequest* networkRequest
+        QNetworkRequest *networkRequest
         );
-    void addConsumerKeyQueryItem(QNetworkRequest* networkRequest);
-
-public: //shared objects
-    ConsumerData* consumerData;
-
+    void addConsumerKeyQueryItem(QNetworkRequest *networkRequest);
 private:
     QString timestampAndNonceItems();
     QString consumerKeyItem();
     QString signatureMethodItem();
-    QString userTokenItem(UserData* userData);
+    QString userTokenItem(UserData *userData);
     QString versionItem();
     QString signatureItem(
-        UserData* userData,
+        UserData *userData,
         QString method,
-        QUrl* url,
+        QUrl *url,
         QString oAuthHeader
         );
-
-    //calculates a HMAC-SHA1 checksum
-    QString hmacSha1(QString base, QString key);
+    QString hmacSha1(QString base, QString key); //calculates a HMAC-SHA1 checksum
 };
 
 #endif // OAUTH_H

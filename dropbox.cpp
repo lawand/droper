@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -35,85 +34,85 @@ QUrl Dropbox::apiToUrl(Dropbox::Api api)
 {
     switch(api)
     {
-    case Dropbox::TOKEN:
-        return QUrl(
-            QString(
+        case Dropbox::TOKEN:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/token"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::ACCOUNT_INFO:
-        return QUrl(
-            QString(
+        case Dropbox::ACCOUNT_INFO:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/account/info"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::ACCOUNT:
-        return QUrl(
-            QString(
+        case Dropbox::ACCOUNT:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/account"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::FILES:
-        return QUrl(
-            QString(
+        case Dropbox::FILES:
+            return QUrl(
+                QString(
                 "https://api-content.dropbox.com/%1/files/dropbox"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::METADATA:
-        return QUrl(
-            QString(
+        case Dropbox::METADATA:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/metadata/dropbox"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::THUMBNAILS:
-        return QUrl(
-            QString(
+        case Dropbox::THUMBNAILS:
+            return QUrl(
+                QString(
                 "https://api-content.dropbox.com/%1/thumbnails/dropbox"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::FILEOPS_COPY:
-        return QUrl(
-            QString(
+        case Dropbox::FILEOPS_COPY:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/fileops/copy"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::FILEOPS_CREATEFOLDER:
-        return QUrl(
-            QString(
+        case Dropbox::FILEOPS_CREATEFOLDER:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/fileops/create_folder"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::FILEOPS_DELETE:
-        return QUrl(
-            QString(
+        case Dropbox::FILEOPS_DELETE:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/fileops/delete"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
 
-    case Dropbox::FILEOPS_MOVE:
-        return QUrl(
-            QString(
+        case Dropbox::FILEOPS_MOVE:
+            return QUrl(
+                QString(
                 "https://api.dropbox.com/%1/fileops/move"
                 ).arg(apiVersion)
-            );
-        break;
+                );
+            break;
     }
 }
 

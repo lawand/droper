@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -26,10 +25,11 @@
 //corresponding headers
 #include "userdata.h"
 
-UserData::UserData(QString token, QString secret, QString email)
+UserData::UserData(
+    ) :
+    token(""),
+    secret(""),
+    uid(""),
+    referralLink("")
 {
-    //member initialization
-    this->token = token;
-    this->secret = secret;
-    this->email = email;
 }

@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -30,13 +29,13 @@
 #include <QDialog>
 
 //data members
+#include <QFile>
 #include <QTime>
-class QNetworkReply;
 class QNetworkAccessManager;
-class QFile;
+class QNetworkReply;
+class Dropbox;
 class OAuth;
 class UserData;
-class Dropbox;
 
 namespace Ui {
     class UploadDialog;
@@ -46,48 +45,65 @@ class UploadDialog : public QDialog
 {
     Q_OBJECT
 
+//shared data members
+public:
+    QNetworkAccessManager *networkAccessManager;
+    Dropbox *dropbox;
+    OAuth *oAuth;
+    UserData *userData;
+
+//enumerations
+private:
+    enum State
+    {
+        INITIAL,
+        READY_TO_START,
+        UPLOADING,
+        FINISHED,
+        NOT_FINISHED
+    };
+
+//member functions
 public:
     explicit UploadDialog(
-        QNetworkAccessManager* networkAccessManager,
-        OAuth* oAuth,
-        UserData* userData,
-        Dropbox* dropbox,
+        QNetworkAccessManager *networkAccessManager,
+        Dropbox *dropbox,
+        OAuth *oAuth,
+        UserData *userData,
         QWidget *parent = 0
         );
     ~UploadDialog();
-
-public:
-    void setFileAndFolder(
-        QString localFile,
-        QString remoteFolder
-        );
-    bool isActive();
-
 signals:
-    void done(QString folder);
+    void itemUploadedToDirectory(QString directory);
+public:
+    bool isUploading();
+    void setFileAndFolderInformation(
+        QString filePath,
+        QString fileSize,
+        QString folderPath
+        );
+private slots:
+    void startStopRestart();
+    void setState(UploadDialog::State state);
+    void handleUploadProgress(qint64 sent, qint64 total);
+public slots:
+    void handleNetworkReply(QNetworkReply *networkReply);
 
-public: //shared objects
-    QNetworkAccessManager* networkAccessManager;
-    OAuth* oAuth;
-    UserData* userData;
-    Dropbox* dropbox;
-
+//private data members
 private:
     Ui::UploadDialog *ui;
-    QString localFile;
-    QString remoteFolder;
-    QNetworkReply* networkReply;
-    bool active;
+    State state;
+    QAction *startStopRestartAction;
+    QAction *closeAction;
+    QByteArray *multipartform;
+    QFile file;
+    QString filePath;
+    QString fileName;
+    QString fileSize;
+    QString folderPath;
+    QString folderName;
+    QNetworkReply *networkReply;
     QTime uploadTime;
-    QByteArray* multipartform;
-    QFile* file;
-
-private slots:
-    void initialize();
-    void reject();  //reimplementation
-    void toggleStart();
-    void handleUploadProgress(qint64 sent, qint64 total);
-    void handleFinished();
 };
 
 #endif // UPLOADDIALOG_H

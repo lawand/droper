@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -31,12 +30,15 @@
 
 class UserData
 {
+//member functions
 public:
-    UserData(QString token, QString secret, QString email);
+    UserData();
 
+//data members
     QString token;
     QString secret;
-    QString email;
+    QString uid;
+    QString referralLink;
 };
 
 #endif // USERDATA_H
