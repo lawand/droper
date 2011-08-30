@@ -351,7 +351,7 @@ void MainWindow::setupActions()
     aboutAction = new QAction("About", this);
     aboutQtAction = new QAction("About Qt", this);
 
-    //connect them with their corresponding slots    
+    //connect them with their corresponding slots
     connect(cutAction, SIGNAL(triggered()), SLOT(cut()));
     connect(copyAction, SIGNAL(triggered()), SLOT(copy()));
     connect(renameAction, SIGNAL(triggered()), SLOT(rename()));
@@ -612,7 +612,7 @@ void MainWindow::about()
     messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
-        "<b>Droper v0.3.5</b> - "
+        "<b>Droper v0.4.0</b> - "
         "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client"
         );
 
