@@ -88,7 +88,7 @@ If you try to compile Droper, you'll notice that the consumerdata.cpp file is
 missing, it is a simple file that contains the values of the consumer key and
 secret. This file wasn't uploaded to the repository for security reasons. There
 is a template consumerdata.cpp file in the repository called
-"[template]_consumerdata.cpp", you can check it out to get an idea about this
+"consumerdata_template.cpp", you can check it out to get an idea about this
 file. For more info search for and learn about OAuth and Dropbox API.
 
 You can ignore build warnings when building Droper.
