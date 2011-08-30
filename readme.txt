@@ -107,6 +107,7 @@ Distributing a custom build for Symbian requires renaming the application and
 specifying a different UID in the project file (so that it can be installed
 along with Droper).
 
+
 Legal Notes
 -----------
 
