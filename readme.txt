@@ -30,6 +30,12 @@ Added an option to upload files, made lots of GUI enhancements including an
 experimental kinetic scrolling feature for Symbian, added an option to view
 file properties which include the date of last modification.
 
+0.2.1
+Added Symbian support.
+
+0.1
+Initial version.
+
 
 Installation Notes
 ------------------
@@ -100,8 +106,8 @@ file. For more info search for and learn about OAuth and Dropbox API.
 
 You can ignore build warnings when building Droper.
 
-The only version of Qt for Symbian that was tested is 4.7.3, which is
-shipped with Qt SDK 1.1.2.
+The only version of Qt for Symbian that was tested is 4.7.3 (for Symbian^1),
+which is shipped with Qt SDK 1.1.2.
 
 Distributing a custom build for Symbian requires renaming the application and
 specifying a different UID in the project file (so that it can be installed
