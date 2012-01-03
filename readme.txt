@@ -15,25 +15,25 @@ Changelog
 0.4.1
 *Under Development*
 
-0.4.0
+0.4.0 (2011-08-30)
 Rewritten the UI to support S60v3 devices (non-touch devices), better integrate
 with Symbian and stabilize kinetic scrolling, but stop supporting desktop
 platforms.
 Added an option to get the Dropbox referral link.
 Added an option to get public links to files in the public folder.
 
-0.3.4
+0.3.4 (2011-08-11)
 Updated the readme file.
 
-0.3.1
+0.3.1 (2011-04-14)
 Added an option to upload files, made lots of GUI enhancements including an
 experimental kinetic scrolling feature for Symbian, added an option to view
 file properties which include the date of last modification.
 
-0.2.1
+0.2.1 (2011-03-03)
 Added Symbian support.
 
-0.1
+0.1 (2011-02-21)
 Initial version.
 
 
