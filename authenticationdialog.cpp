@@ -83,11 +83,6 @@ void AuthenticationDialog::switchToSignIn()
     ui->stackedWidget->setCurrentWidget(ui->signInPage);
 }
 
-void AuthenticationDialog::switchToSignUp()
-{
-    ui->stackedWidget->setCurrentWidget(ui->signUpPage);
-}
-
 void AuthenticationDialog::on_buttonBox_accepted()
 {
     if(ui->stackedWidget->currentWidget() == ui->signInPage)
@@ -96,39 +91,6 @@ void AuthenticationDialog::on_buttonBox_accepted()
             ui->signInEmailLineEdit->text(),
             ui->signInPasswordLineEdit->text()
             );
-
-    }
-    else if(ui->stackedWidget->currentWidget() == ui->signUpPage)
-    {
-        if(ui->signUpPasswordLineEdit->text()
-                != ui->signUpRetypedPasswordLineEdit->text())
-        {
-            QMessageBox::critical(
-                this,
-                "Droper",
-                "Error: Password mismatch."
-                );
-
-            return;
-        }
-
-        if(ui->signUpPasswordLineEdit->text().isEmpty())
-        {
-            QMessageBox::critical(
-                this,
-                "Droper",
-                "Error: The password field can't be empty."
-                );
-
-            return;
-        }
-
-        requestSignUp(
-            ui->signUpEmailLineEdit->text(),
-            ui->signUpFirstNameLineEdit->text(),
-            ui->signUpLastNameLineEdit->text(),
-            ui->signUpPasswordLineEdit->text()
-            );
     }
 }
 
@@ -136,26 +98,6 @@ void AuthenticationDialog::requestSignIn(QString email, QString password)
 {
     QUrl url = dropbox->apiToUrl(Dropbox::TOKEN);
     url.addQueryItem("email", email);
-    url.addQueryItem("password", password);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->addConsumerKeyQueryItem(&networkRequest);
-
-    requestNetworkRequest( &networkRequest );
-}
-
-void AuthenticationDialog::requestSignUp(
-    QString email,
-    QString first_name,
-    QString last_name,
-    QString password
-    )
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT);
-    url.addQueryItem("email", email);
-    url.addQueryItem("first_name", first_name);
-    url.addQueryItem("last_name", last_name);
     url.addQueryItem("password", password);
 
     QNetworkRequest networkRequest(url);
@@ -193,10 +135,6 @@ void AuthenticationDialog::handleNetworkReply(QNetworkReply *networkReply)
             handleSignIn(networkReply);
             break;
 
-        case Dropbox::ACCOUNT:
-            handleSignUp(networkReply);
-            break;
-
         default:
             break;
     }
@@ -216,49 +154,8 @@ void AuthenticationDialog::handleSignIn(QNetworkReply *networkReply)
     accept();
 }
 
-void AuthenticationDialog::handleSignUp(QNetworkReply *networkReply)
-{
-    QString data = networkReply->readAll();
-
-    //The string "OK" indicates that the new account was created successfully
-    if(data != "OK")
-    {
-        QMessageBox::critical(
-            this,
-            "Droper",
-            "Error: Account creation failed."
-            );
-
-        return;
-    }
-    else
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "The new account was succefully created. You will now be signed in."
-            );
-
-        //at this point, signing in is possible
-
-        ui->stackedWidget->setCurrentWidget(ui->signInPage);
-
-        ui->signInEmailLineEdit->setText( ui->signUpEmailLineEdit->text() );
-        ui->signInPasswordLineEdit->setText( ui->signUpPasswordLineEdit->text() );
-
-        requestSignIn(
-            ui->signInEmailLineEdit->text(),
-            ui->signInPasswordLineEdit->text()
-            );
-    }
-}
-
 void AuthenticationDialog::clearLineEdits()
 {
     ui->signInEmailLineEdit->clear();
     ui->signInPasswordLineEdit->clear();
-    ui->signUpFirstNameLineEdit->clear();
-    ui->signUpLastNameLineEdit->clear();
-    ui->signUpEmailLineEdit->clear();
-    ui->signUpPasswordLineEdit->clear();
 }

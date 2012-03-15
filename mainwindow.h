@@ -90,7 +90,6 @@ private slots:
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     //action slots
     void navigateItem(QListWidgetItem *item);
-    void signUp();
     void signIn();
     void referralLink();
     void signOut();

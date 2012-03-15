@@ -61,22 +61,14 @@ public:
         );
     ~AuthenticationDialog();
     void switchToSignIn();
-    void switchToSignUp();
 private slots:
     void on_buttonBox_accepted();
     void requestSignIn(QString email, QString password);
-    void requestSignUp(
-        QString email,
-        QString first_name,
-        QString last_name,
-        QString password
-        );
     void requestNetworkRequest(QNetworkRequest *networkRequest);
 public slots:
     void handleNetworkReply(QNetworkReply *networkReply);
 private slots:
     void handleSignIn(QNetworkReply *networkReply);
-    void handleSignUp(QNetworkReply *networkReply);
     void clearLineEdits();
 
 //private data members

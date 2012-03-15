@@ -50,14 +50,6 @@ QUrl Dropbox::apiToUrl(Dropbox::Api api)
                 );
             break;
 
-        case Dropbox::ACCOUNT:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/account"
-                ).arg(apiVersion)
-                );
-            break;
-
         case Dropbox::FILES:
             return QUrl(
                 QString(

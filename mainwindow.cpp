@@ -101,7 +101,6 @@ MainWindow::MainWindow(
         SIGNAL(finished(QNetworkReply*)),
         SLOT(globalHandleNetworkReply(QNetworkReply*))
     );
-    connect(ui->signUpPushButton, SIGNAL(clicked()), SLOT(signUp()));
     connect(ui->signInPushButton, SIGNAL(clicked()), SLOT(signIn()));
     connect(
         &authenticationDialog,
@@ -554,13 +553,6 @@ void MainWindow::navigateItem(QListWidgetItem *item)
             map["path"].toString()
         );
     }
-}
-
-void MainWindow::signUp()
-{
-    authenticationDialog.switchToSignUp();
-
-    authenticationDialog.showMaximized();
 }
 
 void MainWindow::signIn()
