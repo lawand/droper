@@ -60,10 +60,12 @@ void OAuth::signRequest(
     header += signatureMethodItem() + ",";
     header += userTokenItem(userData) + ",";
     header += versionItem() + ",";
+
+    QUrl url = networkRequest->url();
     header += signatureItem(
         userData,
         method,
-        &networkRequest->url(),
+        &url,
         header
         ) + ",";
 
