@@ -47,7 +47,7 @@ OAuth::OAuth(ConsumerData *consumerData)
     qsrand(QDateTime::currentDateTime().toTime_t());
 }
 
-void OAuth::signRequest(
+void OAuth::signRequestHeader(
     QString method,
     QNetworkRequest *networkRequest,
     UserData *userData
@@ -55,17 +55,17 @@ void OAuth::signRequest(
 {
     QString header = "OAuth ";
 
-    header += timestampAndNonceItems() + ",";
-    header += consumerKeyItem() + ",";
-    header += signatureMethodItem() + ",";
+    header += timestampAndNonceHeaderItems() + ",";
+    header += consumerKeyHeaderItem() + ",";
+    header += signatureMethodHeaderItem() + ",";
     if(userData != 0)
     {
-        header += userTokenItem(userData) + ",";
+        header += userTokenHeaderItem(userData) + ",";
     }
-    header += versionItem() + ",";
+    header += versionHeaderItem() + ",";
 
     QUrl url = networkRequest->url();
-    header += signatureItem(
+    header += signatureHeaderItem(
         userData,
         method,
         &url,
@@ -78,7 +78,33 @@ void OAuth::signRequest(
     networkRequest->setRawHeader("Authorization", header.toAscii());
 }
 
-QString OAuth::timestampAndNonceItems()
+void OAuth::signRequestUrl(
+    QString method,
+    QNetworkRequest *networkRequest,
+    UserData *userData
+    )
+{
+    QUrl url = networkRequest->url();
+
+    timestampAndNonceUrlItems(&url);
+    consumerKeyUrlItem(&url);
+    signatureMethodUrlItem(&url);
+    if(userData != 0)
+    {
+        userTokenUrlItem(&url, userData);
+    }
+    versionUrlItem(&url);
+
+    signatureUrlItem(
+        &url,
+        userData,
+        method
+        );
+
+    networkRequest->setUrl(url);
+}
+
+QString OAuth::timestampAndNonceHeaderItems()
 {
     int currentSecsSinceEpoch = QDateTime::currentDateTime().toUTC().toTime_t();
 
@@ -94,7 +120,7 @@ QString OAuth::timestampAndNonceItems()
         ;
 }
 
-QString OAuth::consumerKeyItem()
+QString OAuth::consumerKeyHeaderItem()
 {
     return QString("%1=\"%2\"")
         .arg("oauth_consumer_key")
@@ -102,7 +128,7 @@ QString OAuth::consumerKeyItem()
         ;
 }
 
-QString OAuth::signatureMethodItem()
+QString OAuth::signatureMethodHeaderItem()
 {
     return QString("%1=\"%2\"")
         .arg("oauth_signature_method")
@@ -110,7 +136,7 @@ QString OAuth::signatureMethodItem()
         ;
 }
 
-QString OAuth::userTokenItem(UserData *userData)
+QString OAuth::userTokenHeaderItem(UserData *userData)
 {
     return QString("%1=\"%2\"")
         .arg("oauth_token")
@@ -118,7 +144,7 @@ QString OAuth::userTokenItem(UserData *userData)
         ;
 }
 
-QString OAuth::versionItem()
+QString OAuth::versionHeaderItem()
 {
     return QString("%1=\"%2\"")
         .arg("oauth_version")
@@ -126,7 +152,7 @@ QString OAuth::versionItem()
         ;
 }
 
-QString OAuth::signatureItem(
+QString OAuth::signatureHeaderItem(
     UserData *userData,
     QString method,
     QUrl *url,
@@ -226,6 +252,119 @@ QString OAuth::signatureItem(
         .arg("oauth_signature")
         .arg(hash)
         ;
+}
+
+void OAuth::timestampAndNonceUrlItems(QUrl *url)
+{
+    int currentSecsSinceEpoch = QDateTime::currentDateTime().toUTC().toTime_t();
+
+    url->addQueryItem(
+        "oauth_timestamp",
+        QString("%1").arg(currentSecsSinceEpoch)
+        );
+
+    url->addQueryItem("oauth_nonce", QString("%1").arg(qrand()));
+}
+
+void OAuth::consumerKeyUrlItem(QUrl *url)
+{
+    url->addQueryItem("oauth_consumer_key", consumerData->key);
+}
+
+void OAuth::signatureMethodUrlItem(QUrl *url)
+{
+    url->addQueryItem("oauth_signature_method", "HMAC-SHA1");
+}
+
+void OAuth::userTokenUrlItem(QUrl *url, UserData *userData)
+{
+    url->addQueryItem("oauth_token", userData->token);
+}
+
+void OAuth::versionUrlItem(QUrl *url)
+{
+    url->addQueryItem("oauth_version", "1.0");
+}
+
+void OAuth::signatureUrlItem(
+    QUrl *url,
+    UserData *userData,
+    QString method
+    )
+{
+    //prepare URL
+    QString urlSchemeAndHost = url->toString(
+        QUrl::RemovePort |
+        QUrl::RemovePath |
+        QUrl::RemoveQuery |
+        QUrl::RemoveFragment
+        );
+    QString urlPath = url->path();
+
+    //url path parts need to be UTF-8 encoded and percent encoded
+    QStringList urlPathParts = urlPath.split("/");
+    for(int i = 0; i < urlPathParts.length(); ++i)
+    {
+        urlPathParts[i] = urlPathParts[i].toUtf8().toPercentEncoding();
+    }
+    urlPath = urlPathParts.join("/");
+
+    QByteArray readyForUseUrl =
+        (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
+
+    //prepare parameters
+    QList< QPair<QString,QString> > parameters;
+
+    parameters.append(url->queryItems());
+
+    //parameters need to be UTF-8 encoded and percent encoded
+    for(int i = 0; i < parameters.length(); ++i)
+    {
+        QPair<QString,QString> parameter = parameters[i];
+        parameter.second = parameter.second.toUtf8().toPercentEncoding();
+        parameters[i] = parameter;
+    }
+
+    qSort(parameters);
+
+    QString parametersString;
+    QPair<QString,QString> parameter;
+    foreach(parameter, parameters)
+    {
+        parametersString += parameter.first + "=" + parameter.second + "&";
+    }
+    //remove last "&"
+    parametersString.chop(1);
+
+    QString readyForUseParametersString =
+        parametersString.toAscii().toPercentEncoding();
+
+    //generate base string
+    QString base = method+
+        "&"+
+        readyForUseUrl+
+        "&"+
+        readyForUseParametersString;
+
+    //calculate the hash
+    QString hash;
+    if(userData != 0)
+    {
+        hash = hmacSha1(
+                base,
+                consumerData->secret + "&" + userData->secret
+                );
+    }
+    else
+    {
+        hash = hmacSha1(
+                base,
+                consumerData->secret + "&"
+                );
+    }
+
+    //the result
+    url->addQueryItem("oauth_signature", hash);
 }
 
 QString OAuth::hmacSha1(QString base, QString key)

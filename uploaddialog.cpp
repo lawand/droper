@@ -156,27 +156,11 @@ void UploadDialog::setState(UploadDialog::State state)
             uploadTime.start();
 
             //prepare the local file
-
-            multipartform = new QByteArray();
-            QString crlf("\r\n");
-            QString boundaryStr(
-                "---------------------------109074266748897678777839994"
-                );
-            QString boundary="--"+boundaryStr+crlf;
-            multipartform->append(boundary.toAscii());
-            multipartform->append(
-                QString("Content-Disposition: form-data; name=\"file\"; "
-                    "filename=\"" + fileName.toUtf8() + "\"" + crlf
-                    ).toAscii()
-                );
-            multipartform->append(
-                QString("Content-Type: text/plain" + crlf + crlf).toAscii()
-                );
-            file.setFileName(filePath);
+            file = new QFile(filePath);
 
             //check whether the file can be opened for reading,
             //opening it in the process
-            if(!file.open(QFile::ReadOnly))
+            if(!file->open(QFile::ReadOnly))
             {
                 QMessageBox::critical(
                     this,
@@ -189,24 +173,15 @@ void UploadDialog::setState(UploadDialog::State state)
                 return;
             }
 
-            multipartform->append(file.readAll());
-            file.close();
-            multipartform->append(
-                QString(crlf + "--" + boundaryStr + "--" + crlf).toAscii()
-                );
-
             //send the content of the local file
-            QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString()+folderPath;
-            url.addQueryItem("file", fileName);
+            QUrl url = dropbox->apiToUrl(
+                Dropbox::FILESPUT
+                ).toString() + folderPath + fileName;
             QNetworkRequest networkRequest(url);
-            networkRequest.setHeader(
-                QNetworkRequest::ContentTypeHeader,
-                "multipart/form-data; boundary=" + boundaryStr
-                );
-            oAuth->signRequest("POST", &networkRequest, userData);
-            networkReply = networkAccessManager->post(
+            oAuth->signRequestUrl("PUT", &networkRequest, userData);
+            networkReply = networkAccessManager->put(
                 networkRequest,
-                *multipartform
+                file
                 );
             connect(
                 networkReply,
@@ -220,7 +195,7 @@ void UploadDialog::setState(UploadDialog::State state)
     case FINISHED:
         ui->progressBar->setFormat("Finished");
         startStopRestartAction->setVisible(false);
-        delete multipartform;
+        delete file;
         emit itemUploadedToDirectory(folderPath);
         break;
 
@@ -228,7 +203,7 @@ void UploadDialog::setState(UploadDialog::State state)
         ui->progressBar->setFormat("Not Finished");
         startStopRestartAction->setText("Restart");
         startStopRestartAction->setVisible(true);
-        delete multipartform;
+        delete file;
         break;
 
     default:

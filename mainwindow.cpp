@@ -481,6 +481,19 @@ void MainWindow::on_doneSigningInPushButton_clicked()
     }
 }
 
+void MainWindow::on_copyReferralLinkToClipboardToolButton_clicked()
+{
+    QApplication::clipboard()->setText(
+        ui->referralLinkPlainTextEdit->toPlainText()
+        );
+
+    QMessageBox::information(
+        this,
+        "Droper",
+        "Referral link copied to clipboard."
+        );
+}
+
 void MainWindow::on_filesAndFoldersListWidget_itemActivated(
     QListWidgetItem *item
     )
@@ -1172,7 +1185,7 @@ void MainWindow::requestRequestToken()
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest);
+    oAuth->signRequestHeader("GET", &networkRequest);
 
     requestNetworkRequest( &networkRequest );
 }
@@ -1186,7 +1199,7 @@ void MainWindow::requestAccessToken()
     UserData userData;
     userData.token = requestToken;
     userData.secret = requestTokenSecret;
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest( &networkRequest );
 }
@@ -1198,7 +1211,7 @@ void MainWindow::requestDirectoryListing(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1209,7 +1222,7 @@ void MainWindow::requestAccountInfo()
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1222,7 +1235,7 @@ void MainWindow::requestFolderCreation(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1236,7 +1249,7 @@ void MainWindow::requestCopying(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1250,7 +1263,7 @@ void MainWindow::requestMoving(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1263,7 +1276,7 @@ void MainWindow::requestDeletion(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest("GET", &networkRequest, &userData);
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1352,6 +1365,9 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
         downloadDialog.handleNetworkReply(networkReply);
         uploadDialog.handleNetworkReply(networkReply);
         break;
+
+    case Dropbox::FILESPUT:
+        uploadDialog.handleNetworkReply(networkReply);
 
     default:
         this->handleNetworkReply(networkReply);
@@ -1659,13 +1675,9 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
 
     QString generalAccountInfo = QString(
         "<strong>E-Mail: %1</strong> <br />"
-        "Name: %2 <br />"
-        "Country: %3 <br />"
-        "UID: %4 <br />"
+        "UID: %2"
         )
         .arg(jsonResult["email"].toString())
-        .arg(jsonResult["display_name"].toString())
-        .arg(jsonResult["country"].toString())
         .arg(jsonResult["uid"].toString());
     ui->generalAccountInfoLabel->setText(generalAccountInfo);
 
@@ -1683,12 +1695,15 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     ui->spaceProgressBar->setFormat(space);
 
     QString spaceDetails = QString(
-        "Normal Files: %1 <br />"
-        "Shared Files: %2"
+        "Normal Files: %1 / Shared Files: %2"
         )
             .arg(normalFilesString)
             .arg(sharedFilesString);
     ui->spaceDetailsLabel->setText(spaceDetails);
+
+    ui->referralLinkPlainTextEdit->setPlainText(
+        jsonResult["referral_link"].toString()
+        );
 
     setCurrentPage(ui->accountInfoPage);
 }

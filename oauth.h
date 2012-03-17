@@ -44,24 +44,39 @@ public:
 //member functions
 public:
     OAuth(ConsumerData *consumerData);
-    void signRequest(
+    void signRequestHeader(
+        QString method,
+        QNetworkRequest *networkRequest,
+        UserData *userData = 0
+        );
+    void signRequestUrl(
         QString method,
         QNetworkRequest *networkRequest,
         UserData *userData = 0
         );
 private:
-    QString timestampAndNonceItems();
-    QString consumerKeyItem();
-    QString signatureMethodItem();
-    QString userTokenItem(UserData *userData);
-    QString versionItem();
-    QString signatureItem(
+    QString timestampAndNonceHeaderItems();
+    QString consumerKeyHeaderItem();
+    QString signatureMethodHeaderItem();
+    QString userTokenHeaderItem(UserData *userData);
+    QString versionHeaderItem();
+    QString signatureHeaderItem(
         UserData *userData,
         QString method,
         QUrl *url,
         QString oAuthHeader
         );
-    QString hmacSha1(QString base, QString key); //calculates a HMAC-SHA1 checksum
+    void timestampAndNonceUrlItems(QUrl *url);
+    void consumerKeyUrlItem(QUrl *url);
+    void signatureMethodUrlItem(QUrl *url);
+    void userTokenUrlItem(QUrl *url, UserData *userData);
+    void versionUrlItem(QUrl *url);
+    void signatureUrlItem(
+        QUrl *url,
+        UserData *userData,
+        QString method
+        );
+    QString hmacSha1(QString base, QString key); //HMAC-SHA1 checksum
 };
 
 #endif // OAUTH_H

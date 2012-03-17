@@ -82,6 +82,7 @@ private slots:
     void openDropboxInABrowser();
     //ui slots
     void on_doneSigningInPushButton_clicked();
+    void on_copyReferralLinkToClipboardToolButton_clicked();
     void on_filesAndFoldersListWidget_itemActivated(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);

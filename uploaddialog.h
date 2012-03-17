@@ -95,8 +95,7 @@ private:
     State state;
     QAction *startStopRestartAction;
     QAction *closeAction;
-    QByteArray *multipartform;
-    QFile file;
+    QFile *file;
     QString filePath;
     QString fileName;
     QString fileSize;
