@@ -454,7 +454,7 @@ void MainWindow::openDropboxInABrowser()
     QDesktopServices::openUrl(url);
 }
 
-void MainWindow::on_donePushButton_clicked()
+void MainWindow::on_doneSigningInPushButton_clicked()
 {
     if(requestToken.isEmpty() || requestTokenSecret.isEmpty())
     {
