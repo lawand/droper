@@ -10,7 +10,6 @@ VERSION = 0.4.1
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    authenticationdialog.cpp \
     dropbox.cpp \
     oauth.cpp \
     userdata.cpp \
@@ -19,7 +18,6 @@ SOURCES += main.cpp\
     uploaddialog.cpp
 
 HEADERS += mainwindow.h \
-    authenticationdialog.h \
     dropbox.h \
     oauth.h \
     userdata.h \
@@ -28,7 +26,6 @@ HEADERS += mainwindow.h \
     uploaddialog.h
 
 FORMS += mainwindow.ui \
-    authenticationdialog.ui \
     downloaddialog.ui \
     uploaddialog.ui
 

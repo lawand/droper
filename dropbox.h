@@ -36,16 +36,23 @@ class Dropbox
 public:
     enum Api
     {
-        TOKEN,
+        OAUTH_AUTHORIZE,
+        OAUTH_REQUESTTOKEN,
+        OAUTH_ACCESSTOKEN,
         ACCOUNT_INFO,
-        ACCOUNT,
-        FILES,
         METADATA,
-        THUMBNAILS,
+        REVISIONS,
+        RESTORE,
+        SEARCH,
+        SHARES,
+        MEDIA,
         FILEOPS_COPY,
         FILEOPS_CREATEFOLDER,
         FILEOPS_DELETE,
-        FILEOPS_MOVE
+        FILEOPS_MOVE,
+        FILES,
+        FILESPUT,
+        THUMBNAILS
     };
 
 //member functions

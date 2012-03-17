@@ -29,7 +29,6 @@ UserData::UserData(
     ) :
     token(""),
     secret(""),
-    uid(""),
-    referralLink("")
+    uid("")
 {
 }

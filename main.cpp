@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 //shared objects
     QNetworkAccessManager networkAccessManager;
     ConsumerData consumerData;
-    Dropbox dropbox(0);
+    Dropbox dropbox(1);
     OAuth oAuth(&consumerData);
 
     MainWindow mainWindow(

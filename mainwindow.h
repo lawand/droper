@@ -29,7 +29,6 @@
 #include <QWidget>
 
 //data members
-#include "authenticationdialog.h"
 #include "downloaddialog.h"
 #include "uploaddialog.h"
 #include "userdata.h"
@@ -72,26 +71,22 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 private slots:
     //initialization
-    void initializationStepOne();
-    void readTokenAndSecret();
-    void initializationStepTwo();
-    void readUidAndReferralLink();
-    void initializationStepThree();
+    void attemptSignIn();
     //misc
     bool s60v3();
     void setupActions();
-    void readUserDataAndSignIn();
     void setCurrentPage(QWidget *page);
     void showContextMenu(QPoint point);
     void handleItemUploadedToDirectory(QString directory);
+    void openDropboxInABrowser();
     //ui slots
+    void on_donePushButton_clicked();
     void on_filesAndFoldersListWidget_itemActivated(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     //action slots
     void navigateItem(QListWidgetItem *item);
     void signIn();
-    void referralLink();
     void signOut();
     void about();
     void cut();
@@ -109,7 +104,8 @@ private slots:
     void activeDownload();
     void activeUpload();
     //network slots
-    void requestUidAndReferralLink();
+    void requestRequestToken();
+    void requestAccessToken();
     void requestDirectoryListing(QString path);
     void requestAccountInfo();
     void requestFolderCreation(QString path);
@@ -119,7 +115,8 @@ private slots:
     void requestNetworkRequest(QNetworkRequest *networkRequest);
     void globalHandleNetworkReply(QNetworkReply *networkReply);
     void handleNetworkReply(QNetworkReply *networkReply);
-    void handleUidAndReferralLink(QNetworkReply* networkReply);
+    void handleRequestToken(QNetworkReply *networkReply);
+    void handleAccessToken(QNetworkReply *networkReply);
     void handleDirectoryListing(QNetworkReply *networkReply);
     void handleAccountInfo(QNetworkReply *networkReply);
     void handleFolderCreation(QNetworkReply* networkReply);
@@ -130,7 +127,8 @@ private slots:
 //private data members
 private:
     Ui::MainWindow *ui;
-    AuthenticationDialog authenticationDialog;
+    QString requestToken;
+    QString requestTokenSecret;
     DownloadDialog downloadDialog;
     UploadDialog uploadDialog;
     QString currentDirectory;
@@ -138,7 +136,6 @@ private:
     QWidget *tempPage;
     bool shouldPreserveClipboardContents;
     bool renameOperationBeingProcessed;
-    bool requestingUidAndReferralLink;
     QString clipboard;
 
     QLayout *toolButtonsLayout;
@@ -163,7 +160,6 @@ private:
     QAction *activeDownloadAction;
     QAction *activeUploadAction;
     QAction *accountInfoAction;
-    QAction *referralLinkAction;
     QAction *signOutAction;
     QAction *aboutAction;
     QAction *aboutQtAction;

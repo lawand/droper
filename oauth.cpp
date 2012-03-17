@@ -48,9 +48,9 @@ OAuth::OAuth(ConsumerData *consumerData)
 }
 
 void OAuth::signRequest(
-    UserData *userData,
     QString method,
-    QNetworkRequest *networkRequest
+    QNetworkRequest *networkRequest,
+    UserData *userData
     )
 {
     QString header = "OAuth ";
@@ -58,7 +58,10 @@ void OAuth::signRequest(
     header += timestampAndNonceItems() + ",";
     header += consumerKeyItem() + ",";
     header += signatureMethodItem() + ",";
-    header += userTokenItem(userData) + ",";
+    if(userData != 0)
+    {
+        header += userTokenItem(userData) + ",";
+    }
     header += versionItem() + ",";
 
     QUrl url = networkRequest->url();
@@ -73,16 +76,6 @@ void OAuth::signRequest(
     header.chop(1);
 
     networkRequest->setRawHeader("Authorization", header.toAscii());
-}
-
-void OAuth::addConsumerKeyQueryItem(QNetworkRequest *networkRequest)
-{
-    QUrl url = networkRequest->url();
-    url.addQueryItem(
-        "oauth_consumer_key",
-        consumerData->key
-        );
-    networkRequest->setUrl(url);
 }
 
 QString OAuth::timestampAndNonceItems()
@@ -212,10 +205,21 @@ QString OAuth::signatureItem(
         readyForUseParametersString;
 
     //calculate the hash
-    QString hash = hmacSha1(
-        base,
-        consumerData->secret + "&" + userData->secret
-        );
+    QString hash;
+    if(userData != 0)
+    {
+        hash = hmacSha1(
+                base,
+                consumerData->secret + "&" + userData->secret
+                );
+    }
+    else
+    {
+        hash = hmacSha1(
+                base,
+                consumerData->secret + "&"
+                );
+    }
 
     //return the result
     return QString("%1=\"%2\"")

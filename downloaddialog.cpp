@@ -174,7 +174,7 @@ void DownloadDialog::setState(DownloadDialog::State state)
         {
             QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + filePath;
             QNetworkRequest networkRequest(url);
-            oAuth->signRequest(userData, "GET", &networkRequest);
+            oAuth->signRequest("GET", &networkRequest, userData);
             networkReply = networkAccessManager->get(networkRequest);
             connect(
                 networkReply,

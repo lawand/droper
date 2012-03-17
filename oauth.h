@@ -45,11 +45,10 @@ public:
 public:
     OAuth(ConsumerData *consumerData);
     void signRequest(
-        UserData *userData,
         QString method,
-        QNetworkRequest *networkRequest
+        QNetworkRequest *networkRequest,
+        UserData *userData = 0
         );
-    void addConsumerKeyQueryItem(QNetworkRequest *networkRequest);
 private:
     QString timestampAndNonceItems();
     QString consumerKeyItem();

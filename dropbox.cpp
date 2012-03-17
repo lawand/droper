@@ -34,118 +34,205 @@ QUrl Dropbox::apiToUrl(Dropbox::Api api)
 {
     switch(api)
     {
-        case Dropbox::TOKEN:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/token"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::OAUTH_AUTHORIZE:
+        return QUrl(
+            QString(
+            "https://www.dropbox.com/%1/oauth/authorize"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::ACCOUNT_INFO:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/account/info"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::OAUTH_REQUESTTOKEN:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/oauth/request_token"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::FILES:
-            return QUrl(
-                QString(
-                "https://api-content.dropbox.com/%1/files/dropbox"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::OAUTH_ACCESSTOKEN:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/oauth/access_token"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::METADATA:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/metadata/dropbox"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::ACCOUNT_INFO:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/account/info"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::THUMBNAILS:
-            return QUrl(
-                QString(
-                "https://api-content.dropbox.com/%1/thumbnails/dropbox"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::METADATA:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/metadata/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::FILEOPS_COPY:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/fileops/copy"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::REVISIONS:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/revisions/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::FILEOPS_CREATEFOLDER:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/fileops/create_folder"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::RESTORE:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/restore/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::FILEOPS_DELETE:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/fileops/delete"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::SEARCH:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/search/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
 
-        case Dropbox::FILEOPS_MOVE:
-            return QUrl(
-                QString(
-                "https://api.dropbox.com/%1/fileops/move"
-                ).arg(apiVersion)
-                );
-            break;
+    case Dropbox::SHARES:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/shares/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::MEDIA:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/media/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILEOPS_COPY:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/fileops/copy"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILEOPS_CREATEFOLDER:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/fileops/create_folder"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILEOPS_DELETE:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/fileops/delete"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILEOPS_MOVE:
+        return QUrl(
+            QString(
+            "https://api.dropbox.com/%1/fileops/move"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILES:
+        return QUrl(
+            QString(
+            "https://api-content.dropbox.com/%1/files/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::FILESPUT:
+        return QUrl(
+            QString(
+            "https://api-content.dropbox.com/%1/files_put/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
+
+    case Dropbox::THUMBNAILS:
+        return QUrl(
+            QString(
+            "https://api-content.dropbox.com/%1/thumbnails/dropbox"
+            ).arg(apiVersion)
+            );
+        break;
     }
 }
 
 Dropbox::Api Dropbox::urlToApi(QUrl url)
 {
+    if(url.toString().startsWith("https://www.dropbox.com"))
+    {
+        QString path = url.path();
+
+        if(path.startsWith("/" + QString("%1").arg(apiVersion)))
+        {
+            path.remove("/" + QString("%1").arg(apiVersion));
+
+            if(path.startsWith("/oauth/authorize"))
+                return OAUTH_AUTHORIZE;
+        }
+    }
+
     if(url.toString().startsWith("https://api.dropbox.com"))
     {
         QString path = url.path();
 
-        if(path.startsWith("/" + QString("%1").arg(apiVersion) + "/"))
+        if(path.startsWith("/" + QString("%1").arg(apiVersion)))
         {
-            path.remove("/" + QString("%1").arg(apiVersion) + "/");
+            path.remove("/" + QString("%1").arg(apiVersion));
 
-            if(path == "token")
-                return Dropbox::TOKEN;
+            if(path.startsWith("/oauth/request_token"))
+                return Dropbox::OAUTH_REQUESTTOKEN;
 
-            if(path == "account/info")
+            if(path.startsWith("/oauth/access_token"))
+                return Dropbox::OAUTH_ACCESSTOKEN;
+
+            if(path.startsWith("/account/info"))
                 return Dropbox::ACCOUNT_INFO;
 
-            if(path == "account")
-                return Dropbox::ACCOUNT;
-
-            if(path.startsWith("metadata/dropbox"))
+            if(path.startsWith("/metadata"))
                 return Dropbox::METADATA;
 
-            if(path.startsWith("fileops/"))
-            {
-                path.remove("fileops/");
+            if(path.startsWith("/revisions"))
+                return Dropbox::REVISIONS;
 
-                if(path == "copy")
-                    return Dropbox::FILEOPS_COPY;
+            if(path.startsWith("/restore"))
+                return Dropbox::RESTORE;
 
-                if(path == "create_folder")
-                    return Dropbox::FILEOPS_CREATEFOLDER;
+            if(path.startsWith("/search"))
+                return Dropbox::SEARCH;
 
-                if(path == "delete")
-                    return Dropbox::FILEOPS_DELETE;
+            if(path.startsWith("/shares"))
+                return Dropbox::SHARES;
 
-                if(path == "move")
-                    return Dropbox::FILEOPS_MOVE;
-            }
+            if(path.startsWith("/media"))
+                return Dropbox::MEDIA;
+
+            if(path.startsWith("/fileops/copy"))
+                return Dropbox::FILEOPS_COPY;
+
+            if(path.startsWith("/fileops/create_folder"))
+                return Dropbox::FILEOPS_CREATEFOLDER;
+
+            if(path.startsWith("/fileops/delete"))
+                return Dropbox::FILEOPS_DELETE;
+
+            if(path.startsWith("/fileops/move"))
+                return Dropbox::FILEOPS_MOVE;
         }
     }
 
@@ -153,14 +240,17 @@ Dropbox::Api Dropbox::urlToApi(QUrl url)
     {
         QString path = url.path();
 
-        if(path.startsWith("/" + QString("%1").arg(apiVersion) + "/"))
+        if(path.startsWith("/" + QString("%1").arg(apiVersion)))
         {
-            path.remove("/" + QString("%1").arg(apiVersion) + "/");
+            path.remove("/" + QString("%1").arg(apiVersion));
 
-            if(path.startsWith("files/dropbox"))
+            if(path.startsWith("/files"))
                 return Dropbox::FILES;
 
-            if(path.startsWith("thumbnails/dropbox"))
+            if(path.startsWith("/files_put"))
+                return Dropbox::FILESPUT;
+
+            if(path.startsWith("/thumbnails"))
                 return Dropbox::THUMBNAILS;
         }
     }

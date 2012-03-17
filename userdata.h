@@ -38,7 +38,6 @@ public:
     QString token;
     QString secret;
     QString uid;
-    QString referralLink;
 };
 
 #endif // USERDATA_H

@@ -59,11 +59,8 @@ MainWindow::MainWindow(
     ) :
     QWidget(parent),
     ui(new Ui::MainWindow),
-    authenticationDialog(
-        networkAccessManager,
-        dropbox,
-        oAuth
-    ),
+    requestToken(""),
+    requestTokenSecret(""),
     downloadDialog(
         networkAccessManager,
         dropbox,
@@ -78,7 +75,6 @@ MainWindow::MainWindow(
     ),
     currentDirectory("/"),
     renameOperationBeingProcessed(false),
-    requestingUidAndReferralLink(false),
     toolButtonsLayout(0)
 {
     //shared data members initialization
@@ -88,7 +84,7 @@ MainWindow::MainWindow(
 
     //private data members initialization
     ui->setupUi(this);
-    setCurrentPage(ui->authenticationPage);
+    setCurrentPage(ui->signInPage);
     setupActions();
     if(! s60v3())
     {
@@ -102,11 +98,6 @@ MainWindow::MainWindow(
         SLOT(globalHandleNetworkReply(QNetworkReply*))
     );
     connect(ui->signInPushButton, SIGNAL(clicked()), SLOT(signIn()));
-    connect(
-        &authenticationDialog,
-        SIGNAL(accepted()),
-        SLOT(readTokenAndSecret())
-    );
     connect(
         &uploadDialog,
         SIGNAL(itemUploadedToDirectory(QString)),
@@ -127,7 +118,7 @@ MainWindow::MainWindow(
     kineticScroller->enableKineticScrollFor(ui->filesAndFoldersListWidget);
 
     //user data
-    initializationStepOne();
+    attemptSignIn();
 }
 
 MainWindow::~MainWindow()
@@ -244,62 +235,25 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void MainWindow::initializationStepOne()
+void MainWindow::attemptSignIn()
 {
     QSettings settings;
     settings.beginGroup("user");
-    if( (settings.childKeys().indexOf("token") == -1) ||
-        (settings.childKeys().indexOf("secret") == -1) )
+    if( (settings.childKeys().indexOf("access_token") == -1) ||
+        (settings.childKeys().indexOf("access_token_secret") == -1) ||
+        (settings.childKeys().indexOf("uid") == -1) )
     {
         settings.clear();
     }
     else
-    {
-        readTokenAndSecret();
+    {   //sign in
+        userData.token = settings.value("access_token").toString();
+        userData.secret = settings.value("access_token_secret").toString();
+        userData.uid = settings.value("uid").toString();
+
+        setCurrentPage(ui->mainPage);
+        requestDirectoryListing("/");
     }
-}
-
-void MainWindow::readTokenAndSecret()
-{
-    QSettings settings;
-    userData.token = settings.value("user/token").toString();
-    userData.secret = settings.value("user/secret").toString();
-
-    initializationStepTwo();
-}
-
-void MainWindow::initializationStepTwo()
-{
-    QSettings settings;
-    settings.beginGroup("user");
-    if(settings.childKeys().indexOf("uid") == -1 ||
-       settings.childKeys().indexOf("referral_link") == -1 )
-    {
-        requestUidAndReferralLink();
-    }
-    else
-    {
-        readUidAndReferralLink();
-    }
-}
-
-void MainWindow::readUidAndReferralLink()
-{
-    QSettings settings;
-    userData.uid = settings.value("user/uid").toString();
-    userData.referralLink = settings.value("user/referral_link").toString();
-
-    if(userData.referralLink.isEmpty())
-        referralLinkAction->setEnabled(false);
-
-    initializationStepThree();
-}
-
-void MainWindow::initializationStepThree()
-{
-    setCurrentPage(ui->mainPage);
-
-    requestDirectoryListing("/");
 }
 
 bool MainWindow::s60v3()
@@ -345,7 +299,6 @@ void MainWindow::setupActions()
     activeDownloadAction = new QAction("Active Download", this);
     activeUploadAction = new QAction("Active Upload", this);
     accountInfoAction = new QAction("Account Info", this);
-    referralLinkAction = new QAction("Referral Link", this);
     signOutAction = new QAction("Sign Out", this);
     aboutAction = new QAction("About", this);
     aboutQtAction = new QAction("About Qt", this);
@@ -370,7 +323,6 @@ void MainWindow::setupActions()
         SIGNAL(triggered()),
         SLOT(requestAccountInfo())
         );
-    connect(referralLinkAction, SIGNAL(triggered()), SLOT(referralLink()));
     connect(signOutAction, SIGNAL(triggered()), SLOT(signOut()));
     connect(aboutAction, SIGNAL(triggered()), SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -439,7 +391,6 @@ void MainWindow::setupActions()
     QMenu *accountMenu = new QMenu(ui->mainPage);
     accountMenuAction->setMenu(accountMenu);
     accountMenu->addAction(accountInfoAction);
-    accountMenu->addAction(referralLinkAction);
     accountMenu->addAction(signOutAction);
 
     QAction *helpMenuAction = new QAction(
@@ -451,15 +402,6 @@ void MainWindow::setupActions()
     helpMenuAction->setMenu(helpMenu);
     helpMenu->addAction(aboutAction);
     helpMenu->addAction(aboutQtAction);
-}
-
-void MainWindow::readUserDataAndSignIn()
-{
-    QSettings settings;
-    userData.token = settings.value("user/token").toString();
-    userData.secret = settings.value("user/secret").toString();
-
-    requestUidAndReferralLink();
 }
 
 void MainWindow::setCurrentPage(QWidget *page)
@@ -502,6 +444,31 @@ void MainWindow::handleItemUploadedToDirectory(QString directory)
 {
     if(directory == currentDirectory)
         refresh();
+}
+
+void MainWindow::openDropboxInABrowser()
+{
+    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_AUTHORIZE).toString();
+    url.addQueryItem("oauth_token", requestToken);
+
+    QDesktopServices::openUrl(url);
+}
+
+void MainWindow::on_donePushButton_clicked()
+{
+    if(requestToken.isEmpty() || requestTokenSecret.isEmpty())
+    {
+        QMessageBox::information(
+                    this,
+                    "Droper",
+                    "You don't seem to have signed it yet. "
+                    "Sign in and try again."
+                    );
+    }
+    else
+    {
+        requestAccessToken();
+    }
 }
 
 void MainWindow::on_filesAndFoldersListWidget_itemActivated(
@@ -557,20 +524,7 @@ void MainWindow::navigateItem(QListWidgetItem *item)
 
 void MainWindow::signIn()
 {
-    authenticationDialog.switchToSignIn();
-
-    authenticationDialog.showMaximized();
-}
-
-void MainWindow::referralLink()
-{
-    QApplication::clipboard()->setText(userData.referralLink);
-
-    QMessageBox::information(
-        this,
-        "Droper",
-        "Referral link copied to clipboard."
-        );
+    requestRequestToken();
 }
 
 void MainWindow::signOut()
@@ -594,7 +548,7 @@ void MainWindow::signOut()
     userData.secret.clear();
 
     //return to the authentication page
-    setCurrentPage(ui->authenticationPage);
+    setCurrentPage(ui->signInPage);
 }
 
 void MainWindow::about()
@@ -1202,17 +1156,29 @@ void MainWindow::activeUpload()
     uploadDialog.exec();
 }
 
-void MainWindow::requestUidAndReferralLink()
+void MainWindow::requestRequestToken()
 {
-    requestingUidAndReferralLink = true;
-
-    QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT_INFO);
+    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_REQUESTTOKEN);
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest);
 
-    requestNetworkRequest(&networkRequest);
+    requestNetworkRequest( &networkRequest );
+}
+
+void MainWindow::requestAccessToken()
+{
+    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_ACCESSTOKEN);
+
+    QNetworkRequest networkRequest(url);
+
+    UserData userData;
+    userData.token = requestToken;
+    userData.secret = requestTokenSecret;
+    oAuth->signRequest("GET", &networkRequest, &userData);
+
+    requestNetworkRequest( &networkRequest );
 }
 
 void MainWindow::requestDirectoryListing(QString path)
@@ -1222,7 +1188,7 @@ void MainWindow::requestDirectoryListing(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1233,7 +1199,7 @@ void MainWindow::requestAccountInfo()
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1246,7 +1212,7 @@ void MainWindow::requestFolderCreation(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1260,7 +1226,7 @@ void MainWindow::requestCopying(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1274,7 +1240,7 @@ void MainWindow::requestMoving(QString source, QString destination)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1287,7 +1253,7 @@ void MainWindow::requestDeletion(QString path)
 
     QNetworkRequest networkRequest(url);
 
-    oAuth->signRequest(&userData, "GET", &networkRequest);
+    oAuth->signRequest("GET", &networkRequest, &userData);
 
     requestNetworkRequest(&networkRequest);
 }
@@ -1377,11 +1343,6 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
         uploadDialog.handleNetworkReply(networkReply);
         break;
 
-    case Dropbox::TOKEN:
-    case Dropbox::ACCOUNT:
-        authenticationDialog.handleNetworkReply(networkReply);
-        break;
-
     default:
         this->handleNetworkReply(networkReply);
         break;
@@ -1401,15 +1362,20 @@ void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
     Dropbox::Api api = dropbox->urlToApi(networkReply->url());
     switch(api)
     {
+    case Dropbox::OAUTH_REQUESTTOKEN:
+        handleRequestToken(networkReply);
+        break;
+
+    case Dropbox::OAUTH_ACCESSTOKEN:
+        handleAccessToken(networkReply);
+        break;
+
     case Dropbox::METADATA:
         handleDirectoryListing(networkReply);
         break;
 
     case Dropbox::ACCOUNT_INFO:
-        if(requestingUidAndReferralLink)
-            handleUidAndReferralLink(networkReply);
-        else
-            handleAccountInfo(networkReply);
+        handleAccountInfo(networkReply);
         break;
 
     case Dropbox::FILEOPS_CREATEFOLDER:
@@ -1433,33 +1399,30 @@ void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
     }
 }
 
-void MainWindow::handleUidAndReferralLink(QNetworkReply* networkReply)
+void MainWindow::handleRequestToken(QNetworkReply *networkReply)
 {
-    QString jsonData = networkReply->readAll();
+    QString reply = networkReply->readAll();
 
-    bool ok;
-    QVariantMap jsonResult = Json::parse(jsonData, ok).toMap();
-    if(!ok)
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "JSON parsing failed."
-            );
+    requestToken = reply.split("&").at(1).split("=").at(1);
+    requestTokenSecret = reply.split("&").at(0).split("=").at(1);
 
-        return;
-    }
+    openDropboxInABrowser();
+}
+
+void MainWindow::handleAccessToken(QNetworkReply *networkReply)
+{
+    QString reply = networkReply->readAll();
+
+    QString accessToken = reply.split("&").at(1).split("=").at(1);
+    QString accessTokenSecret = reply.split("&").at(0).split("=").at(1);
+    QString uid = reply.split("&").at(2).split("=").at(1);
 
     QSettings settings;
-    settings.setValue("user/uid", jsonResult["uid"].toString());
-    settings.setValue(
-        "user/referral_link",
-        jsonResult["referral_link"].toString()
-        );
+    settings.setValue("user/access_token", accessToken);
+    settings.setValue("user/access_token_secret", accessTokenSecret);
+    settings.setValue("user/uid", uid);
 
-    requestingUidAndReferralLink = false;
-
-    readUidAndReferralLink();
+    attemptSignIn();
 }
 
 void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)

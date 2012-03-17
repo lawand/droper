@@ -203,7 +203,7 @@ void UploadDialog::setState(UploadDialog::State state)
                 QNetworkRequest::ContentTypeHeader,
                 "multipart/form-data; boundary=" + boundaryStr
                 );
-            oAuth->signRequest(userData, "POST", &networkRequest);
+            oAuth->signRequest("POST", &networkRequest, userData);
             networkReply = networkAccessManager->post(
                 networkRequest,
                 *multipartform
