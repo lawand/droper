@@ -358,6 +358,11 @@ void MainWindow::setupActions()
     QMenu *optionsMenu = new QMenu(ui->mainPage);
     optionsMenuAction->setMenu(optionsMenu);
 
+    backAction = new QAction("Back", ui->accountInfoPage);
+    backAction->setSoftKeyRole(QAction::NegativeSoftKey);
+    ui->accountInfoPage->addAction(backAction);
+    connect(backAction, SIGNAL(triggered()), SLOT(back()));
+
     if(s60v3())
     {
         QAction *currentFolderMenuAction = new QAction(
@@ -414,6 +419,11 @@ void MainWindow::setCurrentPage(QWidget *page)
         ui->filesAndFoldersListWidget->setFocus();
     }
     // </I don't know why this is necessary>
+}
+
+void MainWindow::back()
+{
+    setCurrentPage(ui->mainPage);
 }
 
 void MainWindow::showContextMenu(QPoint point)
@@ -1609,6 +1619,25 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         .arg(sharedFilesUnit)
         ;
 
+    qreal used = quotaInfo["normal"].toReal() + quotaInfo["shared"].toReal();
+    QString usedUnit;
+    if (used < 1024) {
+        usedUnit = "bytes";
+    } else if (used < 1024*1024) {
+        used /= 1024;
+        usedUnit = "kB";
+    } else if (used < 1024*1024*1024){
+        used /= 1024*1024;
+        usedUnit = "MB";
+    } else {
+        used /= 1024*1024*1024;
+        usedUnit = "GB";
+    }
+    QString usedString = QString("%1%2")
+        .arg(used, 0, 'f', 1)
+        .arg(usedUnit)
+        ;
+
     qreal quota = quotaInfo["quota"].toReal();
     QString quotaUnit;
     if (quota < 1024) {
@@ -1628,61 +1657,40 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         .arg(quotaUnit)
         ;
 
-    qreal unused = quotaInfo["quota"].toReal() -
-                   (quotaInfo["normal"].toReal() +
-                   quotaInfo["shared"].toReal());
-    QString unusedUnit;
-    if (unused < 1024) {
-        unusedUnit = "bytes";
-    } else if (unused < 1024*1024) {
-        unused /= 1024;
-        unusedUnit = "kB";
-    } else if (unused < 1024*1024*1024){
-        unused /= 1024*1024;
-        unusedUnit = "MB";
-    } else {
-        unused /= 1024*1024*1024;
-        unusedUnit = "GB";
-    }
-    QString unusedString = QString("%1%2")
-        .arg(unused, 0, 'f', 1)
-        .arg(unusedUnit)
-        ;
+    QString generalAccountInfo = QString(
+        "<strong>E-Mail: %1</strong> <br />"
+        "Name: %2 <br />"
+        "Country: %3 <br />"
+        "UID: %4 <br />"
+        )
+        .arg(jsonResult["email"].toString())
+        .arg(jsonResult["display_name"].toString())
+        .arg(jsonResult["country"].toString())
+        .arg(jsonResult["uid"].toString());
+    ui->generalAccountInfoLabel->setText(generalAccountInfo);
 
-    QMessageBox messageBox(this);
-
-    messageBox.setWindowTitle("Droper");
-
-    messageBox.setText(
-        QString("Showing account information for:\n%1").arg(
-            jsonResult["email"].toString()
-            )
+    ui->spaceProgressBar->setValue(
+        (quotaInfo["normal"].toReal()+quotaInfo["shared"].toReal())
+        *
+        100
+        /
+        quotaInfo["quota"].toReal()
         );
 
-    messageBox.setInformativeText(
-        QString(
-            "Name: %1 \n"
-            "Country: %2 \n"
-            "UID: %3 \n"
-            "\n"
-            "Total Space: %4 \n"
-            "Unused Space: %5 \n"
-            "Regular files: %6 \n"
-            "Shared files: %7 \n"
-            "\n"
-            "Total Space = Regular files + "
-            "Shared files + Unused Space"
-            )
-            .arg(jsonResult["display_name"].toString())
-            .arg(jsonResult["country"].toString())
-            .arg(jsonResult["uid"].toString())
-            .arg(quotaString)
-            .arg(unusedString)
+    QString space = QString("%1 out of %2")
+        .arg(usedString)
+        .arg(quotaString);
+    ui->spaceProgressBar->setFormat(space);
+
+    QString spaceDetails = QString(
+        "Normal Files: %1 <br />"
+        "Shared Files: %2"
+        )
             .arg(normalFilesString)
-            .arg(sharedFilesString)
-        );
+            .arg(sharedFilesString);
+    ui->spaceDetailsLabel->setText(spaceDetails);
 
-    messageBox.exec();
+    setCurrentPage(ui->accountInfoPage);
 }
 
 void MainWindow::handleFolderCreation(QNetworkReply* networkReply)

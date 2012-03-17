@@ -76,6 +76,7 @@ private slots:
     bool s60v3();
     void setupActions();
     void setCurrentPage(QWidget *page);
+    void back();
     void showContextMenu(QPoint point);
     void handleItemUploadedToDirectory(QString directory);
     void openDropboxInABrowser();
@@ -163,6 +164,7 @@ private:
     QAction *signOutAction;
     QAction *aboutAction;
     QAction *aboutQtAction;
+    QAction *backAction;
 };
 
 #endif // MAINWINDOW_H
