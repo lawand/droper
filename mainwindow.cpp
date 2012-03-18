@@ -1119,6 +1119,7 @@ void MainWindow::upload()
         //file to be uploaded has and if there was a file with the same name,
         //tell the user that this upload modifies that file and that the
         //revision history can be viewed at dropbox.com
+        bool overwrite = true;
         for(int row = 0; row < ui->filesAndFoldersListWidget->count(); ++row)
         {
             QListWidgetItem *item = ui->filesAndFoldersListWidget->item(row);
@@ -1146,15 +1147,19 @@ void MainWindow::upload()
                 }
                 else
                 {
-                    QMessageBox::information(
+                    QMessageBox::StandardButton result = QMessageBox::question(
                         this,
                         "Droper",
                         "There is a file with the same name in the current "
-                        "directory, if you continue with the upload "
-                        "process, it will be overwritten. \n"
-                        "You can visit dropbox.com to see file revisions "
-                        "and restore earlier ones."
+                        "directory. Do you want to rename the file you are "
+                        "trying to upload? (Otherwise the remote file will be "
+                        "overwritten, but you can restore it later on "
+                        "dropbox.com)",
+                        QMessageBox::Yes|QMessageBox::No,
+                        QMessageBox::Yes
                         );
+                    if(result == QMessageBox::Yes)
+                        overwrite = false;
                 }
             }
         }
@@ -1162,7 +1167,8 @@ void MainWindow::upload()
         uploadDialog.setFileAndFolderInformation(
             filePath,
             fileSize,
-            currentDirectory
+            currentDirectory,
+            overwrite
             );
 
         uploadDialog.exec();

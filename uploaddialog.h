@@ -80,7 +80,8 @@ public:
     void setFileAndFolderInformation(
         QString filePath,
         QString fileSize,
-        QString folderPath
+        QString folderPath,
+        bool overwrite
         );
 private slots:
     void startStopRestart();
@@ -101,6 +102,7 @@ private:
     QString fileSize;
     QString folderPath;
     QString folderName;
+    bool overwrite;
     QNetworkReply *networkReply;
     QTime uploadTime;
 };

@@ -46,7 +46,8 @@ UploadDialog::UploadDialog(
     QDialog(parent),
     ui(new Ui::UploadDialog),
     startStopRestartAction(new QAction("Start", this)),
-    closeAction(new QAction("Close", this))
+    closeAction(new QAction("Close", this)),
+    overwrite(true)
 {
     //shared data members initialization
     this->networkAccessManager = networkAccessManager;
@@ -79,7 +80,8 @@ UploadDialog::~UploadDialog()
 void UploadDialog::setFileAndFolderInformation(
     QString filePath,
     QString fileSize,
-    QString folderPath
+    QString folderPath,
+    bool overwrite
     )
 {
     //file information
@@ -96,6 +98,9 @@ void UploadDialog::setFileAndFolderInformation(
         );
     if(folderName.isEmpty())
         folderName = "/ (root)";
+
+    //overwrite
+    this->overwrite = overwrite;
 
     //update the state
     setState(UploadDialog::READY_TO_START);
@@ -177,6 +182,10 @@ void UploadDialog::setState(UploadDialog::State state)
             QUrl url = dropbox->apiToUrl(
                 Dropbox::FILESPUT
                 ).toString() + folderPath + fileName;
+            if(overwrite == true)
+                url.addQueryItem("overwrite", "true");
+            else
+                url.addQueryItem("overwrite", "false");
             QNetworkRequest networkRequest(url);
             oAuth->signRequestUrl("PUT", &networkRequest, userData);
             networkReply = networkAccessManager->put(
