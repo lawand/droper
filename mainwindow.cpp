@@ -1694,8 +1694,7 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         ;
 
     QString generalAccountInfo = QString(
-        "<strong>E-Mail: %1</strong> <br />"
-        "UID: %2"
+        "E-Mail: %1 / UID: %2"
         )
         .arg(jsonResult["email"].toString())
         .arg(jsonResult["uid"].toString());
