@@ -1705,12 +1705,7 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         .arg(quotaUnit)
         ;
 
-    QString generalAccountInfo = QString(
-        "E-Mail: %1 / UID: %2"
-        )
-        .arg(jsonResult["email"].toString())
-        .arg(jsonResult["uid"].toString());
-    ui->generalAccountInfoLabel->setText(generalAccountInfo);
+    ui->emailLabel->setText(jsonResult["email"].toString());
 
     ui->spaceProgressBar->setValue(
         (quotaInfo["normal"].toReal()+quotaInfo["shared"].toReal())

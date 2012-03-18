@@ -200,7 +200,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="generalAccountInfoDisplayLabel">
+          <widget class="QLabel" name="emailDisplayLabel">
            <property name="font">
             <font>
              <weight>75</weight>
@@ -208,12 +208,12 @@
             </font>
            </property>
            <property name="text">
-            <string>General Info:</string>
+            <string>E-Mail:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="generalAccountInfoLabel">
+          <widget class="QLabel" name="emailLabel">
            <property name="text">
             <string>---</string>
            </property>
