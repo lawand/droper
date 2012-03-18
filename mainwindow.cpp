@@ -1115,6 +1115,19 @@ void MainWindow::upload()
             .arg(sizeUnit)
             ;
 
+        //make sure the file size is smaller than the upload file limit
+        if(bytes > 150000000)
+        {
+            QMessageBox::critical(
+                this,
+                "Droper",
+                "The file size is larger than the limit, upload it using the "
+                " Dropbox desktop client."
+                );
+
+            return;
+        }
+
         //make sure there isn't any folder that has the same name that the
         //file to be uploaded has and if there was a file with the same name,
         //tell the user that this upload modifies that file and that the
