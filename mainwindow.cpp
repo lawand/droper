@@ -495,7 +495,7 @@ void MainWindow::on_copyReferralLinkToClipboardToolButton_clicked()
 }
 
 void MainWindow::on_filesAndFoldersListWidget_itemActivated(
-    QListWidgetItem *item
+    QListWidgetItem *
     )
 {
     if(s60v3())
@@ -1727,17 +1727,17 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     setCurrentPage(ui->accountInfoPage);
 }
 
-void MainWindow::handleFolderCreation(QNetworkReply* networkReply)
+void MainWindow::handleFolderCreation(QNetworkReply*)
 {
     refresh();
 }
 
-void MainWindow::handleCopying(QNetworkReply* networkReply)
+void MainWindow::handleCopying(QNetworkReply*)
 {
     refresh();
 }
 
-void MainWindow::handleMoving(QNetworkReply* networkReply)
+void MainWindow::handleMoving(QNetworkReply*)
 {
     refresh();
 
@@ -1752,7 +1752,7 @@ void MainWindow::handleMoving(QNetworkReply* networkReply)
     }
 }
 
-void MainWindow::handleDeletion(QNetworkReply* networkReply)
+void MainWindow::handleDeletion(QNetworkReply*)
 {
     refresh();
 }
