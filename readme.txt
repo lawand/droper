@@ -4,7 +4,7 @@ Droper 0.4.1
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
 modify their synced files and folders.
 
-Copyright 2011 Omar Lawand Dalatieh <lawand87@gmail.com>.
+Copyright 2011, 2012 Omar Lawand Dalatieh <lawand87@gmail.com>.
 
 http://coinonedge.com/droper/
 
@@ -117,7 +117,7 @@ along with Droper).
 Legal Notes
 -----------
 
-Copyright 2011 Omar Lawand Dalatieh.
+Copyright 2011, 2012 Omar Lawand Dalatieh.
 
 Droper is free software: you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright 2011 Omar Lawand Dalatieh.
+** Copyright 2011, 2012 Omar Lawand Dalatieh.
 ** Contact: see the README file.
 **
 ** This file is part of Droper.
