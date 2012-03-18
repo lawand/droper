@@ -244,11 +244,11 @@ Dropbox::Api Dropbox::urlToApi(QUrl url)
         {
             path.remove("/" + QString("%1").arg(apiVersion));
 
-            if(path.startsWith("/files"))
-                return Dropbox::FILES;
-
             if(path.startsWith("/files_put"))
                 return Dropbox::FILESPUT;
+
+            if(path.startsWith("/files"))
+                return Dropbox::FILES;
 
             if(path.startsWith("/thumbnails"))
                 return Dropbox::THUMBNAILS;

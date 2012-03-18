@@ -1315,6 +1315,8 @@ void MainWindow::requestNetworkRequest(QNetworkRequest *networkRequest)
 
 void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
 {
+    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
+
     if(networkReply->error() != QNetworkReply::NoError &&
        networkReply->error() != QNetworkReply::OperationCanceledError)
     {
@@ -1327,12 +1329,23 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
             {
                 if(jsonResult["error"].toString().contains("Invalid signature"))
                 {
-                    QMessageBox::critical(
-                        this,
-                        "Droper",
-                        "Droper currently has problems dealing with these five "
-                        "symbols ; + ~ # %"
-                        );
+                    if(api == Dropbox::FILESPUT)
+                    {
+                        QMessageBox::critical(
+                            this,
+                            "Droper",
+                            "There was an upload problem, please try again."
+                            );
+                    }
+                    else
+                    {
+                        QMessageBox::critical(
+                            this,
+                            "Droper",
+                            "Droper currently has problems dealing with these five "
+                            "symbols ; + ~ # %"
+                            );
+                    }
                 }
                 else
                 {
@@ -1378,7 +1391,6 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
         }
     }
 
-    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
     switch(api)
     {
     case Dropbox::FILES:
