@@ -80,6 +80,7 @@ UploadDialog::~UploadDialog()
 void UploadDialog::setFileAndFolderInformation(
     QString filePath,
     QString fileSize,
+    int fileBytes,
     QString folderPath,
     bool overwrite
     )
@@ -90,6 +91,7 @@ void UploadDialog::setFileAndFolderInformation(
         (this->filePath.length() - this->filePath.lastIndexOf("/")) - 1
         );
     this->fileSize = fileSize;
+    this->fileBytes = fileBytes;
 
     //folder information
     this->folderPath = folderPath;
@@ -188,6 +190,10 @@ void UploadDialog::setState(UploadDialog::State state)
                 url.addQueryItem("overwrite", "false");
             QNetworkRequest networkRequest(url);
             oAuth->signRequestUrl("PUT", &networkRequest, userData);
+            networkRequest.setRawHeader(
+                "Content-Length",
+                QString("%1").arg(fileBytes).toAscii()
+                );
             networkReply = networkAccessManager->put(
                 networkRequest,
                 file

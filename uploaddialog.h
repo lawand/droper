@@ -80,6 +80,7 @@ public:
     void setFileAndFolderInformation(
         QString filePath,
         QString fileSize,
+        int fileBytes,
         QString folderPath,
         bool overwrite
         );
@@ -100,6 +101,7 @@ private:
     QString filePath;
     QString fileName;
     QString fileSize;
+    int fileBytes;
     QString folderPath;
     QString folderName;
     bool overwrite;

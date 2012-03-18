@@ -1093,9 +1093,9 @@ void MainWindow::upload()
 
         //compute fileSize
         QFileInfo fileInfo(filePath);
-        int bytes = fileInfo.size();
+        int fileBytes = fileInfo.size();
 
-        qreal size = (qreal)bytes;
+        qreal size = (qreal)fileBytes;
         QString sizeUnit;
         if (size < 1024) {
             sizeUnit = "bytes";
@@ -1116,7 +1116,7 @@ void MainWindow::upload()
             ;
 
         //make sure the file size is smaller than the upload file limit
-        if(bytes > 150000000)
+        if(fileBytes > 150000000)
         {
             QMessageBox::critical(
                 this,
@@ -1180,6 +1180,7 @@ void MainWindow::upload()
         uploadDialog.setFileAndFolderInformation(
             filePath,
             fileSize,
+            fileBytes,
             currentDirectory,
             overwrite
             );
