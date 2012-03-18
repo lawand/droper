@@ -218,19 +218,19 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if(s60v3())
     {
-        if(ui->stackedWidget->currentWidget() == ui->loadingPage)
-            return;
-
-        switch(event->key())
+        if(ui->stackedWidget->currentWidget() == ui->mainPage)
         {
-        case Qt::Key_Right:
-            navigateItem(ui->filesAndFoldersListWidget->currentItem());
-            break;
+            switch(event->key())
+            {
+            case Qt::Key_Right:
+                navigateItem(ui->filesAndFoldersListWidget->currentItem());
+                break;
 
-        case Qt::Key_Left:
-            if(upAction->isEnabled())
-                upAction->trigger();
-            break;
+            case Qt::Key_Left:
+                if(upAction->isEnabled())
+                    upAction->trigger();
+                break;
+            }
         }
     }
 }
