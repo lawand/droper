@@ -181,9 +181,19 @@ void UploadDialog::setState(UploadDialog::State state)
             }
 
             //send the content of the local file
-            QUrl url = dropbox->apiToUrl(
-                Dropbox::FILESPUT
-                ).toString() + folderPath + fileName;
+            QUrl url;
+            if(folderPath != "/")
+            {
+                url = dropbox->apiToUrl(
+                    Dropbox::FILESPUT
+                    ).toString() + folderPath + "/" + fileName;
+            }
+            else
+            {
+                url = dropbox->apiToUrl(
+                    Dropbox::FILESPUT
+                    ).toString() + folderPath + fileName;
+            }
             if(overwrite == true)
                 url.addQueryItem("overwrite", "true");
             else
