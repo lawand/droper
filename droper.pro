@@ -51,7 +51,4 @@ symbian {
         # add custom platform dependencies
         custom_platform_dependencies_deployment.pkg_prerules += pkg_custom_platform_dependencies
         DEPLOYMENT += custom_platform_dependencies_deployment
-
-    # allow uploads of large files
-    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
     }
