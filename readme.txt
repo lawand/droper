@@ -82,11 +82,6 @@ which names contain these five symbols ; + ~ # %
 The current version isn't optimized for minimal network traffic. The use of
 WLAN networks when using Droper is recommended to avoid data transfer costs.
 
-Although Dropbox allows uploading files up to 300MB in size, Droper currently
-allows uploading small files only (few MBs, specific amount depends on free RAM
-memory on device). This is a known issue and is supposed to be fixed in later
-releases.
-
 
 General Notes for Developers
 ----------------------------
