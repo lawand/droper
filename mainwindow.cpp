@@ -906,12 +906,26 @@ void MainWindow::propeties()
 
     QMessageBox messageBox(this);
     messageBox.setWindowTitle("Droper");
-    messageBox.setText(
-        QString(
-            "Showing details for file: \n"
-            "%1"
-            ).arg(name)
-        );
+
+    if(map["is_dir"].toBool() != true)
+        //if the item is not a directory
+    {
+        messageBox.setText(
+            QString(
+                "Showing details for file: \n"
+                "%1"
+                ).arg(name)
+            );
+    }
+    else
+    {
+        messageBox.setText(
+            QString(
+                "Showing details for folder: \n"
+                "%1"
+                ).arg(name)
+            );
+    }
 
     QString informativeText;
 
