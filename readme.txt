@@ -114,6 +114,13 @@ specifying a different UID in the project file (so that it can be installed
 along with Droper).
 
 
+Translating Droper
+------------------
+
+You can contribute to Droper by translating it to your native language.
+If you interested, please contact the maintainer(s) of Droper.
+
+
 Legal Notes
 -----------
 
