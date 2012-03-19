@@ -49,11 +49,6 @@ public:
         QNetworkRequest *networkRequest,
         UserData *userData = 0
         );
-    void signRequestUrl(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = 0
-        );
 private:
     QString timestampAndNonceHeaderItems();
     QString consumerKeyHeaderItem();
@@ -65,16 +60,6 @@ private:
         QString method,
         QUrl *url,
         QString oAuthHeader
-        );
-    void timestampAndNonceUrlItems(QUrl *url);
-    void consumerKeyUrlItem(QUrl *url);
-    void signatureMethodUrlItem(QUrl *url);
-    void userTokenUrlItem(QUrl *url, UserData *userData);
-    void versionUrlItem(QUrl *url);
-    void signatureUrlItem(
-        QUrl *url,
-        UserData *userData,
-        QString method
         );
     QString hmacSha1(QString base, QString key); //HMAC-SHA1 checksum
 };
