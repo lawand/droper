@@ -259,7 +259,8 @@ void MainWindow::attemptSignIn()
 bool MainWindow::s60v3()
 {
     return (
-        false
+        QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 ||
+        QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
         );
 }
 
