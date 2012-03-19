@@ -199,7 +199,7 @@ void UploadDialog::setState(UploadDialog::State state)
             else
                 url.addQueryItem("overwrite", "false");
             QNetworkRequest networkRequest(url);
-            oAuth->signRequestUrl("PUT", &networkRequest, userData);
+            oAuth->signRequestHeader("PUT", &networkRequest, userData);
             networkRequest.setRawHeader(
                 "Content-Length",
                 QString("%1").arg(fileBytes).toAscii()

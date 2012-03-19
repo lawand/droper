@@ -1329,23 +1329,12 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
             {
                 if(jsonResult["error"].toString().contains("Invalid signature"))
                 {
-                    if(api == Dropbox::FILESPUT)
-                    {
-                        QMessageBox::critical(
-                            this,
-                            "Droper",
-                            "There was an upload problem, please try again."
-                            );
-                    }
-                    else
-                    {
-                        QMessageBox::critical(
-                            this,
-                            "Droper",
-                            "Droper currently has problems dealing with these five "
-                            "symbols ; + ~ # %"
-                            );
-                    }
+                    QMessageBox::critical(
+                        this,
+                        "Droper",
+                        "Droper currently has problems dealing with these five "
+                        "symbols ; + ~ # %"
+                        );
                 }
                 else
                 {
