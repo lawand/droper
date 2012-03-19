@@ -40,5 +40,6 @@
         <file>resources/actions/up.png</file>
         <file>resources/actions/upload.png</file>
         <file>droper.svg</file>
+        <file>resources/icons/dropbox.png</file>
     </qresource>
 </RCC>

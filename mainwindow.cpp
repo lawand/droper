@@ -259,8 +259,7 @@ void MainWindow::attemptSignIn()
 bool MainWindow::s60v3()
 {
     return (
-        QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 ||
-        QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        false
         );
 }
 
@@ -1494,19 +1493,28 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
     ui->filesAndFoldersListWidget->scrollToTop();
 
     //set current directory's icon
-    QResource iconResource(
-        QString(":/resources/icons/%1")
-        .arg(jsonResult["icon"].toString())
-        + ".png"
-        );
-    if(iconResource.isValid())
+    if(jsonResult["path"] == "/")
+    {
         ui->currentFolderIconLabel->setPixmap(
-            QIcon(iconResource.fileName()).pixmap(16, 16)
+            QIcon(":/resources/icons/dropbox.png").pixmap(16, 16)
             );
+    }
     else
-        ui->currentFolderIconLabel->setPixmap(
-            QIcon(":/resources/icons/folder.png").pixmap(16, 16)
+    {
+        QResource iconResource(
+            QString(":/resources/icons/%1")
+            .arg(jsonResult["icon"].toString())
+            + ".png"
             );
+        if(iconResource.isValid())
+            ui->currentFolderIconLabel->setPixmap(
+                QIcon(iconResource.fileName()).pixmap(16, 16)
+                );
+        else
+            ui->currentFolderIconLabel->setPixmap(
+                QIcon(":/resources/icons/folder.png").pixmap(16, 16)
+                );
+    }
 
     //update currentDirectory and ui->currentFolderLabel
     currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
