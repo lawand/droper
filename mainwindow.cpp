@@ -758,7 +758,8 @@ void MainWindow::publicLink()
         QMessageBox::information(
             this,
             "Droper",
-            "Public link copied to clipboard."
+            QString("The public link \"%1\" was copied to the clipboard.")
+                    .arg(publicLink)
             );
     }
 }
