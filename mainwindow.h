@@ -96,6 +96,7 @@ private slots:
     void rename();
     void remove();
     void publicLink();
+    void shareableLink();
     void download();
     void propeties();
     void up();
@@ -110,6 +111,7 @@ private slots:
     void requestAccessToken();
     void requestDirectoryListing(QString path);
     void requestAccountInfo();
+    void requestShareableLink(QString path);
     void requestFolderCreation(QString path);
     void requestCopying(QString source, QString destination);
     void requestMoving(QString source, QString destination);
@@ -121,6 +123,7 @@ private slots:
     void handleAccessToken(QNetworkReply *networkReply);
     void handleDirectoryListing(QNetworkReply *networkReply);
     void handleAccountInfo(QNetworkReply *networkReply);
+    void handleShareableLink(QNetworkReply *networkReply);
     void handleFolderCreation(QNetworkReply* networkReply);
     void handleCopying(QNetworkReply* networkReply);
     void handleMoving(QNetworkReply* networkReply);
@@ -152,6 +155,7 @@ private:
     QAction *renameAction;
     QAction *removeAction;
     QAction *publicLinkAction;
+    QAction *shareableLinkAction;
     QAction *downloadAction;
     QAction *propertiesAction;
     QAction *upAction;

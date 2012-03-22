@@ -282,6 +282,7 @@ void MainWindow::setupActions()
     renameAction = new QAction("Rename", this);
     removeAction = new QAction("Remove", this);
     publicLinkAction = new QAction("Public Link", this);
+    shareableLinkAction = new QAction("Shareable Link", this);
     downloadAction = new QAction("Download", this);
     propertiesAction = new QAction("Properties", this);
     upAction = new QAction("Up", this);
@@ -309,6 +310,7 @@ void MainWindow::setupActions()
     connect(renameAction, SIGNAL(triggered()), SLOT(rename()));
     connect(removeAction, SIGNAL(triggered()), SLOT(remove()));
     connect(publicLinkAction, SIGNAL(triggered()), SLOT(publicLink()));
+    connect(shareableLinkAction, SIGNAL(triggered()), SLOT(shareableLink()));
     connect(downloadAction, SIGNAL(triggered()), SLOT(download()));
     connect(propertiesAction, SIGNAL(triggered()), SLOT(propeties()));
     connect(upAction, SIGNAL(triggered()), SLOT(up()));
@@ -436,6 +438,7 @@ void MainWindow::showContextMenu(QPoint point)
     menu.addAction(copyAction);
     menu.addAction(renameAction);
     menu.addAction(removeAction);
+    menu.addAction(shareableLinkAction);
 
     QListWidgetItem *item = ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map = item->data(Qt::UserRole).toMap();
@@ -758,6 +761,18 @@ void MainWindow::publicLink()
             "Public link copied to clipboard."
             );
     }
+}
+
+void MainWindow::shareableLink()
+{
+    //get path
+    QListWidgetItem* currentItem =
+        ui->filesAndFoldersListWidget->currentItem();
+    QVariantMap map =
+        currentItem->data(Qt::UserRole).toMap();
+    QString path = map["path"].toString();
+
+    requestShareableLink(path);
 }
 
 void MainWindow::download()
@@ -1261,6 +1276,17 @@ void MainWindow::requestAccountInfo()
     requestNetworkRequest(&networkRequest);
 }
 
+void MainWindow::requestShareableLink(QString path)
+{
+    QUrl url = dropbox->apiToUrl(Dropbox::SHARES).toString() + path;
+
+    QNetworkRequest networkRequest(url);
+
+    oAuth->signRequestHeader("GET", &networkRequest, &userData);
+
+    requestNetworkRequest(&networkRequest);
+}
+
 void MainWindow::requestFolderCreation(QString path)
 {
     QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_CREATEFOLDER);
@@ -1437,6 +1463,10 @@ void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
 
     case Dropbox::ACCOUNT_INFO:
         handleAccountInfo(networkReply);
+        break;
+
+    case Dropbox::SHARES:
+        handleShareableLink(networkReply);
         break;
 
     case Dropbox::FILEOPS_CREATEFOLDER:
@@ -1744,6 +1774,36 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         );
 
     setCurrentPage(ui->accountInfoPage);
+}
+
+void MainWindow::handleShareableLink(QNetworkReply *networkReply)
+{
+    QString json = networkReply->readAll();
+
+    bool ok;
+    QVariantMap jsonResult = QtJson::Json::parse(json, ok).toMap();
+    if(!ok)
+    {
+        QMessageBox::information(
+            this,
+            "Droper",
+            "JSON parsing failed."
+            );
+
+        return;
+    }
+
+    QApplication::clipboard()->setText(jsonResult["url"].toString());
+
+    QMessageBox::information(
+        this,
+        "Droper",
+        QString("The shareable link \"%1\" was copied to the clipboard. Note "
+                "that this link expires after a month, more specifically on: "
+                "%2")
+                .arg(jsonResult["url"].toString())
+                .arg(jsonResult["expires"].toString())
+        );
 }
 
 void MainWindow::handleFolderCreation(QNetworkReply*)
