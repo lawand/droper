@@ -1,4 +1,4 @@
-include(json/json.pri)
+include(qt-json/qt-json.pri)
 include(QsKineticScroller/QsKineticScroller.pri)
 
 QT += core gui network

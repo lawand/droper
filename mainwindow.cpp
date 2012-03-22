@@ -48,8 +48,8 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QClipboard>
-#include <QsKineticScroller/QsKineticScroller.h>
-#include "json/json.h"
+#include "QsKineticScroller.h"
+#include "json.h"
 
 MainWindow::MainWindow(
     QNetworkAccessManager *networkAccessManager,
