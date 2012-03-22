@@ -231,13 +231,13 @@ void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
     double speed = received * 1000.0 / downloadTime.elapsed();
     QString unit;
     if (speed < 1024) {
-        unit = "bps";
+        unit = "bit/s";
     } else if (speed < 1024*1024) {
         speed /= 1024;
-        unit = "kbps";
+        unit = "Kibit/s";
     } else {
         speed /= 1024*1024;
-        unit = "mbps";
+        unit = "Mibit/s";
     }
 
     //update progress bar

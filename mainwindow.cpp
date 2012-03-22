@@ -1128,16 +1128,16 @@ void MainWindow::upload()
         qreal size = (qreal)fileBytes;
         QString sizeUnit;
         if (size < 1024) {
-            sizeUnit = "bytes";
+            sizeUnit = "Bytes";
         } else if (size < 1024*1024) {
             size /= 1024;
-            sizeUnit = "kB";
+            sizeUnit = "KiB";
         } else if (size < 1024*1024*1024){
             size /= 1024*1024;
-            sizeUnit = "MB";
+            sizeUnit = "MiB";
         } else {
             size /= 1024*1024*1024;
-            sizeUnit = "GB";
+            sizeUnit = "GiB";
         }
 
         QString fileSize = QString("%1%2")
@@ -1675,16 +1675,16 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     qreal normalFiles = quotaInfo["normal"].toReal();
     QString normalFilesUnit;
     if (normalFiles < 1024) {
-        normalFilesUnit = "bytes";
+        normalFilesUnit = "Bytes";
     } else if (normalFiles < 1024*1024) {
         normalFiles /= 1024;
-        normalFilesUnit = "kB";
+        normalFilesUnit = "KiB";
     } else if (normalFiles < 1024*1024*1024){
         normalFiles /= 1024*1024;
-        normalFilesUnit = "MB";
+        normalFilesUnit = "MiB";
     } else {
         normalFiles /= 1024*1024*1024;
-        normalFilesUnit = "GB";
+        normalFilesUnit = "GiB";
     }
     QString normalFilesString = QString("%1%2")
         .arg(normalFiles, 0, 'f', 1)
@@ -1694,16 +1694,16 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     qreal sharedFiles = quotaInfo["shared"].toReal();
     QString sharedFilesUnit;
     if (sharedFiles < 1024) {
-        sharedFilesUnit = "bytes";
+        sharedFilesUnit = "Bytes";
     } else if (sharedFiles < 1024*1024) {
         sharedFiles /= 1024;
-        sharedFilesUnit = "kB";
+        sharedFilesUnit = "KiB";
     } else if (sharedFiles < 1024*1024*1024){
         sharedFiles /= 1024*1024;
-        sharedFilesUnit = "MB";
+        sharedFilesUnit = "MiB";
     } else {
         sharedFiles /= 1024*1024*1024;
-        sharedFilesUnit = "GB";
+        sharedFilesUnit = "GiB";
     }
     QString sharedFilesString = QString("%1%2")
         .arg(sharedFiles, 0, 'f', 1)
@@ -1713,16 +1713,16 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     qreal used = quotaInfo["normal"].toReal() + quotaInfo["shared"].toReal();
     QString usedUnit;
     if (used < 1024) {
-        usedUnit = "bytes";
+        usedUnit = "Bytes";
     } else if (used < 1024*1024) {
         used /= 1024;
-        usedUnit = "kB";
+        usedUnit = "KiB";
     } else if (used < 1024*1024*1024){
         used /= 1024*1024;
-        usedUnit = "MB";
+        usedUnit = "MiB";
     } else {
         used /= 1024*1024*1024;
-        usedUnit = "GB";
+        usedUnit = "GiB";
     }
     QString usedString = QString("%1%2")
         .arg(used, 0, 'f', 1)
@@ -1732,16 +1732,16 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     qreal quota = quotaInfo["quota"].toReal();
     QString quotaUnit;
     if (quota < 1024) {
-        quotaUnit = "bytes";
+        quotaUnit = "Bytes";
     } else if (quota < 1024*1024) {
         quota /= 1024;
-        quotaUnit = "kB";
+        quotaUnit = "KiB";
     } else if (quota < 1024*1024*1024){
         quota /= 1024*1024;
-        quotaUnit = "MB";
+        quotaUnit = "MiB";
     } else {
         quota /= 1024*1024*1024;
-        quotaUnit = "GB";
+        quotaUnit = "GiB";
     }
     QString quotaString = QString("%1%2")
         .arg(quota, 0, 'f', 1)

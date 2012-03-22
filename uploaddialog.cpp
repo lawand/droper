@@ -254,13 +254,13 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
     double speed = sent * 1000.0 / uploadTime.elapsed();
     QString unit;
     if (speed < 1024) {
-        unit = "bps";
+        unit = "bit/s";
     } else if (speed < 1024*1024) {
         speed /= 1024;
-        unit = "kbps";
+        unit = "Kibit/s";
     } else {
         speed /= 1024*1024;
-        unit = "mbps";
+        unit = "Mibit/s";
     }
 
     //update progress bar
