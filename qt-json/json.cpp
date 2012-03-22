@@ -1,15 +1,67 @@
-/**
- * \file json.h
+/* Copyright 2011 Eeli Reilin. All rights reserved.
  *
- * \author Eeli Reilin <eeli@nilier.org>,
- *         Mikko Ahonen <mikko.j.ahonen@jyu.fi>
- * \version 0.1
- * \date 8/25/2010
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, 
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation 
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY <COPYRIGHT HOLDER> ''AS IS'' AND ANY EXPRESS OR 
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO 
+ * EVENT SHALL EELI REILIN OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation 
+ * are those of the authors and should not be interpreted as representing 
+ * official policies, either expressed or implied, of Eeli Reilin.
  */
 
-#include <QDebug>
+/**
+ * \file json.cpp
+ */
 
 #include "json.h"
+#include <iostream>
+
+namespace QtJson
+{
+
+
+static QString sanitizeString(QString str)
+{
+    str.replace(QLatin1String("\\"), QLatin1String("\\\\"));
+    str.replace(QLatin1String("\""), QLatin1String("\\\""));
+    str.replace(QLatin1String("\b"), QLatin1String("\\b"));
+    str.replace(QLatin1String("\f"), QLatin1String("\\f"));
+    str.replace(QLatin1String("\n"), QLatin1String("\\n"));
+    str.replace(QLatin1String("\r"), QLatin1String("\\r"));
+    str.replace(QLatin1String("\t"), QLatin1String("\\t"));
+    return QString(QLatin1String("\"%1\"")).arg(str);
+}
+
+static QByteArray join(const QList<QByteArray> &list, const QByteArray &sep)
+{
+    QByteArray res;
+    Q_FOREACH(const QByteArray &i, list)
+    {
+        if(!res.isEmpty())
+        {
+            res += sep;
+        }
+        res += i;
+    }
+    return res;
+}
 
 /**
  * parse
@@ -20,7 +72,6 @@ QVariant Json::parse(const QString &json)
     return Json::parse(json, success);
 }
 
-
 /**
  * parse
  */
@@ -28,34 +79,132 @@ QVariant Json::parse(const QString &json, bool &success)
 {
     success = true;
 
-//Return an empty QVariant if the JSON data is either null or empty
+    //Return an empty QVariant if the JSON data is either null or empty
     if(!json.isNull() || !json.isEmpty())
     {
         QString data = json;
-//We'll start from index 0
+        //We'll start from index 0
         int index = 0;
 
-//Parse the first value
+        //Parse the first value
         QVariant value = Json::parseValue(data, index, success);
 
-//Return the parsed value
+        //Return the parsed value
         return value;
     }
     else
     {
-//Return the empty QVariant
+        //Return the empty QVariant
         return QVariant();
     }
 }
 
+QByteArray Json::serialize(const QVariant &data)
+{
+    bool success = true;
+    return Json::serialize(data, success);
+}
+
+QByteArray Json::serialize(const QVariant &data, bool &success)
+{
+    QByteArray str;
+    success = true;
+
+    if(!data.isValid()) // invalid or null?
+    {
+        str = "null";
+    }
+    else if((data.type() == QVariant::List) || (data.type() == QVariant::StringList)) // variant is a list?
+    {
+        QList<QByteArray> values;
+        const QVariantList list = data.toList();
+        Q_FOREACH(const QVariant& v, list)
+        {
+            QByteArray serializedValue = serialize(v);
+            if(serializedValue.isNull())
+            {
+                success = false;
+                break;
+            }
+            values << serializedValue;
+        }
+
+        str = "[ " + join( values, ", " ) + " ]";
+    }
+    else if(data.type() == QVariant::Map) // variant is a map?
+    {
+        const QVariantMap vmap = data.toMap();
+        QMapIterator<QString, QVariant> it( vmap );
+        str = "{ ";
+        QList<QByteArray> pairs;
+        while(it.hasNext())
+        {
+            it.next();
+            QByteArray serializedValue = serialize(it.value());
+            if(serializedValue.isNull())
+            {
+                success = false;
+                break;
+            }
+            pairs << sanitizeString(it.key()).toUtf8() + " : " + serializedValue;
+        }
+        str += join(pairs, ", ");
+        str += " }";
+    }
+    else if((data.type() == QVariant::String) || (data.type() == QVariant::ByteArray)) // a string or a byte array?
+    {
+        str = sanitizeString(data.toString()).toUtf8();
+    }
+    else if(data.type() == QVariant::Double) // double?
+    {
+        str = QByteArray::number(data.toDouble(), 'g', 20);
+        if(!str.contains(".") && ! str.contains("e"))
+        {
+            str += ".0";
+        }
+    }
+    else if (data.type() == QVariant::Bool) // boolean value?
+    {
+        str = data.toBool() ? "true" : "false";
+    }
+    else if (data.type() == QVariant::ULongLong) // large unsigned number?
+    {
+        str = QByteArray::number(data.value<qulonglong>());
+    }
+    else if ( data.canConvert<qlonglong>() ) // any signed number?
+    {
+        str = QByteArray::number(data.value<qlonglong>());
+    }
+    else if (data.canConvert<long>())
+    {
+        str = QString::number(data.value<long>()).toUtf8();
+    }
+    else if (data.canConvert<QString>()) // can value be converted to string?
+    {
+        // this will catch QDate, QDateTime, QUrl, ...
+        str = sanitizeString(data.toString()).toUtf8();
+    }
+    else
+    {
+        success = false;
+    }
+    if (success)
+    {
+        return str;
+    }
+    else
+    {
+        return QByteArray();
+    }
+}
 
 /**
  * parseValue
  */
 QVariant Json::parseValue(const QString &json, int &index, bool &success)
 {
-//Determine what kind of data we should parse by
-//checking out the upcoming token
+    //Determine what kind of data we should parse by
+    //checking out the upcoming token
     switch(Json::lookAhead(json, index))
     {
         case JsonTokenString:
@@ -79,11 +228,10 @@ QVariant Json::parseValue(const QString &json, int &index, bool &success)
             break;
     }
 
-//If there were no tokens, flag the failure and return an empty QVariant
+    //If there were no tokens, flag the failure and return an empty QVariant
     success = false;
     return QVariant();
 }
-
 
 /**
  * parseObject
@@ -93,20 +241,20 @@ QVariant Json::parseObject(const QString &json, int &index, bool &success)
     QVariantMap map;
     int token;
 
-//Get rid of the whitespace and increment index
+    //Get rid of the whitespace and increment index
     Json::nextToken(json, index);
 
-//Loop through all of the key/value pairs of the object
+    //Loop through all of the key/value pairs of the object
     bool done = false;
     while(!done)
     {
-//Get the upcoming token
+        //Get the upcoming token
         token = Json::lookAhead(json, index);
 
         if(token == JsonTokenNone)
         {
-            success = false;
-            return QVariantMap();
+             success = false;
+             return QVariantMap();
         }
         else if(token == JsonTokenComma)
         {
@@ -119,28 +267,26 @@ QVariant Json::parseObject(const QString &json, int &index, bool &success)
         }
         else
         {
-//Parse the key/value pair's name
-            QString name = Json::parseString(
-                json, index, success
-                ).toString();
+            //Parse the key/value pair's name
+            QString name = Json::parseString(json, index, success).toString();
 
             if(!success)
             {
                 return QVariantMap();
             }
 
-//Get the next token
+            //Get the next token
             token = Json::nextToken(json, index);
 
-//If the next token is not a colon, flag the failure
-//return an empty QVariant
+            //If the next token is not a colon, flag the failure
+            //return an empty QVariant
             if(token != JsonTokenColon)
             {
                 success = false;
                 return QVariant(QVariantMap());
             }
 
-//Parse the key/value pair's value
+            //Parse the key/value pair's value
             QVariant value = Json::parseValue(json, index, success);
 
             if(!success)
@@ -148,15 +294,14 @@ QVariant Json::parseObject(const QString &json, int &index, bool &success)
                 return QVariantMap();
             }
 
-//Assign the value to the key in the map
+            //Assign the value to the key in the map
             map[name] = value;
         }
     }
 
-//Return the map successfully
+    //Return the map successfully
     return QVariant(map);
 }
-
 
 /**
  * parseArray
@@ -201,7 +346,6 @@ QVariant Json::parseArray(const QString &json, int &index, bool &success)
 
     return QVariant(list);
 }
-
 
 /**
  * parseString
@@ -306,7 +450,6 @@ QVariant Json::parseString(const QString &json, int &index, bool &success)
     return QVariant(s);
 }
 
-
 /**
  * parseNumber
  */
@@ -322,9 +465,14 @@ QVariant Json::parseNumber(const QString &json, int &index)
 
     index = lastIndex + 1;
 
-    return QVariant(numberStr);
+    if (numberStr.contains('.')) {
+        return QVariant(numberStr.toDouble(NULL));
+    } else if (numberStr.startsWith('-')) {
+        return QVariant(numberStr.toLongLong(NULL));
+    } else {
+        return QVariant(numberStr.toULongLong(NULL));
+    }
 }
-
 
 /**
  * lastIndexOfNumber
@@ -344,7 +492,6 @@ int Json::lastIndexOfNumber(const QString &json, int index)
     return lastIndex -1;
 }
 
-
 /**
  * eatWhitespace
  */
@@ -359,7 +506,6 @@ void Json::eatWhitespace(const QString &json, int &index)
     }
 }
 
-
 /**
  * lookAhead
  */
@@ -368,7 +514,6 @@ int Json::lookAhead(const QString &json, int index)
     int saveIndex = index;
     return Json::nextToken(json, saveIndex);
 }
-
 
 /**
  * nextToken
@@ -402,7 +547,7 @@ int Json::nextToken(const QString &json, int &index)
 
     int remainingLength = json.size() - index;
 
-//True
+    //True
     if(remainingLength >= 4)
     {
         if (json[index] == 't' && json[index + 1] == 'r' &&
@@ -413,7 +558,7 @@ int Json::nextToken(const QString &json, int &index)
         }
     }
 
-//False
+    //False
     if (remainingLength >= 5)
     {
         if (json[index] == 'f' && json[index + 1] == 'a' &&
@@ -425,7 +570,7 @@ int Json::nextToken(const QString &json, int &index)
         }
     }
 
-//Null
+    //Null
     if (remainingLength >= 4)
     {
         if (json[index] == 'n' && json[index + 1] == 'u' &&
@@ -438,3 +583,6 @@ int Json::nextToken(const QString &json, int &index)
 
     return JsonTokenNone;
 }
+
+
+} //end namespace

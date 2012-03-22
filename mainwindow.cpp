@@ -1335,7 +1335,7 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
        networkReply->error() != QNetworkReply::OperationCanceledError)
     {
         QString replyData = networkReply->readAll();
-        QVariantMap jsonResult = Json::parse(replyData).toMap();
+        QVariantMap jsonResult = QtJson::Json::parse(replyData).toMap();
 
         if(jsonResult.contains("error"))
         {
@@ -1491,7 +1491,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
     QString dirJson = networkReply->readAll();
 
     bool ok;
-    QVariantMap jsonResult = Json::parse(dirJson, ok).toMap();
+    QVariantMap jsonResult = QtJson::Json::parse(dirJson, ok).toMap();
     if(!ok)
     {
         QMessageBox::information(
@@ -1627,7 +1627,7 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     QString jsonData = networkReply->readAll();
 
     bool ok;
-    QVariantMap jsonResult = Json::parse(jsonData, ok).toMap();
+    QVariantMap jsonResult = QtJson::Json::parse(jsonData, ok).toMap();
     if(!ok)
     {
         QMessageBox::information(
