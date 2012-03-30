@@ -584,7 +584,7 @@ void MainWindow::about()
     messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
-        "<b>Droper v0.4.3</b> - "
+        "<b>Droper v0.4.4</b> - "
         "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client"
         );
 
