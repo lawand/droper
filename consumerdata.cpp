@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright 2011, 2012 Omar Lawand Dalatieh.
-** Contact: see the README file.
 **
 ** This file is part of Droper.
 **
@@ -26,8 +25,11 @@
 //corresponding headers
 #include "consumerdata.h"
 
-ConsumerData::ConsumerData() :
-    key("replace this string with the key"),
-    secret("replace this string with the secret")
+ConsumerData::ConsumerData(
+    ) :
+    key(XXXX),
+    secret(XXXX)
+    //key and secret were intentionally set to XXXX for security reasons
+    //for more info, lookup OAuth and Dropbox API
 {
 }

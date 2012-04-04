@@ -101,13 +101,6 @@ are given to code edits that take place between two releases (e.g. 1.7.3 is
 between 1.7.2 and the next released version which could be 1.7.4 and could be
 1.8.0 and 2.0.0 depending on the severity of the changes made to the code).
 
-If you try to compile Droper, you'll notice that the consumerdata.cpp file is
-missing, it is a simple file that contains the values of the consumer key and
-secret. This file wasn't uploaded to the repository for security reasons. There
-is a template consumerdata.cpp file in the repository called
-"consumerdata_template.cpp", you can check it out to get an idea about this
-file. For more info search for and learn about OAuth and Dropbox API.
-
 You can ignore build warnings when building Droper.
 
 The only version of Qt for Symbian that was tested is 4.7.3 (for Symbian^1),
