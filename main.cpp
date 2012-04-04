@@ -24,7 +24,6 @@
 
 #include <QApplication>
 #include <QNetworkAccessManager>
-#include <QSettings>
 #include "consumerdata.h"
 #include "dropbox.h"
 #include "mainwindow.h"
