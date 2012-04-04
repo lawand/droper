@@ -30,6 +30,8 @@ ConsumerData::ConsumerData(
     key(XXXX),
     secret(XXXX)
     //key and secret were intentionally set to XXXX for security reasons
+    //you should request a Dropbox key/secret pair and use them instead
+    //of these dummy values
     //for more info, lookup OAuth and Dropbox API
 {
 }
