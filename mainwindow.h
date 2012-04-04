@@ -76,10 +76,11 @@ private slots:
     bool s60v3();
     void setupActions();
     void setCurrentPage(QWidget *page);
-    void back();
     void showContextMenu(QPoint point);
     void handleItemUploadedToDirectory(QString directory);
     void openDropboxInABrowser();
+    void navigateItem(QListWidgetItem *item);
+    void signIn();
     //ui slots
     void on_doneSigningInPushButton_clicked();
     void on_copyReferralLinkToClipboardToolButton_clicked();
@@ -87,10 +88,6 @@ private slots:
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
     //action slots
-    void navigateItem(QListWidgetItem *item);
-    void signIn();
-    void signOut();
-    void about();
     void cut();
     void copy();
     void rename();
@@ -106,6 +103,10 @@ private slots:
     void upload();
     void activeDownload();
     void activeUpload();
+    void accountInfo();
+    void signOut();
+    void about();
+    void back();
     //network slots
     void requestRequestToken();
     void requestAccessToken();

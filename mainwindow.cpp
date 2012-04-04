@@ -323,7 +323,7 @@ void MainWindow::setupActions()
     connect(
         accountInfoAction,
         SIGNAL(triggered()),
-        SLOT(requestAccountInfo())
+        SLOT(accountInfo())
         );
     connect(signOutAction, SIGNAL(triggered()), SLOT(signOut()));
     connect(aboutAction, SIGNAL(triggered()), SLOT(about()));
@@ -423,11 +423,6 @@ void MainWindow::setCurrentPage(QWidget *page)
     // </I don't know why this is necessary>
 }
 
-void MainWindow::back()
-{
-    setCurrentPage(ui->mainPage);
-}
-
 void MainWindow::showContextMenu(QPoint point)
 {
     if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
@@ -465,6 +460,28 @@ void MainWindow::openDropboxInABrowser()
     url.addQueryItem("oauth_token", requestToken);
 
     QDesktopServices::openUrl(url);
+}
+
+void MainWindow::navigateItem(QListWidgetItem *item)
+{
+    if(item == 0)
+        return;
+
+    QVariantMap map = item->data(Qt::UserRole).toMap();
+
+    if(map["is_dir"].toBool() == true)
+        //if the item is a directory
+    {
+        //navigate to a sub directory
+        requestDirectoryListing(
+            map["path"].toString()
+        );
+    }
+}
+
+void MainWindow::signIn()
+{
+    requestRequestToken();
 }
 
 void MainWindow::on_doneSigningInPushButton_clicked()
@@ -529,79 +546,6 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
             ui->filesAndFoldersListWidget->viewport()->mapToGlobal(point)
             );
     }
-}
-
-void MainWindow::navigateItem(QListWidgetItem *item)
-{
-    if(item == 0)
-        return;
-
-    QVariantMap map = item->data(Qt::UserRole).toMap();
-
-    if(map["is_dir"].toBool() == true)
-        //if the item is a directory
-    {
-        //navigate to a sub directory
-        requestDirectoryListing(
-            map["path"].toString()
-        );
-    }
-}
-
-void MainWindow::signIn()
-{
-    requestRequestToken();
-}
-
-void MainWindow::signOut()
-{
-    QMessageBox::StandardButton result = QMessageBox::question(
-        this,
-        "Droper",
-        "Are you sure you want to sign out?",
-        QMessageBox::Yes|QMessageBox::No,
-        QMessageBox::No
-        );
-    if(result != QMessageBox::Yes)
-    {
-        return;
-    }
-
-    //remove old user data
-    QSettings settings;
-    settings.remove("user");
-    userData.token.clear();
-    userData.secret.clear();
-
-    //return to the authentication page
-    setCurrentPage(ui->signInPage);
-}
-
-void MainWindow::about()
-{
-    QMessageBox messageBox(this);
-
-    messageBox.setWindowTitle("Droper");
-
-    messageBox.setText(
-        "<b>Droper v0.4.5</b> - "
-        "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client"
-        );
-
-    messageBox.setInformativeText(
-        "Copyright 2011, 2012 Omar Lawand Dalatieh <br><br>"
-
-        "Licensed under the GNU GPLv3 license <br><br>"
-
-        "<a href=\"http://coinonedge.com/droper/\">"
-        "http://coinonedge.com/droper/"
-        "</a>"
-        );
-
-    QIcon droper(":/droper.svg");
-    messageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
-
-    messageBox.exec();
 }
 
 void MainWindow::cut()
@@ -1227,6 +1171,67 @@ void MainWindow::activeDownload()
 void MainWindow::activeUpload()
 {
     uploadDialog.exec();
+}
+
+void MainWindow::accountInfo()
+{
+    requestAccountInfo();
+}
+
+void MainWindow::signOut()
+{
+    QMessageBox::StandardButton result = QMessageBox::question(
+        this,
+        "Droper",
+        "Are you sure you want to sign out?",
+        QMessageBox::Yes|QMessageBox::No,
+        QMessageBox::No
+        );
+    if(result != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    //remove old user data
+    QSettings settings;
+    settings.remove("user");
+    userData.token.clear();
+    userData.secret.clear();
+
+    //return to the authentication page
+    setCurrentPage(ui->signInPage);
+}
+
+void MainWindow::about()
+{
+    QMessageBox messageBox(this);
+
+    messageBox.setWindowTitle("Droper");
+
+    messageBox.setText(
+        "<b>Droper v0.4.5</b> - "
+        "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client"
+        );
+
+    messageBox.setInformativeText(
+        "Copyright 2011, 2012 Omar Lawand Dalatieh <br><br>"
+
+        "Licensed under the GNU GPLv3 license <br><br>"
+
+        "<a href=\"http://coinonedge.com/droper/\">"
+        "http://coinonedge.com/droper/"
+        "</a>"
+        );
+
+    QIcon droper(":/droper.svg");
+    messageBox.setIconPixmap(droper.pixmap(QSize(32, 32)));
+
+    messageBox.exec();
+}
+
+void MainWindow::back()
+{
+    setCurrentPage(ui->mainPage);
 }
 
 void MainWindow::requestRequestToken()
