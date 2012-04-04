@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
     application.setOrganizationName("lawand");
-    application.setApplicationName("droper");
+    application.setApplicationName("droper0.4.5");
 
 //shared objects
     QNetworkAccessManager networkAccessManager;

@@ -1510,9 +1510,10 @@ void MainWindow::handleAccessToken(QNetworkReply *networkReply)
     QString uid = reply.split("&").at(2).split("=").at(1);
 
     QSettings settings;
-    settings.setValue("user/access_token", accessToken);
-    settings.setValue("user/access_token_secret", accessTokenSecret);
-    settings.setValue("user/uid", uid);
+    settings.beginGroup("user");
+    settings.setValue("access_token", accessToken);
+    settings.setValue("access_token_secret", accessTokenSecret);
+    settings.setValue("uid", uid);
 
     attemptSignIn();
 }
