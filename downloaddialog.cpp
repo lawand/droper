@@ -97,8 +97,9 @@ void DownloadDialog::setFileAndFolderInformation(
     if(folderName.isEmpty())
         folderName = "/ (root)";
 
-    //update the state
+    //start the download
     setState(DownloadDialog::READY_TO_START);
+    setState(DownloadDialog::DOWNLOADING);
 }
 
 void DownloadDialog::startStopRestart()

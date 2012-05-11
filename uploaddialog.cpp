@@ -105,8 +105,9 @@ void UploadDialog::setFileAndFolderInformation(
     //overwrite
     this->overwrite = overwrite;
 
-    //update the state
+    //start the upload
     setState(UploadDialog::READY_TO_START);
+    setState(UploadDialog::UPLOADING);
 }
 
 void UploadDialog::startStopRestart()
