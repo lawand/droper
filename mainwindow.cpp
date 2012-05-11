@@ -354,11 +354,20 @@ void MainWindow::setupActions()
 
     //softkey menu initialization
 
-    QAction *optionsMenuAction = new QAction("Options", ui->mainPage);
-    optionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
-    ui->mainPage->addAction(optionsMenuAction);
-    QMenu *optionsMenu = new QMenu(ui->mainPage);
-    optionsMenuAction->setMenu(optionsMenu);
+    QAction *mainPageOptionsMenuAction = new QAction("Options", ui->mainPage);
+    mainPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    ui->mainPage->addAction(mainPageOptionsMenuAction);
+    QMenu *mainPageOptionsMenu = new QMenu(ui->mainPage);
+    mainPageOptionsMenuAction->setMenu(mainPageOptionsMenu);
+
+    QAction *signInPageOptionsMenuAction = new QAction(
+        "Options",
+        ui->signInPage
+        );
+    signInPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
+    ui->signInPage->addAction(signInPageOptionsMenuAction);
+    QMenu *signInPageOptionsMenu = new QMenu(ui->signInPage);
+    signInPageOptionsMenuAction->setMenu(signInPageOptionsMenu);
 
     backAction = new QAction("Back", ui->accountInfoPage);
     backAction->setSoftKeyRole(QAction::NegativeSoftKey);
@@ -371,7 +380,7 @@ void MainWindow::setupActions()
             "Current Folder",
             ui->mainPage
             );
-        optionsMenu->addAction(currentFolderMenuAction);
+        mainPageOptionsMenu->addAction(currentFolderMenuAction);
         QMenu *folderMenu = new QMenu(ui->mainPage);
         currentFolderMenuAction->setMenu(folderMenu);
         folderMenu->addAction(refreshAction);
@@ -384,7 +393,7 @@ void MainWindow::setupActions()
         "Active Transfer",
         ui->mainPage
         );
-    optionsMenu->addAction(activeTransferMenuAction);
+    mainPageOptionsMenu->addAction(activeTransferMenuAction);
     QMenu *activeTransferMenu = new QMenu(ui->mainPage);
     activeTransferMenuAction->setMenu(activeTransferMenu);
     activeTransferMenu->addAction(activeDownloadAction);
@@ -394,7 +403,7 @@ void MainWindow::setupActions()
         "Account",
         ui->mainPage
         );
-    optionsMenu->addAction(accountMenuAction);
+    mainPageOptionsMenu->addAction(accountMenuAction);
     QMenu *accountMenu = new QMenu(ui->mainPage);
     accountMenuAction->setMenu(accountMenu);
     accountMenu->addAction(accountInfoAction);
@@ -402,10 +411,11 @@ void MainWindow::setupActions()
 
     QAction *helpMenuAction = new QAction(
         "Help",
-        ui->mainPage
+        this
         );
-    optionsMenu->addAction(helpMenuAction);
-    QMenu *helpMenu = new QMenu(ui->mainPage);
+    mainPageOptionsMenu->addAction(helpMenuAction);
+    signInPageOptionsMenu->addAction(helpMenuAction);
+    QMenu *helpMenu = new QMenu(this);
     helpMenuAction->setMenu(helpMenu);
     helpMenu->addAction(aboutAction);
     helpMenu->addAction(aboutQtAction);
