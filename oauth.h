@@ -25,10 +25,10 @@
 #ifndef OAUTH_H
 #define OAUTH_H
 
-//data members
+// data members
 class ConsumerData;
 
-//member functions
+// member functions
 #include <QPair>
 #include <QString>
 #include <QNetworkRequest>
@@ -37,11 +37,11 @@ class UserData;
 
 class OAuth
 {
-//shared data members
+// shared data members
 public:
     ConsumerData *consumerData;
 
-//member functions
+// member functions
 public:
     OAuth(ConsumerData *consumerData);
     void signRequestHeader(
@@ -61,7 +61,7 @@ private:
         QUrl *url,
         QString oAuthHeader
         );
-    QString hmacSha1(QString base, QString key); //HMAC-SHA1 checksum
+    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
 };
 
 #endif // OAUTH_H

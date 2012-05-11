@@ -25,10 +25,10 @@
 #ifndef DOWNLOADDIALOG_H
 #define DOWNLOADDIALOG_H
 
-//base class
+// base class
 #include <QDialog>
 
-//data members
+// data members
 #include <QFile>
 #include <QTime>
 class QNetworkAccessManager;
@@ -37,7 +37,7 @@ class Dropbox;
 class OAuth;
 class UserData;
 
-//member functions
+// member functions
 #include <QVariantMap>
 
 namespace Ui {
@@ -48,14 +48,14 @@ class DownloadDialog : public QDialog
 {
     Q_OBJECT
 
-//shared data members
+// shared data members
 public:
     QNetworkAccessManager *networkAccessManager;
     Dropbox *dropbox;
     OAuth *oAuth;
     UserData *userData;
 
-//enumerations
+// enumerations
 private:
     enum State
     {
@@ -66,7 +66,7 @@ private:
         NOT_FINISHED
     };
 
-//member functions
+// member functions
 public:
     explicit DownloadDialog(
         QNetworkAccessManager *networkAccessManager,
@@ -89,7 +89,7 @@ private slots:
 public slots:
     void handleNetworkReply(QNetworkReply *networkReply);
 
-//private data members
+// private data members
 private:
     Ui::DownloadDialog *ui;
     State state;

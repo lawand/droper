@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     application.setOrganizationName("lawand");
     application.setApplicationName("droper0.4.5");
 
-//shared objects
+// shared objects
     QNetworkAccessManager networkAccessManager;
     ConsumerData consumerData;
     Dropbox dropbox(1);

@@ -22,18 +22,18 @@
 **
 ****************************************************************************/
 
-//corresponding headers
+// corresponding headers
 #include "downloaddialog.h"
 #include "ui_downloaddialog.h"
 
-//data members
+// data members
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include "dropbox.h"
 #include "oauth.h"
 #include "userdata.h"
 
-//implementation-specific
+// implementation-specific
 #include <QMessageBox>
 #include "util.h"
 
@@ -49,13 +49,13 @@ DownloadDialog::DownloadDialog(
     startStopRestartAction(new QAction("Start", this)),
     closeAction(new QAction("Close", this))
 {
-    //shared data members initialization
+    // shared data members initialization
     this->networkAccessManager = networkAccessManager;
     this->dropbox = dropbox;
     this->oAuth = oAuth;
     this->userData = userData;
 
-    //private data members initialization
+    // private data members initialization
     ui->setupUi(this);
     startStopRestartAction->setSoftKeyRole(QAction::PositiveSoftKey);
     this->addAction(startStopRestartAction);
@@ -68,7 +68,7 @@ DownloadDialog::DownloadDialog(
     this->addAction(closeAction);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
-    //initialize the state
+    // initialize the state
     setState(DownloadDialog::INITIAL);
 }
 
@@ -82,14 +82,14 @@ void DownloadDialog::setFileAndFolderInformation(
     QString folderPath
     )
 {
-    //file information
+    // file information
     filePath = fileInfo["path"].toString();
     fileName = filePath.right(
         (filePath.length() - filePath.lastIndexOf("/")) - 1
         );
     fileSize = fileInfo["size"].toString();
 
-    //folder information
+    // folder information
     this->folderPath = folderPath;
     folderName = this->folderPath.right(
         (this->folderPath.length() - this->folderPath.lastIndexOf("/")) - 1
@@ -97,7 +97,7 @@ void DownloadDialog::setFileAndFolderInformation(
     if(folderName.isEmpty())
         folderName = "/ (root)";
 
-    //start the download
+    // start the download
     setState(DownloadDialog::READY_TO_START);
     setState(DownloadDialog::DOWNLOADING);
 }
@@ -155,10 +155,10 @@ void DownloadDialog::setState(DownloadDialog::State state)
         startStopRestartAction->setVisible(true);
         downloadTime.start();
 
-        //prepare the local file
+        // prepare the local file
         file.setFileName(folderPath + "/" + fileName);
-        //check whether the file can be opened for writing,
-        //opening it in the process
+        // check whether the file can be opened for writing,
+        // opening it in the process
         if(!file.open(QFile::WriteOnly))
         {
             QMessageBox::critical(
@@ -172,7 +172,7 @@ void DownloadDialog::setState(DownloadDialog::State state)
             return;
         }
 
-        //request the content of the remote file
+        // request the content of the remote file
         {
             QUrl url = dropbox->apiToUrl(Dropbox::FILES).toString() + filePath;
             QNetworkRequest networkRequest(url);
@@ -225,11 +225,11 @@ void DownloadDialog::handleReadyRead()
 
 void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
 {
-    //avoid errors
+    // avoid errors
     if (received == 0 || total == 0 || downloadTime.elapsed() == 0)
         return;
 
-    //update progress bar
+    // update progress bar
     ui->progressBar->setFormat(
         QString("%p% Down. at %1").arg(
             Util::bytesToString(

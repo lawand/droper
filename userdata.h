@@ -25,16 +25,16 @@
 #ifndef USERDATA_H
 #define USERDATA_H
 
-//data members
+// data members
 #include <QString>
 
 class UserData
 {
-//member functions
+// member functions
 public:
     UserData();
 
-//data members
+// data members
     QString token;
     QString secret;
     QString uid;

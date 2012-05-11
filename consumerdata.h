@@ -25,16 +25,16 @@
 #ifndef CONSUMERDATA_H
 #define CONSUMERDATA_H
 
-//data members
+// data members
 #include <QString>
 
 class ConsumerData
 {
-//member functions
+// member functions
 public:
     ConsumerData();
 
-//data members
+// data members
 public:
     QString key;
     QString secret;

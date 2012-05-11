@@ -25,14 +25,14 @@
 #ifndef DROPBOX_H
 #define DROPBOX_H
 
-//member functions
+// member functions
 #include <QUrl>
 #include <QString>
 
 class Dropbox
 {
 
-//enumerations
+// enumerations
 public:
     enum Api
     {
@@ -55,7 +55,7 @@ public:
         THUMBNAILS
     };
 
-//member functions
+// member functions
 public:
     Dropbox(int apiVersion = 0);
     QUrl apiToUrl(Dropbox::Api api);
@@ -63,7 +63,7 @@ public:
     QString metaDataPathFromUrl(QUrl url);
     QString filePathFromUrl(QUrl url);
 
-//private data members
+// private data members
 private:
     int apiVersion;
 };

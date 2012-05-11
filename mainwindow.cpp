@@ -22,21 +22,21 @@
 **
 ****************************************************************************/
 
-//corresponding headers
+// corresponding headers
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//data members
+// data members
 #include <QNetworkAccessManager>
 #include <QToolButton>
 #include "dropbox.h"
 #include "oauth.h"
 
-//member functions
+// member functions
 #include <QNetworkReply>
 #include <QResizeEvent>
 
-//implementation-specific
+// implementation-specific
 #include <QSettings>
 #include <QMessageBox>
 #include <QResource>
@@ -78,12 +78,12 @@ MainWindow::MainWindow(
     renameOperationBeingProcessed(false),
     toolButtonsLayout(0)
 {
-    //shared data members initialization
+    // shared data members initialization
     this->networkAccessManager = networkAccessManager;
     this->dropbox = dropbox;
     this->oAuth = oAuth;
 
-    //private data members initialization
+    // private data members initialization
     ui->setupUi(this);
     setCurrentPage(ui->signInPage);
     setupActions();
@@ -92,7 +92,7 @@ MainWindow::MainWindow(
         ui->mainPage->layout()->setMargin(0);
     }
 
-    //QObject connections
+    // QObject connections
     connect(
         this->networkAccessManager,
         SIGNAL(finished(QNetworkReply*)),
@@ -105,7 +105,7 @@ MainWindow::MainWindow(
         SLOT(handleItemUploadedToDirectory(QString))
         );
 
-    //QMovie initialization
+    // QMovie initialization
     QMovie *loading = new QMovie(
         ":/resources/animations/loading.gif",
         QByteArray(),
@@ -114,11 +114,11 @@ MainWindow::MainWindow(
     ui->loadingLabel->setMovie(loading);
     loading->start();
 
-    //QsKineticScroller initialization
+    // QsKineticScroller initialization
     QsKineticScroller *kineticScroller = new QsKineticScroller(this);
     kineticScroller->enableKineticScrollFor(ui->filesAndFoldersListWidget);
 
-    //user data
+    // user data
     attemptSignIn();
 }
 
@@ -138,7 +138,7 @@ void MainWindow::resizeEvent(QResizeEvent *resizeEvent)
         }
 
         if(resizeEvent->size().height() > resizeEvent->size().width())
-            //if the new screen orientation is a portrait one
+            // if the new screen orientation is a portrait one
         {
             toolButtonsLayout = new QHBoxLayout();
             toolButtonsLayout->addWidget(upToolButton);
@@ -247,7 +247,7 @@ void MainWindow::attemptSignIn()
         settings.clear();
     }
     else
-    {   //sign in
+    {   // sign in
         userData.token = settings.value("access_token").toString();
         userData.secret = settings.value("access_token_secret").toString();
         userData.uid = settings.value("uid").toString();
@@ -269,7 +269,7 @@ void MainWindow::setupActions()
 {
     if(! s60v3())
     {
-        //create tool buttons
+        // create tool buttons
         upToolButton = new QToolButton(ui->mainPage);
         refreshToolButton = new QToolButton(ui->mainPage);
         pasteToolButton = new QToolButton(ui->mainPage);
@@ -277,7 +277,7 @@ void MainWindow::setupActions()
         uploadToolButton = new QToolButton(ui->mainPage);
     }
 
-    //create actions
+    // create actions
     cutAction = new QAction("Cut", this);
     copyAction = new QAction("Copy", this);
     renameAction = new QAction("Rename", this);
@@ -305,7 +305,7 @@ void MainWindow::setupActions()
     aboutAction = new QAction("About", this);
     aboutQtAction = new QAction("About Qt", this);
 
-    //connect them with their corresponding slots
+    // connect them with their corresponding slots
     connect(cutAction, SIGNAL(triggered()), SLOT(cut()));
     connect(copyAction, SIGNAL(triggered()), SLOT(copy()));
     connect(renameAction, SIGNAL(triggered()), SLOT(rename()));
@@ -332,7 +332,7 @@ void MainWindow::setupActions()
 
     if(! s60v3())
     {
-        //tool buttons initialization
+        // tool buttons initialization
 
         upToolButton->setDefaultAction(upAction);
         refreshToolButton->setDefaultAction(refreshAction);
@@ -353,7 +353,7 @@ void MainWindow::setupActions()
         uploadToolButton->setIconSize(QSize(32, 32));
     }
 
-    //softkey menu initialization
+    // softkey menu initialization
 
     QAction *mainPageOptionsMenuAction = new QAction("Options", ui->mainPage);
     mainPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
@@ -449,7 +449,7 @@ void MainWindow::showContextMenu(QPoint point)
     QListWidgetItem *item = ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map = item->data(Qt::UserRole).toMap();
     if(map["is_dir"].toBool() != true)
-        //if the item is not a directory
+        // if the item is not a directory
     {
         menu.addAction(publicLinkAction);
         menu.addAction(downloadAction);
@@ -481,9 +481,9 @@ void MainWindow::navigateItem(QListWidgetItem *item)
     QVariantMap map = item->data(Qt::UserRole).toMap();
 
     if(map["is_dir"].toBool() == true)
-        //if the item is a directory
+        // if the item is a directory
     {
-        //navigate to a sub directory
+        // navigate to a sub directory
         requestDirectoryListing(
             map["path"].toString()
         );
@@ -561,10 +561,10 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
 
 void MainWindow::cut()
 {
-    //mark the operation as a cut operation
+    // mark the operation as a cut operation
     shouldPreserveClipboardContents = false;
 
-    //fill the clipboard
+    // fill the clipboard
     QListWidgetItem* currentItem =
         ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
@@ -575,10 +575,10 @@ void MainWindow::cut()
 
 void MainWindow::copy()
 {
-    //mark the operation as a copy operation
+    // mark the operation as a copy operation
     shouldPreserveClipboardContents = true;
 
-    //fill the clipboard
+    // fill the clipboard
     QListWidgetItem* currentItem =
         ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
@@ -610,10 +610,10 @@ void MainWindow::rename()
             newName
             );
 
-        //trim whitespace
+        // trim whitespace
         newName = newName.trimmed();
 
-        //these symbols aren't allowed by Dropbox
+        // these symbols aren't allowed by Dropbox
         QRegExp disallowedSymbols("[/:?*<>\"|]");
         if(newName.contains(disallowedSymbols) || newName.contains("\\") ||
             newName == "." || newName == ".."
@@ -633,11 +633,11 @@ void MainWindow::rename()
         }
     }
 
-    //if no new value was entered, do nothing
+    // if no new value was entered, do nothing
     if(newName.isEmpty())
         return;
 
-    //perform the rename operation
+    // perform the rename operation
     if(currentDirectory == "/")
     {
         requestMoving(
@@ -653,7 +653,7 @@ void MainWindow::rename()
             );
     }
 
-    //mark the current operation as a rename
+    // mark the current operation as a rename
     renameOperationBeingProcessed = true;
 }
 
@@ -681,7 +681,7 @@ void MainWindow::remove()
 
 void MainWindow::publicLink()
 {
-    //get raw info
+    // get raw info
     QListWidgetItem* currentItem =
         ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
@@ -721,7 +721,7 @@ void MainWindow::publicLink()
 
 void MainWindow::shareableLink()
 {
-    //get path
+    // get path
     QListWidgetItem* currentItem =
         ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
@@ -745,13 +745,13 @@ void MainWindow::download()
     }
     else
     {
-        //get raw info
+        // get raw info
         QListWidgetItem *currentItem =
             ui->filesAndFoldersListWidget->currentItem();
         QVariantMap map =
             currentItem->data(Qt::UserRole).toMap();
 
-        //prepare folder
+        // prepare folder
         bool ok = false;
         QString folderPath;
         while(!ok)
@@ -764,7 +764,7 @@ void MainWindow::download()
                     )
                 );
 
-            //if no directory selected, do nothing
+            // if no directory selected, do nothing
             if(folderPath.isEmpty())
             {
                 return;
@@ -800,13 +800,13 @@ void MainWindow::download()
 
 void MainWindow::propeties()
 {
-    //get raw info
+    // get raw info
     QListWidgetItem* currentItem =
         ui->filesAndFoldersListWidget->currentItem();
     QVariantMap map =
         currentItem->data(Qt::UserRole).toMap();
 
-    //size
+    // size
     QString size = map["size"].toString();
     if(!size.endsWith("bytes"))
     {
@@ -814,15 +814,15 @@ void MainWindow::propeties()
         size += QString(" (%1 bytes)").arg(bytes);
     }
 
-    //path and name
+    // path and name
     QString path = map["path"].toString();
     QString name = path.right(
         (path.length() - path.lastIndexOf("/")) - 1
         );
 
-    //modified date and time
+    // modified date and time
     QString modifiedString = map["modified"].toString();
-    modifiedString.chop(6);     //chop() removes the time zone
+    modifiedString.chop(6);     // chop() removes the time zone
     QDateTime modifiedTimeDate = QDateTime::fromString(
         modifiedString,
         "ddd, dd MMM yyyy HH:mm:ss"
@@ -831,8 +831,8 @@ void MainWindow::propeties()
     QDateTime current = QDateTime::currentDateTime().toUTC();
     int secs = modifiedTimeDate.secsTo(current);
     int mins = secs/60.0;
-    int hours = mins/60.0;    //using non-integer division to be able to
-    int days = hours/24.0;    //compile for S60v3 using Qt SDK 1.1.2
+    int hours = mins/60.0;    // using non-integer division to be able to
+    int days = hours/24.0;    // compile for S60v3 using Qt SDK 1.1.2
     int months = days/30.0;
     int years = months/12.0;
     QString friendlyModifiedString;
@@ -874,13 +874,13 @@ void MainWindow::propeties()
     }
     modifiedString += QString(" (%1)").arg(friendlyModifiedString);
 
-    //show results
+    // show results
 
     QMessageBox messageBox(this);
     messageBox.setWindowTitle("Droper");
 
     if(map["is_dir"].toBool() != true)
-        //if the item is not a directory
+        // if the item is not a directory
     {
         messageBox.setText(
             QString(
@@ -902,7 +902,7 @@ void MainWindow::propeties()
     QString informativeText;
 
     if(map["is_dir"].toBool() != true)
-        //if the item is not a directory
+        // if the item is not a directory
     {
         informativeText += QString("Size: %1\n\n").arg(size);
     }
@@ -919,12 +919,12 @@ void MainWindow::propeties()
 
 void MainWindow::up()
 {
-    //generate new directory
+    // generate new directory
     QStringList parts = currentDirectory.split("/");
     parts.removeLast();
     QString newDirectory = parts.join("/");
 
-    //handle root
+    // handle root
     if(newDirectory.isEmpty())
         newDirectory = "/";
 
@@ -938,13 +938,13 @@ void MainWindow::refresh()
 
 void MainWindow::paste()
 {
-    //get file or folder name
+    // get file or folder name
     QString name = clipboard.right(
         (clipboard.length() - clipboard.lastIndexOf("/")) - 1
         );
 
     if(shouldPreserveClipboardContents)
-        //if this is a copy operation
+        // if this is a copy operation
     {
         if(currentDirectory == "/")
         {
@@ -982,10 +982,10 @@ void MainWindow::createFolder()
             folderName
             );
 
-        //trim whitespace
+        // trim whitespace
         folderName = folderName.trimmed();
 
-        //these symbols aren't allowed by Dropbox
+        // these symbols aren't allowed by Dropbox
         QRegExp disallowedSymbols("[/:?*<>\"|]");
         if(folderName.contains(disallowedSymbols) ||
             folderName.contains("\\") || folderName == "." ||
@@ -1005,7 +1005,7 @@ void MainWindow::createFolder()
         }
     }
 
-    //if no folderName was entered, do nothing
+    // if no folderName was entered, do nothing
     if( folderName.isEmpty() )
         return;
 
@@ -1033,7 +1033,7 @@ void MainWindow::upload()
     }
     else
     {
-        //prepare file
+        // prepare file
         bool ok = false;
         QString filePath;
         while(!ok)
@@ -1046,7 +1046,7 @@ void MainWindow::upload()
                     )
                 );
 
-            //if no file selected, do nothing
+            // if no file selected, do nothing
             if(filePath.isEmpty())
             {
                 return;
@@ -1056,7 +1056,7 @@ void MainWindow::upload()
                 (filePath.length() - filePath.lastIndexOf("/")) - 1
                 );
 
-            //these symbols aren't allowed by Dropbox
+            // these symbols aren't allowed by Dropbox
             QRegExp disallowedSymbols("[/:?*<>\"|]");
             if(fileName.contains(disallowedSymbols) ||
                 fileName.contains("\\") || fileName == "." || fileName == ".."
@@ -1076,11 +1076,11 @@ void MainWindow::upload()
             }
         }
 
-        //compute fileSize
+        // compute fileSize
         QFileInfo fileInfo(filePath);
         int fileBytes = fileInfo.size();
 
-        //make sure the file size is smaller than the upload file limit
+        // make sure the file size is smaller than the upload file limit
         if(fileBytes > 150000000)
         {
             QMessageBox::critical(
@@ -1093,10 +1093,10 @@ void MainWindow::upload()
             return;
         }
 
-        //make sure there isn't any folder that has the same name that the
-        //file to be uploaded has and if there was a file with the same name,
-        //tell the user that this upload modifies that file and that the
-        //revision history can be viewed at dropbox.com
+        // make sure there isn't any folder that has the same name that the
+        // file to be uploaded has and if there was a file with the same name,
+        // tell the user that this upload modifies that file and that the
+        // revision history can be viewed at dropbox.com
         bool overwrite = true;
         for(int row = 0; row < ui->filesAndFoldersListWidget->count(); ++row)
         {
@@ -1183,13 +1183,13 @@ void MainWindow::signOut()
         return;
     }
 
-    //remove old user data
+    // remove old user data
     QSettings settings;
     settings.remove("user");
     userData.token.clear();
     userData.secret.clear();
 
-    //return to the authentication page
+    // return to the authentication page
     setCurrentPage(ui->signInPage);
 }
 
@@ -1342,7 +1342,7 @@ void MainWindow::requestNetworkRequest(QNetworkRequest *networkRequest)
 {
     networkAccessManager->get(*networkRequest);
 
-    //show the loading animation
+    // show the loading animation
     if(ui->stackedWidget->currentWidget() != ui->loadingPage)
     {
         tempPage = ui->stackedWidget->currentWidget();
@@ -1437,7 +1437,7 @@ void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
 
 void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
 {
-    //stop the loading animation
+    // stop the loading animation
     setCurrentPage(tempPage);
 
     if(networkReply->error() != QNetworkReply::NoError)
@@ -1531,11 +1531,11 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
         return;
     }
 
-    //prepare to change current directory
+    // prepare to change current directory
     ui->filesAndFoldersListWidget->clear();
     ui->filesAndFoldersListWidget->scrollToTop();
 
-    //set current directory's icon
+    // set current directory's icon
     if(jsonResult["path"] == "/")
     {
         ui->currentFolderIconLabel->setPixmap(
@@ -1559,7 +1559,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
                 );
     }
 
-    //update currentDirectory and ui->currentFolderLabel
+    // update currentDirectory and ui->currentFolderLabel
     currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
     QString currentFolder = currentDirectory.right(
         (currentDirectory.length() - currentDirectory.lastIndexOf("/")) - 1
@@ -1569,13 +1569,13 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
     else
         ui->currentFolderLabel->setText("Dropbox");
 
-    //disable the up action if we are at root, enable it otherwise
+    // disable the up action if we are at root, enable it otherwise
     if(currentDirectory == "/")
         upAction->setEnabled(false);
     else
         upAction->setEnabled(true);
 
-    //add folders
+    // add folders
     foreach(const QVariant &itemJson, jsonResult["contents"].toList())
     {
         QVariantMap itemMap = itemJson.toMap();
@@ -1608,7 +1608,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
         }
     }
 
-    //add files
+    // add files
     foreach(const QVariant &itemJson, jsonResult["contents"].toList())
     {
         QVariantMap itemMap = itemJson.toMap();

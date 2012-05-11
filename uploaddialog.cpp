@@ -22,18 +22,18 @@
 **
 ****************************************************************************/
 
-//corresponding headers
+// corresponding headers
 #include "uploaddialog.h"
 #include "ui_uploaddialog.h"
 
-//data members
+// data members
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include "dropbox.h"
 #include "oauth.h"
 #include "userdata.h"
 
-//implementation-specific
+// implementation-specific
 #include <QMessageBox>
 #include "util.h"
 
@@ -50,13 +50,13 @@ UploadDialog::UploadDialog(
     closeAction(new QAction("Close", this)),
     overwrite(true)
 {
-    //shared data members initialization
+    // shared data members initialization
     this->networkAccessManager = networkAccessManager;
     this->dropbox = dropbox;
     this->oAuth = oAuth;
     this->userData = userData;
 
-    //private data members initialization
+    // private data members initialization
     ui->setupUi(this);
     startStopRestartAction->setSoftKeyRole(QAction::PositiveSoftKey);
     this->addAction(startStopRestartAction);
@@ -69,7 +69,7 @@ UploadDialog::UploadDialog(
     this->addAction(closeAction);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
-    //initialize the state
+    // initialize the state
     setState(UploadDialog::INITIAL);
 }
 
@@ -86,7 +86,7 @@ void UploadDialog::setFileAndFolderInformation(
     bool overwrite
     )
 {
-    //file information
+    // file information
     this->filePath = filePath;
     fileName = this->filePath.right(
         (this->filePath.length() - this->filePath.lastIndexOf("/")) - 1
@@ -94,7 +94,7 @@ void UploadDialog::setFileAndFolderInformation(
     this->fileSize = fileSize;
     this->fileBytes = fileBytes;
 
-    //folder information
+    // folder information
     this->folderPath = folderPath;
     folderName = this->folderPath.right(
         (this->folderPath.length() - this->folderPath.lastIndexOf("/")) - 1
@@ -102,10 +102,10 @@ void UploadDialog::setFileAndFolderInformation(
     if(folderName.isEmpty())
         folderName = "/ (root)";
 
-    //overwrite
+    // overwrite
     this->overwrite = overwrite;
 
-    //start the upload
+    // start the upload
     setState(UploadDialog::READY_TO_START);
     setState(UploadDialog::UPLOADING);
 }
@@ -164,11 +164,11 @@ void UploadDialog::setState(UploadDialog::State state)
             startStopRestartAction->setVisible(true);
             uploadTime.start();
 
-            //prepare the local file
+            // prepare the local file
             file = new QFile(filePath);
 
-            //check whether the file can be opened for reading,
-            //opening it in the process
+            // check whether the file can be opened for reading,
+            // opening it in the process
             if(!file->open(QFile::ReadOnly))
             {
                 QMessageBox::critical(
@@ -182,7 +182,7 @@ void UploadDialog::setState(UploadDialog::State state)
                 return;
             }
 
-            //send the content of the local file
+            // send the content of the local file
             QUrl url;
             if(folderPath != "/")
             {
@@ -248,11 +248,11 @@ bool UploadDialog::isUploading()
 
 void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
 {
-    //avoid errors
+    // avoid errors
     if (sent == 0 || total == 0 || uploadTime.elapsed() == 0)
         return;
 
-    //update progress bar
+    // update progress bar
     ui->progressBar->setFormat(
         QString("%p% Upl. at %1").arg(
             Util::bytesToString(double(sent * 1000.0) / uploadTime.elapsed())

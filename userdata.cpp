@@ -22,7 +22,7 @@
 **
 ****************************************************************************/
 
-//corresponding headers
+// corresponding headers
 #include "userdata.h"
 
 UserData::UserData(

@@ -22,17 +22,17 @@
 **
 ****************************************************************************/
 
-//corresponding headers
+// corresponding headers
 #include "oauth.h"
 
-//data members
+// data members
 #include "consumerdata.h"
 
-//member functions
+// member functions
 #include <QUrl>
 #include "userdata.h"
 
-//implementation-specific
+// implementation-specific
 #include <QByteArray>
 #include <QCryptographicHash>
 #include <QDateTime>
@@ -40,10 +40,10 @@
 
 OAuth::OAuth(ConsumerData *consumerData)
 {
-    //shared data members initialization
+    // shared data members initialization
     this->consumerData = consumerData;
 
-    //qrand seed
+    // qrand seed
     qsrand(QDateTime::currentDateTime().toTime_t());
 }
 
@@ -72,7 +72,7 @@ void OAuth::signRequestHeader(
         header
         ) + ",";
 
-    //remove the last ","
+    // remove the last ","
     header.chop(1);
 
     networkRequest->setRawHeader("Authorization", header.toAscii());
@@ -133,7 +133,7 @@ QString OAuth::signatureHeaderItem(
     QString oAuthHeader
     )
 {
-    //prepare URL
+    // prepare URL
     QString urlSchemeAndHost = url->toString(
         QUrl::RemovePort |
         QUrl::RemovePath |
@@ -142,7 +142,7 @@ QString OAuth::signatureHeaderItem(
         );
     QString urlPath = url->path();
 
-    //url path parts need to be UTF-8 encoded and percent encoded
+    // url path parts need to be UTF-8 encoded and percent encoded
     QStringList urlPathParts = urlPath.split("/");
     for(int i = 0; i < urlPathParts.length(); ++i)
     {
@@ -153,12 +153,12 @@ QString OAuth::signatureHeaderItem(
     QByteArray readyForUseUrl =
         (urlSchemeAndHost+urlPath).toAscii().toPercentEncoding();
 
-    //prepare parameters
+    // prepare parameters
     QList< QPair<QString,QString> > parameters;
 
     parameters.append(url->queryItems());
 
-    //extract header parameters and add them to the parameters list
+    // extract header parameters and add them to the parameters list
     oAuthHeader.remove("OAuth ");
     QStringList oAuthParameters =
         oAuthHeader.split(",", QString::SkipEmptyParts);
@@ -175,7 +175,7 @@ QString OAuth::signatureHeaderItem(
         parameters.append(parameter);
     }
 
-    //parameters need to be UTF-8 encoded and percent encoded
+    // parameters need to be UTF-8 encoded and percent encoded
     for(int i = 0; i < parameters.length(); ++i)
     {
         QPair<QString,QString> parameter = parameters[i];
@@ -191,20 +191,20 @@ QString OAuth::signatureHeaderItem(
     {
         parametersString += parameter.first + "=" + parameter.second + "&";
     }
-    //remove last "&"
+    // remove last "&"
     parametersString.chop(1);
 
     QString readyForUseParametersString =
         parametersString.toAscii().toPercentEncoding();
 
-    //generate base string
+    // generate base string
     QString base = method+
         "&"+
         readyForUseUrl+
         "&"+
         readyForUseParametersString;
 
-    //calculate the hash
+    // calculate the hash
     QString hash;
     if(userData != 0)
     {
@@ -221,7 +221,7 @@ QString OAuth::signatureHeaderItem(
                 );
     }
 
-    //return the result
+    // return the result
     return QString("%1=\"%2\"")
         .arg("oauth_signature")
         .arg(hash)
@@ -230,33 +230,33 @@ QString OAuth::signatureHeaderItem(
 
 QString OAuth::hmacSha1(QString base, QString key)
 {
-    //inner pad
+    // inner pad
     QByteArray ipad;
     ipad.fill(char(0), 64);
     for(int i = 0; i < key.length(); ++i)
         ipad[i] = key[i].toAscii();
 
-    //outer pad
+    // outer pad
     QByteArray opad;
     opad.fill(char(0), 64);
     for(int i = 0; i < key.length(); ++i)
         opad[i] = key[i].toAscii();
 
-    //XOR operation for inner pad
+    // XOR operation for inner pad
     for(int i = 0; i < ipad.length(); ++i)
         ipad[i] = ipad[i] ^ 0x36;
 
-    //XOR operation for outer pad
+    // XOR operation for outer pad
     for(int i = 0; i < opad.length(); ++i)
         opad[i] = opad[i] ^ 0x5c;
 
-    //Hashes inner pad
+    // Hashes inner pad
     QByteArray innerSha1 = QCryptographicHash::hash(
         ipad + base.toAscii(),
         QCryptographicHash::Sha1
         );
 
-    //Hashes outer pad
+    // Hashes outer pad
     QByteArray outerSha1 = QCryptographicHash::hash(
         opad + innerSha1,
         QCryptographicHash::Sha1

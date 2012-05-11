@@ -25,10 +25,10 @@
 #ifndef UPLOADDIALOG_H
 #define UPLOADDIALOG_H
 
-//base class
+// base class
 #include <QDialog>
 
-//data members
+// data members
 #include <QFile>
 #include <QTime>
 class QNetworkAccessManager;
@@ -45,14 +45,14 @@ class UploadDialog : public QDialog
 {
     Q_OBJECT
 
-//shared data members
+// shared data members
 public:
     QNetworkAccessManager *networkAccessManager;
     Dropbox *dropbox;
     OAuth *oAuth;
     UserData *userData;
 
-//enumerations
+// enumerations
 private:
     enum State
     {
@@ -63,7 +63,7 @@ private:
         NOT_FINISHED
     };
 
-//member functions
+// member functions
 public:
     explicit UploadDialog(
         QNetworkAccessManager *networkAccessManager,
@@ -91,7 +91,7 @@ private slots:
 public slots:
     void handleNetworkReply(QNetworkReply *networkReply);
 
-//private data members
+// private data members
 private:
     Ui::UploadDialog *ui;
     State state;

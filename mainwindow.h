@@ -25,10 +25,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//base class
+// base class
 #include <QWidget>
 
-//data members
+// data members
 #include "downloaddialog.h"
 #include "uploaddialog.h"
 #include "userdata.h"
@@ -37,7 +37,7 @@ class QToolButton;
 class Dropbox;
 class OAuth;
 
-//member functions
+// member functions
 class QNetworkReply;
 class QListWidgetItem;
 class QNetworkRequest;
@@ -51,13 +51,13 @@ class MainWindow : public QWidget
 {
     Q_OBJECT
 
-//shared data members
+// shared data members
 public:
     QNetworkAccessManager *networkAccessManager;
     Dropbox *dropbox;
     OAuth *oAuth;
 
-//member functions
+// member functions
 public:
     explicit MainWindow(
         QNetworkAccessManager *networkAccessManager,
@@ -70,9 +70,9 @@ protected:
     void resizeEvent(QResizeEvent *resizeEvent);
     void keyPressEvent(QKeyEvent *event);
 private slots:
-    //initialization
+    // initialization
     void attemptSignIn();
-    //misc
+    // misc
     bool s60v3();
     void setupActions();
     void setCurrentPage(QWidget *page);
@@ -81,13 +81,13 @@ private slots:
     void openDropboxInABrowser();
     void navigateItem(QListWidgetItem *item);
     void signIn();
-    //ui slots
+    // ui slots
     void on_doneSigningInPushButton_clicked();
     void on_copyReferralLinkToClipboardToolButton_clicked();
     void on_filesAndFoldersListWidget_itemActivated(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_filesAndFoldersListWidget_customContextMenuRequested(QPoint point);
-    //action slots
+    // action slots
     void cut();
     void copy();
     void rename();
@@ -107,7 +107,7 @@ private slots:
     void signOut();
     void about();
     void back();
-    //network slots
+    // network slots
     void requestRequestToken();
     void requestAccessToken();
     void requestDirectoryListing(QString path);
@@ -130,7 +130,7 @@ private slots:
     void handleMoving(QNetworkReply* networkReply);
     void handleDeletion(QNetworkReply* networkReply);
 
-//private data members
+// private data members
 private:
     Ui::MainWindow *ui;
     QString requestToken;
