@@ -15,7 +15,8 @@ SOURCES += main.cpp\
     userdata.cpp \
     consumerdata.cpp \
     downloaddialog.cpp \
-    uploaddialog.cpp
+    uploaddialog.cpp \
+    util.cpp
 
 HEADERS += mainwindow.h \
     dropbox.h \
@@ -23,7 +24,8 @@ HEADERS += mainwindow.h \
     userdata.h \
     consumerdata.h \
     downloaddialog.h \
-    uploaddialog.h
+    uploaddialog.h \
+    util.h
 
 FORMS += mainwindow.ui \
     downloaddialog.ui \

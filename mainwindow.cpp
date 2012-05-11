@@ -50,6 +50,7 @@
 #include <QClipboard>
 #include "QsKineticScroller.h"
 #include "json.h"
+#include "util.h"
 
 MainWindow::MainWindow(
     QNetworkAccessManager *networkAccessManager,
@@ -1079,26 +1080,6 @@ void MainWindow::upload()
         QFileInfo fileInfo(filePath);
         int fileBytes = fileInfo.size();
 
-        qreal size = (qreal)fileBytes;
-        QString sizeUnit;
-        if (size < 1024) {
-            sizeUnit = "Bytes";
-        } else if (size < 1024*1024) {
-            size /= 1024;
-            sizeUnit = "KiB";
-        } else if (size < 1024*1024*1024){
-            size /= 1024*1024;
-            sizeUnit = "MiB";
-        } else {
-            size /= 1024*1024*1024;
-            sizeUnit = "GiB";
-        }
-
-        QString fileSize = QString("%1%2")
-            .arg(size, 0, 'f', 1)
-            .arg(sizeUnit)
-            ;
-
         //make sure the file size is smaller than the upload file limit
         if(fileBytes > 150000000)
         {
@@ -1163,7 +1144,7 @@ void MainWindow::upload()
 
         uploadDialog.setFileAndFolderInformation(
             filePath,
-            fileSize,
+            Util::bytesToString(fileBytes),
             fileBytes,
             currentDirectory,
             overwrite
@@ -1687,82 +1668,10 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
     }
 
     QVariantMap quotaInfo = jsonResult["quota_info"].toMap();
-
     qreal normalFiles = quotaInfo["normal"].toReal();
-    QString normalFilesUnit;
-    if (normalFiles < 1024) {
-        normalFilesUnit = "Bytes";
-    } else if (normalFiles < 1024*1024) {
-        normalFiles /= 1024;
-        normalFilesUnit = "KiB";
-    } else if (normalFiles < 1024*1024*1024){
-        normalFiles /= 1024*1024;
-        normalFilesUnit = "MiB";
-    } else {
-        normalFiles /= 1024*1024*1024;
-        normalFilesUnit = "GiB";
-    }
-    QString normalFilesString = QString("%1%2")
-        .arg(normalFiles, 0, 'f', 1)
-        .arg(normalFilesUnit)
-        ;
-
     qreal sharedFiles = quotaInfo["shared"].toReal();
-    QString sharedFilesUnit;
-    if (sharedFiles < 1024) {
-        sharedFilesUnit = "Bytes";
-    } else if (sharedFiles < 1024*1024) {
-        sharedFiles /= 1024;
-        sharedFilesUnit = "KiB";
-    } else if (sharedFiles < 1024*1024*1024){
-        sharedFiles /= 1024*1024;
-        sharedFilesUnit = "MiB";
-    } else {
-        sharedFiles /= 1024*1024*1024;
-        sharedFilesUnit = "GiB";
-    }
-    QString sharedFilesString = QString("%1%2")
-        .arg(sharedFiles, 0, 'f', 1)
-        .arg(sharedFilesUnit)
-        ;
-
     qreal used = quotaInfo["normal"].toReal() + quotaInfo["shared"].toReal();
-    QString usedUnit;
-    if (used < 1024) {
-        usedUnit = "Bytes";
-    } else if (used < 1024*1024) {
-        used /= 1024;
-        usedUnit = "KiB";
-    } else if (used < 1024*1024*1024){
-        used /= 1024*1024;
-        usedUnit = "MiB";
-    } else {
-        used /= 1024*1024*1024;
-        usedUnit = "GiB";
-    }
-    QString usedString = QString("%1%2")
-        .arg(used, 0, 'f', 1)
-        .arg(usedUnit)
-        ;
-
     qreal quota = quotaInfo["quota"].toReal();
-    QString quotaUnit;
-    if (quota < 1024) {
-        quotaUnit = "Bytes";
-    } else if (quota < 1024*1024) {
-        quota /= 1024;
-        quotaUnit = "KiB";
-    } else if (quota < 1024*1024*1024){
-        quota /= 1024*1024;
-        quotaUnit = "MiB";
-    } else {
-        quota /= 1024*1024*1024;
-        quotaUnit = "GiB";
-    }
-    QString quotaString = QString("%1%2")
-        .arg(quota, 0, 'f', 1)
-        .arg(quotaUnit)
-        ;
 
     ui->emailLabel->setText(jsonResult["email"].toString());
 
@@ -1775,15 +1684,15 @@ void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
         );
 
     QString space = QString("%1 out of %2")
-        .arg(usedString)
-        .arg(quotaString);
+        .arg(Util::bytesToString(used))
+        .arg(Util::bytesToString(quota));
     ui->spaceProgressBar->setFormat(space);
 
     QString spaceDetails = QString(
         "Normal Files: %1 / Shared Files: %2"
         )
-            .arg(normalFilesString)
-            .arg(sharedFilesString);
+            .arg(Util::bytesToString(normalFiles))
+            .arg(Util::bytesToString(sharedFiles));
     ui->spaceDetailsLabel->setText(spaceDetails);
 
     ui->referralLinkPlainTextEdit->setPlainText(

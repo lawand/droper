@@ -35,6 +35,7 @@
 
 //implementation-specific
 #include <QMessageBox>
+#include "util.h"
 
 UploadDialog::UploadDialog(
     QNetworkAccessManager *networkAccessManager,
@@ -250,22 +251,11 @@ void UploadDialog::handleUploadProgress(qint64 sent, qint64 total)
     if (sent == 0 || total == 0 || uploadTime.elapsed() == 0)
         return;
 
-    //calculate upload speed
-    double speed = sent * 1000.0 / uploadTime.elapsed();
-    QString unit;
-    if (speed < 1024) {
-        unit = "bit/s";
-    } else if (speed < 1024*1024) {
-        speed /= 1024;
-        unit = "Kibit/s";
-    } else {
-        speed /= 1024*1024;
-        unit = "Mibit/s";
-    }
-
     //update progress bar
     ui->progressBar->setFormat(
-        QString("%p% Upl. at %1%2").arg(speed, 0, 'f', 1).arg(unit)
+        QString("%p% Upl. at %1").arg(
+            Util::bytesToString(double(sent * 1000.0) / uploadTime.elapsed())
+            )
         );
     ui->progressBar->setValue( (sent*100) / total );
 }

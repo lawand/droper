@@ -35,6 +35,7 @@
 
 //implementation-specific
 #include <QMessageBox>
+#include "util.h"
 
 DownloadDialog::DownloadDialog(
     QNetworkAccessManager *networkAccessManager,
@@ -227,22 +228,13 @@ void DownloadDialog::handleDownloadProgress(qint64 received, qint64 total)
     if (received == 0 || total == 0 || downloadTime.elapsed() == 0)
         return;
 
-    //calculate download speed
-    double speed = received * 1000.0 / downloadTime.elapsed();
-    QString unit;
-    if (speed < 1024) {
-        unit = "bit/s";
-    } else if (speed < 1024*1024) {
-        speed /= 1024;
-        unit = "Kibit/s";
-    } else {
-        speed /= 1024*1024;
-        unit = "Mibit/s";
-    }
-
     //update progress bar
     ui->progressBar->setFormat(
-        QString("%p% Down. at %1%2").arg(speed, 0, 'f', 1).arg(unit)
+        QString("%p% Down. at %1").arg(
+            Util::bytesToString(
+                double(received * 1000.0) / downloadTime.elapsed()
+                )
+            )
         );
     ui->progressBar->setValue( (received*100) / total );
 }
