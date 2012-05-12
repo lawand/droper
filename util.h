@@ -1,6 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+// member functions
 #include <QString>
 
 class Util
