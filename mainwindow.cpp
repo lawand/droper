@@ -751,17 +751,26 @@ void MainWindow::download()
         QVariantMap map =
             currentItem->data(Qt::UserRole).toMap();
 
+        // initial download path
+        QSettings settings;
+        QString initialPath = settings.value(
+            "config/last_download_path",
+            QDesktopServices::storageLocation(
+                QDesktopServices::DesktopLocation
+                )
+            ).toString();
+
         // prepare folder
         bool ok = false;
         QString folderPath;
         while(!ok)
         {
+            folderPath.clear();
+
             folderPath = QFileDialog::getExistingDirectory(
                 0,
                 "Droper",
-                QDesktopServices::storageLocation(
-                    QDesktopServices::DesktopLocation
-                    )
+                initialPath
                 );
 
             // if no directory selected, do nothing
@@ -791,6 +800,8 @@ void MainWindow::download()
                 ok = true;
             }
         }
+
+        settings.setValue("config/last_download_path", folderPath);
 
         downloadDialog.setFileAndFolderInformation(map, folderPath);
 
@@ -1033,17 +1044,26 @@ void MainWindow::upload()
     }
     else
     {
+        // initial upload path
+        QSettings settings;
+        QString initialPath = settings.value(
+            "config/last_upload_path",
+            QDesktopServices::storageLocation(
+                QDesktopServices::DesktopLocation
+                )
+            ).toString();
+
         // prepare file
         bool ok = false;
         QString filePath;
         while(!ok)
         {
+            filePath.clear();
+
             filePath = QFileDialog::getOpenFileName(
                 0,
                 "Droper",
-                QDesktopServices::storageLocation(
-                    QDesktopServices::DesktopLocation
-                    )
+                initialPath
                 );
 
             // if no file selected, do nothing
@@ -1141,6 +1161,8 @@ void MainWindow::upload()
                 }
             }
         }
+
+        settings.setValue("config/last_upload_path", filePath);
 
         uploadDialog.setFileAndFolderInformation(
             filePath,
