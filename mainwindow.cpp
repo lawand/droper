@@ -355,13 +355,18 @@ void MainWindow::setupActions()
 
     // softkey menu initialization
 
-    QAction *mainPageOptionsMenuAction = new QAction("Options", ui->mainPage);
+    QAction *mainPageOptionsMenuAction = new QAction(
+        style()->standardIcon(QStyle::SP_TitleBarMenuButton),
+        "Options",
+        ui->mainPage
+        );
     mainPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
     ui->mainPage->addAction(mainPageOptionsMenuAction);
     QMenu *mainPageOptionsMenu = new QMenu(ui->mainPage);
     mainPageOptionsMenuAction->setMenu(mainPageOptionsMenu);
 
     QAction *signInPageOptionsMenuAction = new QAction(
+        style()->standardIcon(QStyle::SP_TitleBarMenuButton),
         "Options",
         ui->signInPage
         );
