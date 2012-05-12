@@ -267,7 +267,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Space:</string>
+            <string>Used Space:</string>
            </property>
           </widget>
          </item>
