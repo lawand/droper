@@ -25,6 +25,9 @@
 // corresponding headers
 #include "util.h"
 
+// implementation-specific
+#include <QSysInfo>
+
 QString Util::bytesToString(int bytes)
 {
     qreal size = (qreal)bytes;
@@ -45,5 +48,13 @@ QString Util::bytesToString(int bytes)
     return QString("%1%2")
         .arg(size, 0, 'f', 1)
         .arg(unit)
-        ;
+            ;
+}
+
+bool Util::s60v3()
+{
+    return (
+        QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 ||
+        QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+        );
 }

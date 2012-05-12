@@ -32,6 +32,7 @@ class Util
 {
 public:
     static QString bytesToString(int bytes);
+    static bool s60v3();
 };
 
 #endif // UTIL_H

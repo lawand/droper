@@ -43,7 +43,6 @@
 #include <QMovie>
 #include <QInputDialog>
 #include <QMenu>
-#include <QSysInfo>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -87,7 +86,7 @@ MainWindow::MainWindow(
     ui->setupUi(this);
     setCurrentPage(ui->signInPage);
     setupActions();
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         ui->mainPage->layout()->setMargin(0);
     }
@@ -129,7 +128,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::resizeEvent(QResizeEvent *resizeEvent)
 {
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         if(toolButtonsLayout != 0)
         {
@@ -217,7 +216,7 @@ void MainWindow::resizeEvent(QResizeEvent *resizeEvent)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(s60v3())
+    if(Util::s60v3())
     {
         if(ui->stackedWidget->currentWidget() == ui->mainPage)
         {
@@ -257,17 +256,9 @@ void MainWindow::attemptSignIn()
     }
 }
 
-bool MainWindow::s60v3()
-{
-    return (
-        QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 ||
-        QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
-        );
-}
-
 void MainWindow::setupActions()
 {
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         // create tool buttons
         upToolButton = new QToolButton(ui->mainPage);
@@ -330,7 +321,7 @@ void MainWindow::setupActions()
     connect(aboutAction, SIGNAL(triggered()), SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         // tool buttons initialization
 
@@ -380,7 +371,7 @@ void MainWindow::setupActions()
     ui->accountInfoPage->addAction(backAction);
     connect(backAction, SIGNAL(triggered()), SLOT(back()));
 
-    if(s60v3())
+    if(Util::s60v3())
     {
         QAction *currentFolderMenuAction = new QAction(
             "Current Folder",
@@ -534,7 +525,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemActivated(
     QListWidgetItem *
     )
 {
-    if(s60v3())
+    if(Util::s60v3())
     {
         showContextMenu(
             ui->filesAndFoldersListWidget->geometry().center()
@@ -546,7 +537,7 @@ void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
     QListWidgetItem *item
     )
 {
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         navigateItem(item);
     }
@@ -556,7 +547,7 @@ void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
     QPoint point
     )
 {
-    if(! s60v3())
+    if(! Util::s60v3())
     {
         showContextMenu(
             ui->filesAndFoldersListWidget->viewport()->mapToGlobal(point)
@@ -1670,7 +1661,7 @@ void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
         }
     }
 
-    if(s60v3())
+    if(Util::s60v3())
     {
         if(ui->filesAndFoldersListWidget->count() != 0)
             ui->filesAndFoldersListWidget->setCurrentRow(0);

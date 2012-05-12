@@ -73,7 +73,6 @@ private slots:
     // initialization
     void attemptSignIn();
     // misc
-    bool s60v3();
     void setupActions();
     void setCurrentPage(QWidget *page);
     void showContextMenu(QPoint point);
