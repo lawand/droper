@@ -22,39 +22,51 @@
 **
 ****************************************************************************/
 
-#ifndef OAUTH_H
-#define OAUTH_H
+#ifndef ACCOUNTINFOPAGE_H
+#define ACCOUNTINFOPAGE_H
+
+// base class
+#include <QWidget>
 
 // member functions
-#include <QString>
-#include "common.h"
 class QNetworkRequest;
-class QUrl;
-class UserData;
+class QNetworkReply;
 
-class OAuth
+namespace Ui {
+class AccountInfoPage;
+}
+
+class AccountInfoPage : public QWidget
 {
+    Q_OBJECT
+
 // member functions
 public:
-    OAuth();
-    void signRequestHeader(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = Common::userData
-        );
+    explicit AccountInfoPage(QWidget *parent = 0);
+    ~AccountInfoPage();
+    // misc
 private:
-    QString timestampAndNonceHeaderItems();
-    QString consumerKeyHeaderItem();
-    QString signatureMethodHeaderItem();
-    QString userTokenHeaderItem(UserData *userData);
-    QString versionHeaderItem();
-    QString signatureHeaderItem(
-        QString method,
-        QUrl *url,
-        QString oAuthHeader,
-        UserData *userData
-        );
-    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
+    void setupActions();
+signals:
+    // signals
+    void networkRequestGetNeeded(QNetworkRequest *request);
+    void backRequested();
+    void signOutRequested();
+public slots:
+    // network slots
+    void requestAccountInfo();
+    void handleNetworkReply(QNetworkReply *networkReply);
+    void handleAccountInfo(QNetworkReply *networkReply);
+private slots:
+    // action slots
+    void on_referralLinkAction_triggered();
+    void on_backAction_triggered();
+    void on_signOutAction_triggered();
+
+// private data members
+private:
+    Ui::AccountInfoPage *ui;
+    QString referralLink;
 };
 
-#endif // OAUTH_H
+#endif // ACCOUNTINFOPAGE_H

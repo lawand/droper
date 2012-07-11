@@ -1,5 +1,5 @@
 include(qt-json/qt-json.pri)
-include(QsKineticScroller/QsKineticScroller.pri)
+include(qtscroller/qtscroller.pri)
 
 QT += core gui network
 
@@ -14,22 +14,33 @@ SOURCES += main.cpp\
     oauth.cpp \
     userdata.cpp \
     consumerdata.cpp \
-    downloaddialog.cpp \
-    uploaddialog.cpp \
-    util.cpp
+    util.cpp \
+    signinpage.cpp \
+    loadingpage.cpp \
+    common.cpp \
+    navigationpage.cpp \
+    accountinfopage.cpp \
+    filetransferspage.cpp
 
 HEADERS += mainwindow.h \
     dropbox.h \
     oauth.h \
     userdata.h \
     consumerdata.h \
-    downloaddialog.h \
-    uploaddialog.h \
-    util.h
+    util.h \
+    signinpage.h \
+    loadingpage.h \
+    common.h \
+    navigationpage.h \
+    accountinfopage.h \
+    filetransferspage.h
 
 FORMS += mainwindow.ui \
-    downloaddialog.ui \
-    uploaddialog.ui
+    signinpage.ui \
+    loadingpage.ui \
+    navigationpage.ui \
+    accountinfopage.ui \
+    filetransferspage.ui
 
 RESOURCES += \
     main.qrc

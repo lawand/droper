@@ -22,39 +22,25 @@
 **
 ****************************************************************************/
 
-#ifndef OAUTH_H
-#define OAUTH_H
+#ifndef COMMON_H
+#define COMMON_H
 
-// member functions
-#include <QString>
-#include "common.h"
-class QNetworkRequest;
-class QUrl;
+// static shared data members
+class QNetworkAccessManager;
+class ConsumerData;
+class Dropbox;
+class OAuth;
 class UserData;
 
-class OAuth
+class Common
 {
-// member functions
+// static shared data members
 public:
-    OAuth();
-    void signRequestHeader(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = Common::userData
-        );
-private:
-    QString timestampAndNonceHeaderItems();
-    QString consumerKeyHeaderItem();
-    QString signatureMethodHeaderItem();
-    QString userTokenHeaderItem(UserData *userData);
-    QString versionHeaderItem();
-    QString signatureHeaderItem(
-        QString method,
-        QUrl *url,
-        QString oAuthHeader,
-        UserData *userData
-        );
-    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
+    static QNetworkAccessManager *networkAccessManager;
+    static ConsumerData *consumerData;
+    static Dropbox *dropbox;
+    static OAuth *oAuth;
+    static UserData *userData;
 };
 
-#endif // OAUTH_H
+#endif // COMMON_H

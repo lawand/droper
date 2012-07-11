@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NavigationPage</class>
+ <widget class="QWidget" name="NavigationPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="currentFolderIconLabel">
+       <property name="maximumSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="main.qrc">:/resources/icons/dropbox.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="currentFolderLabel">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Dropbox</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QListWidget" name="filesAndFoldersListWidget">
+     <property name="contextMenuPolicy">
+      <enum>Qt::ActionsContextMenu</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="verticalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="horizontalScrollMode">
+      <enum>QAbstractItemView::ScrollPerPixel</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="propertiesAction">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+  </action>
+  <action name="upAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/up.png</normaloff>:/resources/actions/up.png</iconset>
+   </property>
+   <property name="text">
+    <string>Up</string>
+   </property>
+  </action>
+  <action name="deleteAction">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="refreshAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/refresh.png</normaloff>:/resources/actions/refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+  </action>
+  <action name="createFolderAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/create-folder.png</normaloff>:/resources/actions/create-folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create Folder</string>
+   </property>
+  </action>
+  <action name="shareableLinkAction">
+   <property name="text">
+    <string>Shareable Link</string>
+   </property>
+  </action>
+  <action name="publicLinkAction">
+   <property name="text">
+    <string>Public Link</string>
+   </property>
+  </action>
+  <action name="copyAction">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="pasteAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/paste.png</normaloff>:/resources/actions/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="cutAction">
+   <property name="text">
+    <string>Cut</string>
+   </property>
+  </action>
+  <action name="renameAction">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="navigateAction">
+   <property name="text">
+    <string>Navigate</string>
+   </property>
+   <property name="toolTip">
+    <string>Navigate</string>
+   </property>
+  </action>
+  <action name="accountInfoAction">
+   <property name="text">
+    <string>Account Info</string>
+   </property>
+  </action>
+  <action name="downloadAction">
+   <property name="text">
+    <string>Download</string>
+   </property>
+  </action>
+  <action name="fileTransfersAction">
+   <property name="text">
+    <string>File Transfers</string>
+   </property>
+  </action>
+  <action name="uploadAction">
+   <property name="icon">
+    <iconset resource="main.qrc">
+     <normaloff>:/resources/actions/upload.png</normaloff>:/resources/actions/upload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Upload</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="main.qrc"/>
+ </resources>
+ <connections/>
+</ui>

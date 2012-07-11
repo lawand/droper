@@ -23,11 +23,10 @@
 ****************************************************************************/
 
 #include <QApplication>
-#include <QNetworkAccessManager>
-#include "consumerdata.h"
-#include "dropbox.h"
+#include <QSettings>
 #include "mainwindow.h"
-#include "oauth.h"
+#include "common.h"
+#include "userdata.h"
 
 int main(int argc, char *argv[])
 {
@@ -35,19 +34,33 @@ int main(int argc, char *argv[])
     application.setOrganizationName("lawand");
     application.setApplicationName("droper0.4.5");
 
-// shared objects
-    QNetworkAccessManager networkAccessManager;
-    ConsumerData consumerData;
-    Dropbox dropbox(1);
-    OAuth oAuth(&consumerData);
+    // load user data
+    QSettings settings;
+    settings.beginGroup("user_data");
+    if( (settings.childKeys().indexOf("access_token") == -1) ||
+        (settings.childKeys().indexOf("access_token_secret") == -1) ||
+        (settings.childKeys().indexOf("uid") == -1) )
+    {
+        settings.remove("user_data");
+    }
+    else
+    {
+        Common::userData->token = settings.value("access_token").toString();
+        Common::userData->secret = settings.value(
+            "access_token_secret"
+            ).toString();
+        Common::userData->uid = settings.value("uid").toString();
+    }
 
-    MainWindow mainWindow(
-        &networkAccessManager,
-        &dropbox,
-        &oAuth
-        );
-
+    MainWindow mainWindow;
     mainWindow.showMaximized();
 
-    return application.exec();
+    int exitCode = application.exec();
+
+    // save user data
+    settings.setValue("access_token", Common::userData->token);
+    settings.setValue("access_token_secret", Common::userData->secret);
+    settings.setValue("uid", Common::userData->uid);
+
+    return exitCode;
 }

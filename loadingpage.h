@@ -22,39 +22,28 @@
 **
 ****************************************************************************/
 
-#ifndef OAUTH_H
-#define OAUTH_H
+#ifndef LOADINGPAGE_H
+#define LOADINGPAGE_H
 
-// member functions
-#include <QString>
-#include "common.h"
-class QNetworkRequest;
-class QUrl;
-class UserData;
+// base class
+#include <QWidget>
 
-class OAuth
+namespace Ui {
+class LoadingPage;
+}
+
+class LoadingPage : public QWidget
 {
+    Q_OBJECT
+    
 // member functions
 public:
-    OAuth();
-    void signRequestHeader(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = Common::userData
-        );
+    explicit LoadingPage(QWidget *parent = 0);
+    ~LoadingPage();
+    
+// private data members
 private:
-    QString timestampAndNonceHeaderItems();
-    QString consumerKeyHeaderItem();
-    QString signatureMethodHeaderItem();
-    QString userTokenHeaderItem(UserData *userData);
-    QString versionHeaderItem();
-    QString signatureHeaderItem(
-        QString method,
-        QUrl *url,
-        QString oAuthHeader,
-        UserData *userData
-        );
-    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
+    Ui::LoadingPage *ui;
 };
 
-#endif // OAUTH_H
+#endif // LOADINGPAGE_H

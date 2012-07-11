@@ -22,39 +22,31 @@
 **
 ****************************************************************************/
 
-#ifndef OAUTH_H
-#define OAUTH_H
+// corresponding headers
+#include "loadingpage.h"
+#include "ui_loadingpage.h"
 
-// member functions
-#include <QString>
-#include "common.h"
-class QNetworkRequest;
-class QUrl;
-class UserData;
+// implementation-specific
+#include <QMovie>
 
-class OAuth
+LoadingPage::LoadingPage(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::LoadingPage)
 {
-// member functions
-public:
-    OAuth();
-    void signRequestHeader(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = Common::userData
-        );
-private:
-    QString timestampAndNonceHeaderItems();
-    QString consumerKeyHeaderItem();
-    QString signatureMethodHeaderItem();
-    QString userTokenHeaderItem(UserData *userData);
-    QString versionHeaderItem();
-    QString signatureHeaderItem(
-        QString method,
-        QUrl *url,
-        QString oAuthHeader,
-        UserData *userData
-        );
-    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
-};
+    // private data members initialization
+    ui->setupUi(this);
 
-#endif // OAUTH_H
+    // QMovie initialization
+    QMovie *loading = new QMovie(
+        ":/resources/animations/loading.gif",
+        QByteArray(),
+        this
+    );
+    ui->loadingLabel->setMovie(loading);
+    loading->start();
+}
+
+LoadingPage::~LoadingPage()
+{
+    delete ui;
+}

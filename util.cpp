@@ -54,7 +54,11 @@ QString Util::bytesToString(int bytes)
 bool Util::s60v3()
 {
     return (
+#ifdef Q_OS_SYMBIAN
         QSysInfo::s60Version() == QSysInfo::SV_S60_3_1 ||
         QSysInfo::s60Version() == QSysInfo::SV_S60_3_2
+#else
+        false
+#endif
         );
 }

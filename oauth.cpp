@@ -25,10 +25,8 @@
 // corresponding headers
 #include "oauth.h"
 
-// data members
-#include "consumerdata.h"
-
 // member functions
+#include <QNetworkRequest>
 #include <QUrl>
 #include "userdata.h"
 
@@ -37,12 +35,10 @@
 #include <QCryptographicHash>
 #include <QDateTime>
 #include <QStringList>
+#include "consumerdata.h"
 
-OAuth::OAuth(ConsumerData *consumerData)
+OAuth::OAuth()
 {
-    // shared data members initialization
-    this->consumerData = consumerData;
-
     // qrand seed
     qsrand(QDateTime::currentDateTime().toTime_t());
 }
@@ -58,18 +54,15 @@ void OAuth::signRequestHeader(
     header += timestampAndNonceHeaderItems() + ",";
     header += consumerKeyHeaderItem() + ",";
     header += signatureMethodHeaderItem() + ",";
-    if(userData != 0)
-    {
-        header += userTokenHeaderItem(userData) + ",";
-    }
+    header += userTokenHeaderItem(userData) + ",";
     header += versionHeaderItem() + ",";
 
     QUrl url = networkRequest->url();
     header += signatureHeaderItem(
-        userData,
         method,
         &url,
-        header
+        header,
+        userData
         ) + ",";
 
     // remove the last ","
@@ -98,7 +91,7 @@ QString OAuth::consumerKeyHeaderItem()
 {
     return QString("%1=\"%2\"")
         .arg("oauth_consumer_key")
-        .arg(consumerData->key)
+        .arg(Common::consumerData->key)
         ;
 }
 
@@ -127,10 +120,10 @@ QString OAuth::versionHeaderItem()
 }
 
 QString OAuth::signatureHeaderItem(
-    UserData *userData,
     QString method,
     QUrl *url,
-    QString oAuthHeader
+    QString oAuthHeader,
+    UserData *userData
     )
 {
     // prepare URL
@@ -206,20 +199,10 @@ QString OAuth::signatureHeaderItem(
 
     // calculate the hash
     QString hash;
-    if(userData != 0)
-    {
-        hash = hmacSha1(
-                base,
-                consumerData->secret + "&" + userData->secret
-                );
-    }
-    else
-    {
-        hash = hmacSha1(
-                base,
-                consumerData->secret + "&"
-                );
-    }
+    hash = hmacSha1(
+            base,
+            Common::consumerData->secret + "&" + userData->secret
+            );
 
     // return the result
     return QString("%1=\"%2\"")

@@ -22,39 +22,54 @@
 **
 ****************************************************************************/
 
-#ifndef OAUTH_H
-#define OAUTH_H
+#ifndef SIGNINPAGE_H
+#define SIGNINPAGE_H
+
+// base class
+#include <QWidget>
 
 // member functions
-#include <QString>
-#include "common.h"
 class QNetworkRequest;
-class QUrl;
-class UserData;
+class QNetworkReply;
 
-class OAuth
+// data members
+#include "userdata.h"
+
+namespace Ui {
+class SignInPage;
+}
+
+class SignInPage : public QWidget
 {
+    Q_OBJECT
+
 // member functions
 public:
-    OAuth();
-    void signRequestHeader(
-        QString method,
-        QNetworkRequest *networkRequest,
-        UserData *userData = Common::userData
-        );
+    explicit SignInPage(QWidget *parent = 0);
+    ~SignInPage();    
+signals:
+    // signals
+    void networkRequestGetNeeded(QNetworkRequest *request);
+    void oauthAccesstokenHandled();
+private slots:
+    // ui slots
+    void on_signInPushButton_clicked();
+    void on_doneSigningInPushButton_clicked();
+public slots:
+    // network slots
+    void requestOauthRequesttoken();
+    void requestOauthAccesstoken();
+    void handleNetworkReply(QNetworkReply *networkReply);
+    void handleOauthRequesttoken(QNetworkReply *networkReply);
+    void handleOauthAccesstoken(QNetworkReply *networkReply);
+private slots:
+    // misc
+    void openDropboxInABrowser();
+
+// private data members
 private:
-    QString timestampAndNonceHeaderItems();
-    QString consumerKeyHeaderItem();
-    QString signatureMethodHeaderItem();
-    QString userTokenHeaderItem(UserData *userData);
-    QString versionHeaderItem();
-    QString signatureHeaderItem(
-        QString method,
-        QUrl *url,
-        QString oAuthHeader,
-        UserData *userData
-        );
-    QString hmacSha1(QString base, QString key); // HMAC-SHA1 checksum
+    Ui::SignInPage *ui;
+    UserData requestUserData;
 };
 
-#endif // OAUTH_H
+#endif // SIGNINPAGE_H

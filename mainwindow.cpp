@@ -26,99 +26,113 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-// data members
-#include <QNetworkAccessManager>
-#include <QToolButton>
-#include "dropbox.h"
-#include "oauth.h"
-
 // member functions
+#include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QResizeEvent>
 
 // implementation-specific
-#include <QSettings>
 #include <QMessageBox>
-#include <QResource>
-#include <QMovie>
-#include <QInputDialog>
-#include <QMenu>
-#include <QDateTime>
-#include <QFileDialog>
+#include <QSettings>
 #include <QDesktopServices>
-#include <QClipboard>
-#include "QsKineticScroller.h"
-#include "json.h"
+#include <QFileDialog>
+#include "common.h"
+#include "dropbox.h"
+#include "filetransferspage.h"
+#include "userdata.h"
 #include "util.h"
+#include "json.h"
 
-MainWindow::MainWindow(
-    QNetworkAccessManager *networkAccessManager,
-    Dropbox *dropbox,
-    OAuth *oAuth,
-    QWidget *parent
-    ) :
-    QWidget(parent),
-    ui(new Ui::MainWindow),
-    requestToken(""),
-    requestTokenSecret(""),
-    downloadDialog(
-        networkAccessManager,
-        dropbox,
-        oAuth,
-        &userData
-    ),
-    uploadDialog(
-        networkAccessManager,
-        dropbox,
-        oAuth,
-        &userData
-    ),
-    currentDirectory("/"),
-    renameOperationBeingProcessed(false),
-    toolButtonsLayout(0)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
-    // shared data members initialization
-    this->networkAccessManager = networkAccessManager;
-    this->dropbox = dropbox;
-    this->oAuth = oAuth;
-
     // private data members initialization
     ui->setupUi(this);
-    setCurrentPage(ui->signInPage);
-    setupActions();
-    if(! Util::s60v3())
-    {
-        ui->mainPage->layout()->setMargin(0);
-    }
 
-    // QObject connections
+    // signal/slot connections
     connect(
-        this->networkAccessManager,
+        Common::networkAccessManager,
         SIGNAL(finished(QNetworkReply*)),
-        SLOT(globalHandleNetworkReply(QNetworkReply*))
-    );
-    connect(ui->signInPushButton, SIGNAL(clicked()), SLOT(signIn()));
+        SLOT(handleNetworkReply(QNetworkReply*))
+        );
     connect(
-        &uploadDialog,
-        SIGNAL(itemUploadedToDirectory(QString)),
-        SLOT(handleItemUploadedToDirectory(QString))
+        ui->signInPage,
+        SIGNAL(networkRequestGetNeeded(QNetworkRequest*)),
+        SLOT(getNetworkRequest(QNetworkRequest*))
+        );
+    connect(
+        ui->signInPage,
+        SIGNAL(oauthAccesstokenHandled()),
+        SLOT(attemptSignIn())
+        );
+    connect(
+        ui->navigationPage,
+        SIGNAL(networkRequestGetNeeded(QNetworkRequest*)),
+        SLOT(getNetworkRequest(QNetworkRequest*))
+        );
+    connect(
+        ui->navigationPage,
+        SIGNAL(accountInfoRequested()),
+        SLOT(switchToAccountInfo())
+        );
+    connect(
+        ui->navigationPage,
+        SIGNAL(downloadRequested(QVariantMap)),
+        SLOT(download(QVariantMap))
+        );
+    connect(
+        ui->navigationPage,
+        SIGNAL(uploadRequested(QString)),
+        SLOT(upload(QString))
+        );
+    connect(
+        ui->navigationPage,
+        SIGNAL(switchToFileTransfersRequested()),
+        SLOT(switchToFileTransfers())
+        );
+    connect(
+        ui->accountInfoPage,
+        SIGNAL(networkRequestGetNeeded(QNetworkRequest*)),
+        SLOT(getNetworkRequest(QNetworkRequest*))
+        );
+    connect(
+        ui->accountInfoPage,
+        SIGNAL(backRequested()),
+        SLOT(switchToNavigation())
+        );
+    connect(
+        ui->accountInfoPage,
+        SIGNAL(signOutRequested()),
+        SLOT(signOut())
+        );
+    connect(
+        ui->fileTransfersPage,
+        SIGNAL(networkRequestGetNeeded(QNetworkRequest*)),
+        SLOT(getNetworkRequest(QNetworkRequest*))
+        );
+    connect(
+        ui->fileTransfersPage,
+        SIGNAL(networkRequestPutNeeded(QNetworkRequest*,QIODevice*)),
+        SLOT(putNetworkRequest(QNetworkRequest*,QIODevice*))
+        );
+    connect(
+        ui->fileTransfersPage,
+        SIGNAL(backRequested()),
+        SLOT(switchToNavigation())
+        );
+    connect(
+        ui->fileTransfersPage,
+        SIGNAL(fileUploaded(QVariantMap)),
+        ui->navigationPage,
+        SLOT(addItemToFilesAndFoldersListWidget(QVariantMap))
         );
 
-    // QMovie initialization
-    QMovie *loading = new QMovie(
-        ":/resources/animations/loading.gif",
-        QByteArray(),
-        this
-    );
-    ui->loadingLabel->setMovie(loading);
-    loading->start();
-
-    // QsKineticScroller initialization
-    QsKineticScroller *kineticScroller = new QsKineticScroller(this);
-    kineticScroller->enableKineticScrollFor(ui->filesAndFoldersListWidget);
-
-    // user data
+    // initial sign in attempt
     attemptSignIn();
+
+    // actions setup
+    setupActions();
+    ui->menubar->addActions(this->actions());
 }
 
 MainWindow::~MainWindow()
@@ -126,493 +140,342 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::resizeEvent(QResizeEvent *resizeEvent)
+void MainWindow::getNetworkRequest(QNetworkRequest *networkRequest)
 {
-    if(! Util::s60v3())
+    Dropbox::Api api = Common::dropbox->urlToApi(networkRequest->url());
+
+    switch(api)
     {
-        if(toolButtonsLayout != 0)
+    case Dropbox::FILES:
+    case Dropbox::FILESPUT:
+        break;
+
+    default:
+        // show animation
+        previousPage = ui->stackedWidget->currentWidget();
+        setCurrentPage(ui->loadingPage);
+        break;
+    }
+
+    QNetworkReply *networkReply = Common::networkAccessManager->get(
+        *networkRequest
+        );
+
+    switch(api)
+    {
+    case Dropbox::FILES:
+        ui->fileTransfersPage->setDownloadNetworkReply(networkReply);
+        break;
+
+    default:
+        break;
+    }
+}
+
+void MainWindow::putNetworkRequest(
+    QNetworkRequest *networkRequest,
+    QIODevice *data
+    )
+{
+    Dropbox::Api api = Common::dropbox->urlToApi(networkRequest->url());
+
+    switch(api)
+    {
+    case Dropbox::FILES:
+    case Dropbox::FILESPUT:
+        break;
+
+    default:
+        // show animation
+        previousPage = ui->stackedWidget->currentWidget();
+        setCurrentPage(ui->loadingPage);
+        break;
+    }
+
+    QNetworkReply *networkReply = Common::networkAccessManager->put(
+        *networkRequest,
+        data
+        );
+
+    switch(api)
+    {
+    case Dropbox::FILESPUT:
+        ui->fileTransfersPage->setUploadNetworkReply(networkReply);
+        break;
+
+    default:
+        break;
+    }
+}
+
+void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
+{
+    Dropbox::Api api = Common::dropbox->urlToApi(networkReply->url());
+    switch(api)
+    {
+    case Dropbox::FILES:
+    case Dropbox::FILESPUT:
+        ui->fileTransfersPage->handleNetworkReply(networkReply);
+        break;
+
+    default:
+        // stop animation
+        setCurrentPage(previousPage);
+        break;
+    }
+
+    networkReply->deleteLater();
+
+    if(networkReply->error() != QNetworkReply::NoError &&
+       networkReply->error() != QNetworkReply::OperationCanceledError)
+    {
+        QString replyData = networkReply->readAll();
+        QVariantMap jsonResult = QtJson::Json::parse(replyData).toMap();
+
+        if(jsonResult.contains("error"))
         {
-            ui->mainPage->layout()->removeItem(toolButtonsLayout);
-            delete toolButtonsLayout;
-        }
-
-        if(resizeEvent->size().height() > resizeEvent->size().width())
-            // if the new screen orientation is a portrait one
-        {
-            toolButtonsLayout = new QHBoxLayout();
-            toolButtonsLayout->addWidget(upToolButton);
-            toolButtonsLayout->addWidget(refreshToolButton);
-            toolButtonsLayout->addWidget(pasteToolButton);
-            toolButtonsLayout->addWidget(createFolderToolButton);
-            toolButtonsLayout->addWidget(uploadToolButton);
-
-            upToolButton->setSizePolicy(
-                QSizePolicy::Expanding,
-                QSizePolicy::Preferred
-                );
-            refreshToolButton->setSizePolicy(
-                QSizePolicy::Expanding,
-                QSizePolicy::Preferred
-                );
-            pasteToolButton->setSizePolicy(
-                QSizePolicy::Expanding,
-                QSizePolicy::Preferred
-                );
-            createFolderToolButton->setSizePolicy(
-                QSizePolicy::Expanding,
-                QSizePolicy::Preferred
-                );
-            uploadToolButton->setSizePolicy(
-                QSizePolicy::Expanding,
-                QSizePolicy::Preferred
-                );
-
-            qobject_cast<QGridLayout *>( ui->mainPage->layout() )->addItem(
-                toolButtonsLayout,
-                1,
-                0
-                );
+            if(jsonResult["error"].type() != QVariant::Map)
+            {
+                QMessageBox::critical(
+                    this,
+                    "Droper",
+                    jsonResult["error"].toString()
+                    );
+                return;
+            }
+            else
+            {
+                QMessageBox::critical(
+                    this,
+                    "Droper",
+                    QString(
+                        jsonResult["error"].toMap().keys().first() +
+                        ": " +
+                        jsonResult["error"].toMap()
+                                .values().first().toString()
+                        )
+                    );
+                return;
+            }
         }
         else
         {
-            toolButtonsLayout = new QVBoxLayout();
-            toolButtonsLayout->addWidget(upToolButton);
-            toolButtonsLayout->addWidget(refreshToolButton);
-            toolButtonsLayout->addWidget(pasteToolButton);
-            toolButtonsLayout->addWidget(createFolderToolButton);
-            toolButtonsLayout->addWidget(uploadToolButton);
-
-            upToolButton->setSizePolicy(
-                QSizePolicy::Preferred,
-                QSizePolicy::Expanding
-                );
-            refreshToolButton->setSizePolicy(
-                QSizePolicy::Preferred,
-                QSizePolicy::Expanding
-                );
-            pasteToolButton->setSizePolicy(
-                QSizePolicy::Preferred,
-                QSizePolicy::Expanding
-                );
-            createFolderToolButton->setSizePolicy(
-                QSizePolicy::Preferred,
-                QSizePolicy::Expanding
-                );
-            uploadToolButton->setSizePolicy(
-                QSizePolicy::Preferred,
-                QSizePolicy::Expanding
-                );
-
-            qobject_cast<QGridLayout *>( ui->mainPage->layout() )->addItem(
-                toolButtonsLayout,
-                0,
-                1
-                );
-        }
-    }
-
-    QWidget::resizeEvent(resizeEvent);
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    if(Util::s60v3())
-    {
-        if(ui->stackedWidget->currentWidget() == ui->mainPage)
-        {
-            switch(event->key())
+            if(!replyData.isEmpty())
             {
-            case Qt::Key_Right:
-                navigateItem(ui->filesAndFoldersListWidget->currentItem());
-                break;
-
-            case Qt::Key_Left:
-                if(upAction->isEnabled())
-                    upAction->trigger();
-                break;
+                QMessageBox::critical(
+                    this,
+                    "Droper",
+                    replyData
+                );
+                return;
+            }
+            else
+            {
+                QMessageBox::critical(
+                    this,
+                    "Droper",
+                    networkReply->errorString()
+                    );
+                return;
             }
         }
     }
-}
 
-void MainWindow::attemptSignIn()
-{
-    QSettings settings;
-    settings.beginGroup("user");
-    if( (settings.childKeys().indexOf("access_token") == -1) ||
-        (settings.childKeys().indexOf("access_token_secret") == -1) ||
-        (settings.childKeys().indexOf("uid") == -1) )
+    switch(api)
     {
-        settings.clear();
-    }
-    else
-    {   // sign in
-        userData.token = settings.value("access_token").toString();
-        userData.secret = settings.value("access_token_secret").toString();
-        userData.uid = settings.value("uid").toString();
+    case Dropbox::OAUTH_REQUESTTOKEN:
+    case Dropbox::OAUTH_ACCESSTOKEN:
+        ui->signInPage->handleNetworkReply(networkReply);
+        break;
 
-        setCurrentPage(ui->mainPage);
-        requestDirectoryListing("/");
+    case Dropbox::METADATA:
+    case Dropbox::FILEOPS_MOVE:
+    case Dropbox::FILEOPS_COPY:
+    case Dropbox::FILEOPS_DELETE:
+    case Dropbox::FILEOPS_CREATEFOLDER:
+    case Dropbox::SHARES:
+        ui->navigationPage->handleNetworkReply(networkReply);
+        break;
+
+    case Dropbox::ACCOUNT_INFO:
+        ui->accountInfoPage->handleNetworkReply(networkReply);
+        break;
+
+    default:
+        break;
     }
 }
 
 void MainWindow::setupActions()
 {
-    if(! Util::s60v3())
-    {
-        // create tool buttons
-        upToolButton = new QToolButton(ui->mainPage);
-        refreshToolButton = new QToolButton(ui->mainPage);
-        pasteToolButton = new QToolButton(ui->mainPage);
-        createFolderToolButton = new QToolButton(ui->mainPage);
-        uploadToolButton = new QToolButton(ui->mainPage);
-    }
-
-    // create actions
-    cutAction = new QAction("Cut", this);
-    copyAction = new QAction("Copy", this);
-    renameAction = new QAction("Rename", this);
-    removeAction = new QAction("Remove", this);
-    publicLinkAction = new QAction("Public Link", this);
-    shareableLinkAction = new QAction("Shareable Link", this);
-    downloadAction = new QAction("Download", this);
-    propertiesAction = new QAction("Properties", this);
-    upAction = new QAction("Up", this);
-    upAction->setIcon(QIcon(":/resources/actions/up.png"));
-    upAction->setEnabled(false);
-    refreshAction = new QAction("Refresh", this);
-    refreshAction->setIcon(QIcon(":/resources/actions/refresh.png"));
-    pasteAction = new QAction("Paste", this);
-    pasteAction->setIcon(QIcon(":/resources/actions/paste.png"));
-    pasteAction->setEnabled(false);
-    createFolderAction = new QAction("Create Folder", this);
-    createFolderAction->setIcon(QIcon(":/resources/actions/create-folder.png"));
-    uploadAction = new QAction("Upload", this);
-    uploadAction->setIcon(QIcon(":/resources/actions/upload.png"));
-    activeDownloadAction = new QAction("Active Download", this);
-    activeUploadAction = new QAction("Active Upload", this);
-    accountInfoAction = new QAction("Account Info", this);
-    signOutAction = new QAction("Sign Out", this);
-    aboutAction = new QAction("About", this);
-    aboutQtAction = new QAction("About Qt", this);
-
-    // connect them with their corresponding slots
-    connect(cutAction, SIGNAL(triggered()), SLOT(cut()));
-    connect(copyAction, SIGNAL(triggered()), SLOT(copy()));
-    connect(renameAction, SIGNAL(triggered()), SLOT(rename()));
-    connect(removeAction, SIGNAL(triggered()), SLOT(remove()));
-    connect(publicLinkAction, SIGNAL(triggered()), SLOT(publicLink()));
-    connect(shareableLinkAction, SIGNAL(triggered()), SLOT(shareableLink()));
-    connect(downloadAction, SIGNAL(triggered()), SLOT(download()));
-    connect(propertiesAction, SIGNAL(triggered()), SLOT(propeties()));
-    connect(upAction, SIGNAL(triggered()), SLOT(up()));
-    connect(refreshAction, SIGNAL(triggered()), SLOT(refresh()));
-    connect(pasteAction, SIGNAL(triggered()), SLOT(paste()));
-    connect(createFolderAction, SIGNAL(triggered()), SLOT(createFolder()));
-    connect(uploadAction, SIGNAL(triggered()), SLOT(upload()));
-    connect(activeDownloadAction, SIGNAL(triggered()), SLOT(activeDownload()));
-    connect(activeUploadAction, SIGNAL(triggered()), SLOT(activeUpload()));
-    connect(
-        accountInfoAction,
-        SIGNAL(triggered()),
-        SLOT(accountInfo())
-        );
-    connect(signOutAction, SIGNAL(triggered()), SLOT(signOut()));
-    connect(aboutAction, SIGNAL(triggered()), SLOT(about()));
-    connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-    if(! Util::s60v3())
-    {
-        // tool buttons initialization
-
-        upToolButton->setDefaultAction(upAction);
-        refreshToolButton->setDefaultAction(refreshAction);
-        pasteToolButton->setDefaultAction(pasteAction);
-        createFolderToolButton->setDefaultAction(createFolderAction);
-        uploadToolButton->setDefaultAction(uploadAction);
-
-        upToolButton->setAutoRaise(true);
-        refreshToolButton->setAutoRaise(true);
-        pasteToolButton->setAutoRaise(true);
-        createFolderToolButton->setAutoRaise(true);
-        uploadToolButton->setAutoRaise(true);
-
-        upToolButton->setIconSize(QSize(32, 32));
-        refreshToolButton->setIconSize(QSize(32, 32));
-        pasteToolButton->setIconSize(QSize(32, 32));
-        createFolderToolButton->setIconSize(QSize(32, 32));
-        uploadToolButton->setIconSize(QSize(32, 32));
-    }
-
-    // softkey menu initialization
-
-    QAction *mainPageOptionsMenuAction = new QAction(
-        style()->standardIcon(QStyle::SP_TitleBarMenuButton),
-        "Options",
-        ui->mainPage
-        );
-    mainPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
-    ui->mainPage->addAction(mainPageOptionsMenuAction);
-    QMenu *mainPageOptionsMenu = new QMenu(ui->mainPage);
-    mainPageOptionsMenuAction->setMenu(mainPageOptionsMenu);
-
-    QAction *signInPageOptionsMenuAction = new QAction(
-        style()->standardIcon(QStyle::SP_TitleBarMenuButton),
-        "Options",
-        ui->signInPage
-        );
-    signInPageOptionsMenuAction->setSoftKeyRole(QAction::PositiveSoftKey);
-    ui->signInPage->addAction(signInPageOptionsMenuAction);
-    QMenu *signInPageOptionsMenu = new QMenu(ui->signInPage);
-    signInPageOptionsMenuAction->setMenu(signInPageOptionsMenu);
-
-    backAction = new QAction("Back", ui->accountInfoPage);
-    backAction->setSoftKeyRole(QAction::NegativeSoftKey);
-    ui->accountInfoPage->addAction(backAction);
-    connect(backAction, SIGNAL(triggered()), SLOT(back()));
-
-    if(Util::s60v3())
-    {
-        QAction *currentFolderMenuAction = new QAction(
-            "Current Folder",
-            ui->mainPage
-            );
-        mainPageOptionsMenu->addAction(currentFolderMenuAction);
-        QMenu *folderMenu = new QMenu(ui->mainPage);
-        currentFolderMenuAction->setMenu(folderMenu);
-        folderMenu->addAction(refreshAction);
-        folderMenu->addAction(pasteAction);
-        folderMenu->addAction(createFolderAction);
-        folderMenu->addAction(uploadAction);
-    }
-
-    QAction *activeTransferMenuAction = new QAction(
-        "Active Transfer",
-        ui->mainPage
-        );
-    mainPageOptionsMenu->addAction(activeTransferMenuAction);
-    QMenu *activeTransferMenu = new QMenu(ui->mainPage);
-    activeTransferMenuAction->setMenu(activeTransferMenu);
-    activeTransferMenu->addAction(activeDownloadAction);
-    activeTransferMenu->addAction(activeUploadAction);
-
-    QAction *accountMenuAction = new QAction(
-        "Account",
-        ui->mainPage
-        );
-    mainPageOptionsMenu->addAction(accountMenuAction);
-    QMenu *accountMenu = new QMenu(ui->mainPage);
-    accountMenuAction->setMenu(accountMenu);
-    accountMenu->addAction(accountInfoAction);
-    accountMenu->addAction(signOutAction);
-
-    QAction *helpMenuAction = new QAction(
-        "Help",
-        this
-        );
-    mainPageOptionsMenu->addAction(helpMenuAction);
-    signInPageOptionsMenu->addAction(helpMenuAction);
     QMenu *helpMenu = new QMenu(this);
+    helpMenu->addAction(ui->aboutAction);
+    helpMenu->addAction(ui->aboutQtAction);
+    QAction *helpMenuAction = new QAction("Help", this);
     helpMenuAction->setMenu(helpMenu);
-    helpMenu->addAction(aboutAction);
-    helpMenu->addAction(aboutQtAction);
+    this->addAction(helpMenuAction);
 }
 
-void MainWindow::setCurrentPage(QWidget *page)
+void MainWindow::attemptSignIn()
 {
-    ui->stackedWidget->setCurrentWidget(page);
-
-    // <I don't know why this is necessary>
-    if(page == ui->mainPage)
+    if( !Common::userData->token.isEmpty() &&
+        !Common::userData->secret.isEmpty() &&
+        !Common::userData->uid.isEmpty() )
     {
-        ui->filesAndFoldersListWidget->setFocus();
-    }
-    // </I don't know why this is necessary>
-}
-
-void MainWindow::showContextMenu(QPoint point)
-{
-    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
-        return;
-
-    QMenu menu(this);
-    menu.addAction(cutAction);
-    menu.addAction(copyAction);
-    menu.addAction(renameAction);
-    menu.addAction(removeAction);
-    menu.addAction(shareableLinkAction);
-
-    QListWidgetItem *item = ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map = item->data(Qt::UserRole).toMap();
-    if(map["is_dir"].toBool() != true)
-        // if the item is not a directory
-    {
-        menu.addAction(publicLinkAction);
-        menu.addAction(downloadAction);
-    }
-
-    menu.addAction(propertiesAction);
-    menu.exec(point);
-}
-
-void MainWindow::handleItemUploadedToDirectory(QString directory)
-{
-    if(directory == currentDirectory)
-        refresh();
-}
-
-void MainWindow::openDropboxInABrowser()
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_AUTHORIZE).toString();
-    url.addQueryItem("oauth_token", requestToken);
-
-    QDesktopServices::openUrl(url);
-}
-
-void MainWindow::navigateItem(QListWidgetItem *item)
-{
-    if(item == 0)
-        return;
-
-    QVariantMap map = item->data(Qt::UserRole).toMap();
-
-    if(map["is_dir"].toBool() == true)
-        // if the item is a directory
-    {
-        // navigate to a sub directory
-        requestDirectoryListing(
-            map["path"].toString()
-        );
+        // sign in
+        setCurrentPage(ui->navigationPage);
+        ui->navigationPage->requestMetadata("/");
     }
 }
 
-void MainWindow::signIn()
+void MainWindow::signOut()
 {
-    requestRequestToken();
+    // remove old user data
+    QSettings settings;
+    settings.remove("user");
+    Common::userData->token.clear();
+    Common::userData->secret.clear();
+
+    // return to the authentication page
+    setCurrentPage(ui->signInPage);
 }
 
-void MainWindow::on_doneSigningInPushButton_clicked()
+void MainWindow::download(QVariantMap fileInfo)
 {
-    if(requestToken.isEmpty() || requestTokenSecret.isEmpty())
+    if(fileInfo["is_dir"].toBool() == true)
     {
         QMessageBox::information(
-                    this,
-                    "Droper",
-                    "You don't seem to have signed it yet. "
-                    "Sign in and try again."
-                    );
-    }
-    else
-    {
-        requestAccessToken();
-    }
-}
-
-void MainWindow::on_copyReferralLinkToClipboardToolButton_clicked()
-{
-    QApplication::clipboard()->setText(
-        ui->referralLinkPlainTextEdit->toPlainText()
-        );
-
-    QMessageBox::information(
-        this,
-        "Droper",
-        "Referral link copied to clipboard."
-        );
-}
-
-void MainWindow::on_filesAndFoldersListWidget_itemActivated(
-    QListWidgetItem *
-    )
-{
-    if(Util::s60v3())
-    {
-        showContextMenu(
-            ui->filesAndFoldersListWidget->geometry().center()
-            );
-    }
-}
-
-void MainWindow::on_filesAndFoldersListWidget_itemDoubleClicked(
-    QListWidgetItem *item
-    )
-{
-    if(! Util::s60v3())
-    {
-        navigateItem(item);
-    }
-}
-
-void MainWindow::on_filesAndFoldersListWidget_customContextMenuRequested(
-    QPoint point
-    )
-{
-    if(! Util::s60v3())
-    {
-        showContextMenu(
-            ui->filesAndFoldersListWidget->viewport()->mapToGlobal(point)
-            );
-    }
-}
-
-void MainWindow::cut()
-{
-    // mark the operation as a cut operation
-    shouldPreserveClipboardContents = false;
-
-    // fill the clipboard
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-    clipboard = map["path"].toString();
-    pasteAction->setEnabled(true);
-}
-
-void MainWindow::copy()
-{
-    // mark the operation as a copy operation
-    shouldPreserveClipboardContents = true;
-
-    // fill the clipboard
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-    clipboard = map["path"].toString();
-    pasteAction->setEnabled(true);
-}
-
-void MainWindow::rename()
-{
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-    QString path = map["path"].toString();
-    QString oldName = path.right(
-        (path.length() - path.lastIndexOf("/")) - 1
-        );
-
-    bool inputOk = false;
-    QString newName = oldName;
-    while(!inputOk)
-    {
-        newName = QInputDialog::getText(
             this,
-            "Rename",
-            "Enter a new name:",
-            QLineEdit::Normal,
-            newName
+            "Droper",
+            "This is a folder and it's currently only possible to "
+            "download files."
             );
 
-        // trim whitespace
-        newName = newName.trimmed();
+        return;
+    }
+
+    if(ui->fileTransfersPage->isDownloading())
+    {
+        QMessageBox::information(
+            this,
+            "Droper",
+            "Another file is being downloaded."
+            );
+
+        return;
+    }
+
+    // initial download path
+    QSettings settings;
+    QString initialPath = settings.value(
+        "config/last_download_path",
+        QDesktopServices::storageLocation(
+            QDesktopServices::DesktopLocation
+            )
+        ).toString();
+
+    // prepare folder
+    QString folderPath;
+    while(true)
+    {
+        folderPath.clear();
+
+        folderPath = QFileDialog::getExistingDirectory(
+            0,
+            "Droper",
+            initialPath
+            );
+
+        // if no directory selected, do nothing
+        if(folderPath.isEmpty())
+        {
+            return;
+        }
+
+        QString filePath = fileInfo["path"].toString();
+        QString fileName = filePath.right(
+            (filePath.length() -
+             filePath.lastIndexOf("/")) - 1
+            );
+        if(QFile(folderPath + "/" + fileName).exists())
+        {
+            QMessageBox::information(
+                this,
+                "Droper",
+                QString(
+                    "This directory already has a file "
+                    "named '%1'. Choose another one."
+                    ).arg(fileName)
+                );
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    settings.setValue("config/last_download_path", folderPath);
+
+    ui->fileTransfersPage->setDownloadFileAndFolderInformation(
+        fileInfo,
+        folderPath
+        );
+
+    // start download
+    ui->fileTransfersPage->setDownloadState(FileTransfersPage::TRANSFERRING);
+
+    switchToFileTransfers();
+}
+
+void MainWindow::upload(QString directory)
+{
+    if(ui->fileTransfersPage->isUploading())
+    {
+        QMessageBox::information(
+            this,
+            "Droper",
+            "Another file is being uploaded."
+            );
+
+        return;
+    }
+
+    // initial upload path
+    QSettings settings;
+    QString initialPath = settings.value(
+        "config/last_upload_path",
+        QDesktopServices::storageLocation(
+            QDesktopServices::DesktopLocation
+            )
+        ).toString();
+
+    // prepare file
+    bool ok = false;
+    QString filePath;
+    while(!ok)
+    {
+        filePath.clear();
+
+        filePath = QFileDialog::getOpenFileName(
+            0,
+            "Droper",
+            initialPath
+            );
+
+        // if no file selected, do nothing
+        if(filePath.isEmpty())
+        {
+            return;
+        }
+
+        QString fileName = filePath.right(
+            (filePath.length() - filePath.lastIndexOf("/")) - 1
+            );
 
         // these symbols aren't allowed by Dropbox
         QRegExp disallowedSymbols("[/:?*<>\"|]");
-        if(newName.contains(disallowedSymbols) || newName.contains("\\") ||
-            newName == "." || newName == ".."
+        if(fileName.contains(disallowedSymbols) ||
+            fileName.contains("\\") || fileName == "." || fileName == ".."
             )
         {
             QMessageBox::information(
@@ -625,593 +488,138 @@ void MainWindow::rename()
         }
         else
         {
-            inputOk = true;
+            ok = true;
         }
     }
 
-    // if no new value was entered, do nothing
-    if(newName.isEmpty())
+    // compute fileSize
+    QFileInfo fileInfo(filePath);
+    int fileBytes = fileInfo.size();
+
+    // make sure the file size is smaller than the upload file limit
+    if(fileBytes > 150000000)
+    {
+        QMessageBox::critical(
+            this,
+            "Droper",
+            "The file size is larger than the limit, upload it using the "
+            " Dropbox desktop client."
+            );
+
         return;
-
-    // perform the rename operation
-    if(currentDirectory == "/")
-    {
-        requestMoving(
-            currentDirectory + oldName,
-            currentDirectory + newName
-            );
-    }
-    else
-    {
-        requestMoving(
-            currentDirectory + "/" + oldName,
-            currentDirectory + "/" + newName
-            );
     }
 
-    // mark the current operation as a rename
-    renameOperationBeingProcessed = true;
-}
-
-void MainWindow::remove()
-{
-    QMessageBox::StandardButton response = QMessageBox::question(
-        this,
-        "Droper",
-        "Are you sure you want to delete the file/folder?",
-        QMessageBox::No|QMessageBox::Yes,
-        QMessageBox::No
-        );
-
-    if(response == QMessageBox::Yes)
+    // make sure the current directory is loaded
+    QVariantMap metadataOfCurrentDirectory =
+        ui->navigationPage->getMetadataOfCurrentDirectory();
+    if(metadataOfCurrentDirectory.isEmpty())
     {
-        QListWidgetItem* currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
-        QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
-        QString path = map["path"].toString();
-
-        requestDeletion(path);
-    }
-}
-
-void MainWindow::publicLink()
-{
-    // get raw info
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-
-    QString path = map["path"].toString();
-
-    if(! path.startsWith("/Public/"))
-    {
-        QMessageBox::information(
+        QMessageBox::critical(
             this,
             "Droper",
-            "Can only get public links to files inside the public folder."
-            );
-    }
-    else
-    {
-        QString pathWithPublicAsRoot = path;
-        pathWithPublicAsRoot.remove(0, 8);
-        QString percentEncodedPathWithPublicAsRoot =
-                pathWithPublicAsRoot.toUtf8().toPercentEncoding("", "~");
-
-        QString publicLink = QString(
-            "http://dl.dropbox.com/u/%1/%2"
-            ).arg(userData.uid).arg(percentEncodedPathWithPublicAsRoot);
-
-        QApplication::clipboard()->setText(publicLink);
-
-        QMessageBox::information(
-            this,
-            "Droper",
-            QString("The public link \"%1\" was copied to the clipboard.")
-                    .arg(publicLink)
-            );
-    }
-}
-
-void MainWindow::shareableLink()
-{
-    // get path
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-    QString path = map["path"].toString();
-
-    requestShareableLink(path);
-}
-
-void MainWindow::download()
-{
-    if(downloadDialog.isDownloading())
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "Another file is being downloaded."
+            "The current directory must be loaded before uploading files. "
+            "Refresh or open another directory and try again."
             );
 
-        downloadDialog.exec();
+        return;
     }
-    else
+
+    // make sure there isn't any folder that has the same name that the
+    // file to be uploaded has and if there was a file with the same name,
+    // tell the user that this upload modifies that file and that the
+    // revision history can be viewed at dropbox.com
+    bool overwrite = true;
+    foreach(const QVariant &itemJson,
+            metadataOfCurrentDirectory["contents"].toList())
     {
-        // get raw info
-        QListWidgetItem *currentItem =
-            ui->filesAndFoldersListWidget->currentItem();
-        QVariantMap map =
-            currentItem->data(Qt::UserRole).toMap();
-
-        // initial download path
-        QSettings settings;
-        QString initialPath = settings.value(
-            "config/last_download_path",
-            QDesktopServices::storageLocation(
-                QDesktopServices::DesktopLocation
-                )
-            ).toString();
-
-        // prepare folder
-        bool ok = false;
-        QString folderPath;
-        while(!ok)
+        QVariantMap itemMap = itemJson.toMap();
+        QString itemPath = itemMap["path"].toString();
+        QString itemName = itemPath.right(
+            (itemPath.length() - itemPath.lastIndexOf("/")) - 1
+            );
+        QString fileName = filePath.right(
+            (filePath.length() - filePath.lastIndexOf("/")) - 1
+            );
+        if(itemName.toLower() == fileName.toLower())
         {
-            folderPath.clear();
-
-            folderPath = QFileDialog::getExistingDirectory(
-                0,
-                "Droper",
-                initialPath
-                );
-
-            // if no directory selected, do nothing
-            if(folderPath.isEmpty())
+            if(itemMap["is_dir"].toBool() == true)
             {
-                return;
-            }
-
-            QString filePath = map["path"].toString();
-            QString fileName = filePath.right(
-                (filePath.length() -
-                 filePath.lastIndexOf("/")) - 1
-                );
-            if(QFile(folderPath + "/" + fileName).exists())
-            {
-                QMessageBox::information(
+                QMessageBox::critical(
                     this,
                     "Droper",
-                    QString(
-                        "This directory already has a file "
-                        "named '%1'. Choose another one."
-                        ).arg(fileName)
+                    "There is a folder with the same name in the current "
+                    "directory."
                     );
+
+                return;
             }
             else
             {
-                ok = true;
-            }
-        }
-
-        settings.setValue("config/last_download_path", folderPath);
-
-        downloadDialog.setFileAndFolderInformation(map, folderPath);
-
-        downloadDialog.exec();
-    }
-}
-
-void MainWindow::propeties()
-{
-    // get raw info
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-
-    // size
-    QString size = map["size"].toString();
-    if(!size.endsWith("bytes"))
-    {
-        QString bytes = map["bytes"].toString();
-        size += QString(" (%1 bytes)").arg(bytes);
-    }
-
-    // path and name
-    QString path = map["path"].toString();
-    QString name = path.right(
-        (path.length() - path.lastIndexOf("/")) - 1
-        );
-
-    // modified date and time
-    QString modifiedString = map["modified"].toString();
-    modifiedString.chop(6);     // chop() removes the time zone
-    QDateTime modifiedTimeDate = QDateTime::fromString(
-        modifiedString,
-        "ddd, dd MMM yyyy HH:mm:ss"
-        );
-    modifiedTimeDate.setTimeSpec(Qt::UTC);
-    QDateTime current = QDateTime::currentDateTime().toUTC();
-    int secs = modifiedTimeDate.secsTo(current);
-    int mins = secs/60.0;
-    int hours = mins/60.0;    // using non-integer division to be able to
-    int days = hours/24.0;    // compile for S60v3 using Qt SDK 1.1.2
-    int months = days/30.0;
-    int years = months/12.0;
-    QString friendlyModifiedString;
-    if(secs < 60)
-    {
-        friendlyModifiedString = QString(
-            "about %1 second(s) ago"
-            ).arg(secs);
-    }
-    else if(mins < 60)
-    {
-        friendlyModifiedString = QString(
-            "about %1 minute(s) ago"
-            ).arg(mins);
-    }
-    else if(hours < 24)
-    {
-        friendlyModifiedString = QString(
-            "about %1 hour(s) ago"
-            ).arg(hours);
-    }
-    else if(days < 30)
-    {
-        friendlyModifiedString = QString(
-            "about %1 day(s) ago"
-            ).arg(days);
-    }
-    else if(months < 12)
-    {
-        friendlyModifiedString = QString(
-            "about %1 month(s) ago"
-            ).arg(months);
-    }
-    else
-    {
-        friendlyModifiedString = QString(
-            "about %1 year(s) ago"
-            ).arg(years);
-    }
-    modifiedString += QString(" (%1)").arg(friendlyModifiedString);
-
-    // show results
-
-    QMessageBox messageBox(this);
-    messageBox.setWindowTitle("Droper");
-
-    if(map["is_dir"].toBool() != true)
-        // if the item is not a directory
-    {
-        messageBox.setText(
-            QString(
-                "Showing details for file: \n"
-                "%1"
-                ).arg(name)
-            );
-    }
-    else
-    {
-        messageBox.setText(
-            QString(
-                "Showing details for folder: \n"
-                "%1"
-                ).arg(name)
-            );
-    }
-
-    QString informativeText;
-
-    if(map["is_dir"].toBool() != true)
-        // if the item is not a directory
-    {
-        informativeText += QString("Size: %1\n\n").arg(size);
-    }
-
-    informativeText += QString(
-        "Path: %2 \n\n"
-        "Modified (in UTC): %3"
-        ).arg(path).arg(modifiedString);
-
-    messageBox.setInformativeText(informativeText);
-
-    messageBox.exec();
-}
-
-void MainWindow::up()
-{
-    // generate new directory
-    QStringList parts = currentDirectory.split("/");
-    parts.removeLast();
-    QString newDirectory = parts.join("/");
-
-    // handle root
-    if(newDirectory.isEmpty())
-        newDirectory = "/";
-
-    requestDirectoryListing(newDirectory);
-}
-
-void MainWindow::refresh()
-{
-    requestDirectoryListing(currentDirectory);
-}
-
-void MainWindow::paste()
-{
-    // get file or folder name
-    QString name = clipboard.right(
-        (clipboard.length() - clipboard.lastIndexOf("/")) - 1
-        );
-
-    if(shouldPreserveClipboardContents)
-        // if this is a copy operation
-    {
-        if(currentDirectory == "/")
-        {
-            requestCopying(clipboard, currentDirectory + name);
-        }
-        else
-        {
-            requestCopying(clipboard, currentDirectory + "/" + name);
-        }
-    }
-    else
-    {
-        if(currentDirectory == "/")
-        {
-            requestMoving(clipboard, currentDirectory + name);
-        }
-        else
-        {
-            requestMoving(clipboard, currentDirectory + "/" + name);
-        }
-    }
-}
-
-void MainWindow::createFolder()
-{
-    bool inputOk = false;
-    QString folderName;
-    while(!inputOk)
-    {
-        folderName = QInputDialog::getText(
-            this,
-            "Droper",
-            "Enter the folder's name:",
-            QLineEdit::Normal,
-            folderName
-            );
-
-        // trim whitespace
-        folderName = folderName.trimmed();
-
-        // these symbols aren't allowed by Dropbox
-        QRegExp disallowedSymbols("[/:?*<>\"|]");
-        if(folderName.contains(disallowedSymbols) ||
-            folderName.contains("\\") || folderName == "." ||
-            folderName == "..")
-        {
-            QMessageBox::information(
-                this,
-                "Droper",
-                "The following characters aren't allowed by Dropbox: \n"
-                "\\ / : ? * < > \" | \n"
-                "And you can't name a file or folder . or .."
-                );
-        }
-        else
-        {
-            inputOk = true;
-        }
-    }
-
-    // if no folderName was entered, do nothing
-    if( folderName.isEmpty() )
-        return;
-
-    if(currentDirectory == "/")
-    {
-        requestFolderCreation(currentDirectory + folderName);
-    }
-    else
-    {
-        requestFolderCreation(currentDirectory + "/" + folderName);
-    }
-}
-
-void MainWindow::upload()
-{
-    if(uploadDialog.isUploading())
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "Another file is being uploaded."
-            );
-
-        uploadDialog.exec();
-    }
-    else
-    {
-        // initial upload path
-        QSettings settings;
-        QString initialPath = settings.value(
-            "config/last_upload_path",
-            QDesktopServices::storageLocation(
-                QDesktopServices::DesktopLocation
-                )
-            ).toString();
-
-        // prepare file
-        bool ok = false;
-        QString filePath;
-        while(!ok)
-        {
-            filePath.clear();
-
-            filePath = QFileDialog::getOpenFileName(
-                0,
-                "Droper",
-                initialPath
-                );
-
-            // if no file selected, do nothing
-            if(filePath.isEmpty())
-            {
-                return;
-            }
-
-            QString fileName = filePath.right(
-                (filePath.length() - filePath.lastIndexOf("/")) - 1
-                );
-
-            // these symbols aren't allowed by Dropbox
-            QRegExp disallowedSymbols("[/:?*<>\"|]");
-            if(fileName.contains(disallowedSymbols) ||
-                fileName.contains("\\") || fileName == "." || fileName == ".."
-                )
-            {
-                QMessageBox::information(
+                QMessageBox::StandardButton result = QMessageBox::question(
                     this,
                     "Droper",
-                    "The following characters aren't allowed by Dropbox: \n"
-                    "\\ / : ? * < > \" | \n"
-                    "And you can't name a file or folder . or .."
+                    "There is a file with the same name in the current "
+                    "directory. Do you want to rename the file you are "
+                    "trying to upload? (Otherwise the remote file will be "
+                    "overwritten, but you can restore it later on "
+                    "dropbox.com)",
+                    QMessageBox::Yes|QMessageBox::No,
+                    QMessageBox::Yes
                     );
-            }
-            else
-            {
-                ok = true;
+                if(result == QMessageBox::Yes)
+                    overwrite = false;
             }
         }
-
-        // compute fileSize
-        QFileInfo fileInfo(filePath);
-        int fileBytes = fileInfo.size();
-
-        // make sure the file size is smaller than the upload file limit
-        if(fileBytes > 150000000)
-        {
-            QMessageBox::critical(
-                this,
-                "Droper",
-                "The file size is larger than the limit, upload it using the "
-                " Dropbox desktop client."
-                );
-
-            return;
-        }
-
-        // make sure there isn't any folder that has the same name that the
-        // file to be uploaded has and if there was a file with the same name,
-        // tell the user that this upload modifies that file and that the
-        // revision history can be viewed at dropbox.com
-        bool overwrite = true;
-        for(int row = 0; row < ui->filesAndFoldersListWidget->count(); ++row)
-        {
-            QListWidgetItem *item = ui->filesAndFoldersListWidget->item(row);
-
-            QVariantMap map = item->data(Qt::UserRole).toMap();
-            QString path = map["path"].toString();
-            QString name = path.right(
-                (path.length() - path.lastIndexOf("/")) - 1
-                );
-            QString fileName = filePath.right(
-                (filePath.length() - filePath.lastIndexOf("/")) - 1
-                );
-            if(name.toLower() == fileName.toLower())
-            {
-                if(map["is_dir"].toBool() == true)
-                {
-                    QMessageBox::critical(
-                        this,
-                        "Droper",
-                        "There is a folder with the same name in the current "
-                        "directory."
-                        );
-
-                    return;
-                }
-                else
-                {
-                    QMessageBox::StandardButton result = QMessageBox::question(
-                        this,
-                        "Droper",
-                        "There is a file with the same name in the current "
-                        "directory. Do you want to rename the file you are "
-                        "trying to upload? (Otherwise the remote file will be "
-                        "overwritten, but you can restore it later on "
-                        "dropbox.com)",
-                        QMessageBox::Yes|QMessageBox::No,
-                        QMessageBox::Yes
-                        );
-                    if(result == QMessageBox::Yes)
-                        overwrite = false;
-                }
-            }
-        }
-
-        settings.setValue("config/last_upload_path", filePath);
-
-        uploadDialog.setFileAndFolderInformation(
-            filePath,
-            Util::bytesToString(fileBytes),
-            fileBytes,
-            currentDirectory,
-            overwrite
-            );
-
-        uploadDialog.exec();
     }
-}
 
-void MainWindow::activeDownload()
-{
-    downloadDialog.exec();
-}
+    settings.setValue("config/last_upload_path", filePath);
 
-void MainWindow::activeUpload()
-{
-    uploadDialog.exec();
-}
-
-void MainWindow::accountInfo()
-{
-    requestAccountInfo();
-}
-
-void MainWindow::signOut()
-{
-    QMessageBox::StandardButton result = QMessageBox::question(
-        this,
-        "Droper",
-        "Are you sure you want to sign out?",
-        QMessageBox::Yes|QMessageBox::No,
-        QMessageBox::No
+    ui->fileTransfersPage->setUploadFileAndFolderInformation(
+        filePath,
+        Util::bytesToString(fileBytes),
+        fileBytes,
+        directory,
+        overwrite
         );
-    if(result != QMessageBox::Yes)
-    {
-        return;
-    }
 
-    // remove old user data
-    QSettings settings;
-    settings.remove("user");
-    userData.token.clear();
-    userData.secret.clear();
+    ui->fileTransfersPage->setUploadState(FileTransfersPage::TRANSFERRING);
 
-    // return to the authentication page
-    setCurrentPage(ui->signInPage);
+    switchToFileTransfers();
 }
 
-void MainWindow::about()
+void MainWindow::switchToNavigation()
+{
+    setCurrentPage(ui->navigationPage);
+}
+
+void MainWindow::switchToAccountInfo()
+{
+    setCurrentPage(ui->accountInfoPage);
+    ui->accountInfoPage->requestAccountInfo();
+}
+
+void MainWindow::switchToFileTransfers()
+{
+    setCurrentPage(ui->fileTransfersPage);
+}
+
+void MainWindow::setCurrentPage(QWidget *page)
+{
+    ui->menubar->clear();
+    ui->menubar->addActions(page->actions());
+    ui->menubar->addActions(this->actions());
+
+    ui->stackedWidget->setCurrentWidget(page);
+
+    // I don't know why this is necessary for softkey actions
+    if(Util::s60v3())
+    {
+        if(page == ui->navigationPage)
+            ui->navigationPage->focusFilesAndFoldersListWidget();
+    }
+}
+
+void MainWindow::on_aboutAction_triggered()
 {
     QMessageBox messageBox(this);
 
@@ -1238,544 +646,7 @@ void MainWindow::about()
     messageBox.exec();
 }
 
-void MainWindow::back()
+void MainWindow::on_aboutQtAction_triggered()
 {
-    setCurrentPage(ui->mainPage);
-}
-
-void MainWindow::requestRequestToken()
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_REQUESTTOKEN);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest);
-
-    requestNetworkRequest( &networkRequest );
-}
-
-void MainWindow::requestAccessToken()
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::OAUTH_ACCESSTOKEN);
-
-    QNetworkRequest networkRequest(url);
-
-    UserData userData;
-    userData.token = requestToken;
-    userData.secret = requestTokenSecret;
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest( &networkRequest );
-}
-
-void MainWindow::requestDirectoryListing(QString path)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::METADATA).toString() + path;
-    url.addQueryItem("list", "true");
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestAccountInfo()
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::ACCOUNT_INFO);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestShareableLink(QString path)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::SHARES).toString() + path;
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestFolderCreation(QString path)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_CREATEFOLDER);
-    url.addQueryItem("root", "dropbox");
-    url.addQueryItem("path", path);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestCopying(QString source, QString destination)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_COPY);
-    url.addQueryItem("root", "dropbox");
-    url.addQueryItem("from_path", source);
-    url.addQueryItem("to_path", destination);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestMoving(QString source, QString destination)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_MOVE);
-    url.addQueryItem("root", "dropbox");
-    url.addQueryItem("from_path", source);
-    url.addQueryItem("to_path", destination);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestDeletion(QString path)
-{
-    QUrl url = dropbox->apiToUrl(Dropbox::FILEOPS_DELETE);
-    url.addQueryItem("root", "dropbox");
-    url.addQueryItem("path", path);
-
-    QNetworkRequest networkRequest(url);
-
-    oAuth->signRequestHeader("GET", &networkRequest, &userData);
-
-    requestNetworkRequest(&networkRequest);
-}
-
-void MainWindow::requestNetworkRequest(QNetworkRequest *networkRequest)
-{
-    networkAccessManager->get(*networkRequest);
-
-    // show the loading animation
-    if(ui->stackedWidget->currentWidget() != ui->loadingPage)
-    {
-        tempPage = ui->stackedWidget->currentWidget();
-        setCurrentPage(ui->loadingPage);
-    }
-}
-
-void MainWindow::globalHandleNetworkReply(QNetworkReply *networkReply)
-{
-    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
-
-    if(networkReply->error() != QNetworkReply::NoError &&
-       networkReply->error() != QNetworkReply::OperationCanceledError)
-    {
-        QString replyData = networkReply->readAll();
-        QVariantMap jsonResult = QtJson::Json::parse(replyData).toMap();
-
-        if(jsonResult.contains("error"))
-        {
-            if(jsonResult["error"].type() != QVariant::Map)
-            {
-                if(jsonResult["error"].toString().contains("Invalid signature"))
-                {
-                    QMessageBox::critical(
-                        this,
-                        "Droper",
-                        "Droper currently has problems dealing with these five "
-                        "symbols ; + ~ # %"
-                        );
-                }
-                else
-                {
-                    QMessageBox::critical(
-                        this,
-                        "Droper",
-                        jsonResult["error"].toString()
-                        );
-                }
-            }
-            else
-            {
-                QMessageBox::critical(
-                    this,
-                    "Droper",
-                    QString(
-                        jsonResult["error"].toMap().keys().first() +
-                        ": " +
-                        jsonResult["error"].toMap()
-                                .values().first().toString()
-                        )
-                    );
-            }
-        }
-        else
-        {
-            if(!replyData.isEmpty())
-            {
-                QMessageBox::critical(
-                    this,
-                    "Droper",
-                    replyData
-                );
-            }
-            else
-            {
-                QMessageBox::critical(
-                    this,
-                    "Droper",
-                    networkReply->errorString()
-                    );
-            }
-        }
-    }
-
-    switch(api)
-    {
-    case Dropbox::FILES:
-        downloadDialog.handleNetworkReply(networkReply);
-        uploadDialog.handleNetworkReply(networkReply);
-        break;
-
-    case Dropbox::FILESPUT:
-        uploadDialog.handleNetworkReply(networkReply);
-
-    default:
-        this->handleNetworkReply(networkReply);
-        break;
-    }
-
-    networkReply->deleteLater();
-}
-
-void MainWindow::handleNetworkReply(QNetworkReply *networkReply)
-{
-    // stop the loading animation
-    setCurrentPage(tempPage);
-
-    if(networkReply->error() != QNetworkReply::NoError)
-        return;
-
-    Dropbox::Api api = dropbox->urlToApi(networkReply->url());
-    switch(api)
-    {
-    case Dropbox::OAUTH_REQUESTTOKEN:
-        handleRequestToken(networkReply);
-        break;
-
-    case Dropbox::OAUTH_ACCESSTOKEN:
-        handleAccessToken(networkReply);
-        break;
-
-    case Dropbox::METADATA:
-        handleDirectoryListing(networkReply);
-        break;
-
-    case Dropbox::ACCOUNT_INFO:
-        handleAccountInfo(networkReply);
-        break;
-
-    case Dropbox::SHARES:
-        handleShareableLink(networkReply);
-        break;
-
-    case Dropbox::FILEOPS_CREATEFOLDER:
-        handleFolderCreation(networkReply);
-        break;
-
-    case Dropbox::FILEOPS_COPY:
-        handleCopying(networkReply);
-        break;
-
-    case Dropbox::FILEOPS_MOVE:
-        handleMoving(networkReply);
-        break;
-
-    case Dropbox::FILEOPS_DELETE:
-        handleDeletion(networkReply);
-        break;
-
-    default:
-        break;
-    }
-}
-
-void MainWindow::handleRequestToken(QNetworkReply *networkReply)
-{
-    QString reply = networkReply->readAll();
-
-    requestToken = reply.split("&").at(1).split("=").at(1);
-    requestTokenSecret = reply.split("&").at(0).split("=").at(1);
-
-    openDropboxInABrowser();
-}
-
-void MainWindow::handleAccessToken(QNetworkReply *networkReply)
-{
-    QString reply = networkReply->readAll();
-
-    QString accessToken = reply.split("&").at(1).split("=").at(1);
-    QString accessTokenSecret = reply.split("&").at(0).split("=").at(1);
-    QString uid = reply.split("&").at(2).split("=").at(1);
-
-    QSettings settings;
-    settings.beginGroup("user");
-    settings.setValue("access_token", accessToken);
-    settings.setValue("access_token_secret", accessTokenSecret);
-    settings.setValue("uid", uid);
-
-    attemptSignIn();
-}
-
-void MainWindow::handleDirectoryListing(QNetworkReply *networkReply)
-{
-    QString dirJson = networkReply->readAll();
-
-    bool ok;
-    QVariantMap jsonResult = QtJson::Json::parse(dirJson, ok).toMap();
-    if(!ok)
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "JSON parsing failed."
-            );
-
-        return;
-    }
-
-    // prepare to change current directory
-    ui->filesAndFoldersListWidget->clear();
-    ui->filesAndFoldersListWidget->scrollToTop();
-
-    // set current directory's icon
-    if(jsonResult["path"] == "/")
-    {
-        ui->currentFolderIconLabel->setPixmap(
-            QIcon(":/resources/icons/dropbox.png").pixmap(16, 16)
-            );
-    }
-    else
-    {
-        QResource iconResource(
-            QString(":/resources/icons/%1")
-            .arg(jsonResult["icon"].toString())
-            + ".png"
-            );
-        if(iconResource.isValid())
-            ui->currentFolderIconLabel->setPixmap(
-                QIcon(iconResource.fileName()).pixmap(16, 16)
-                );
-        else
-            ui->currentFolderIconLabel->setPixmap(
-                QIcon(":/resources/icons/folder.png").pixmap(16, 16)
-                );
-    }
-
-    // update currentDirectory and ui->currentFolderLabel
-    currentDirectory = dropbox->metaDataPathFromUrl(networkReply->url());
-    QString currentFolder = currentDirectory.right(
-        (currentDirectory.length() - currentDirectory.lastIndexOf("/")) - 1
-        );
-    if(!currentFolder.isEmpty())
-        ui->currentFolderLabel->setText(currentFolder);
-    else
-        ui->currentFolderLabel->setText("Dropbox");
-
-    // disable the up action if we are at root, enable it otherwise
-    if(currentDirectory == "/")
-        upAction->setEnabled(false);
-    else
-        upAction->setEnabled(true);
-
-    // add folders
-    foreach(const QVariant &itemJson, jsonResult["contents"].toList())
-    {
-        QVariantMap itemMap = itemJson.toMap();
-
-        if(itemMap["is_dir"].toBool() == true)
-        {
-            QListWidgetItem *item = new QListWidgetItem(
-                ui->filesAndFoldersListWidget
-                );
-
-            QString itemPath = itemMap["path"].toString();
-            QString itemName = itemPath.right(
-                (itemPath.length() - itemPath.lastIndexOf("/")) - 1
-                );
-
-            item->setText(itemName);
-
-            QResource iconResource(
-                QString(":/resources/icons/%1")
-                .arg(itemMap["icon"].toString())
-                + ".png"
-                );
-
-            if(iconResource.isValid())
-                item->setIcon(QIcon(iconResource.fileName()));
-            else
-                item->setIcon(QIcon(":/resources/icons/folder.png"));
-
-            item->setData(Qt::UserRole, itemMap);
-        }
-    }
-
-    // add files
-    foreach(const QVariant &itemJson, jsonResult["contents"].toList())
-    {
-        QVariantMap itemMap = itemJson.toMap();
-
-        if(itemMap["is_dir"].toBool() == false)
-        {
-            QListWidgetItem *item = new QListWidgetItem(
-                ui->filesAndFoldersListWidget
-                );
-
-            QString itemPath = itemMap["path"].toString();
-            QString itemName = itemPath.right(
-                (itemPath.length() - itemPath.lastIndexOf("/")) - 1
-                );
-
-            QString size =  itemMap["size"].toString();
-
-            item->setText(itemName + " " + "(" + size + ")");
-
-            QResource iconResource(
-                QString(":/resources/icons/%1")
-                .arg(itemMap["icon"].toString())
-                + ".png"
-                );
-
-            if(iconResource.isValid())
-                item->setIcon(QIcon(iconResource.fileName()));
-            else
-                item->setIcon(QIcon(":/resources/icons/page_white.png"));
-
-            item->setData(Qt::UserRole, itemMap);
-        }
-    }
-
-    if(Util::s60v3())
-    {
-        if(ui->filesAndFoldersListWidget->count() != 0)
-            ui->filesAndFoldersListWidget->setCurrentRow(0);
-    }
-}
-
-void MainWindow::handleAccountInfo(QNetworkReply *networkReply)
-{
-    QString jsonData = networkReply->readAll();
-
-    bool ok;
-    QVariantMap jsonResult = QtJson::Json::parse(jsonData, ok).toMap();
-    if(!ok)
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "JSON parsing failed."
-            );
-
-        return;
-    }
-
-    QVariantMap quotaInfo = jsonResult["quota_info"].toMap();
-    qreal normalFiles = quotaInfo["normal"].toReal();
-    qreal sharedFiles = quotaInfo["shared"].toReal();
-    qreal used = quotaInfo["normal"].toReal() + quotaInfo["shared"].toReal();
-    qreal quota = quotaInfo["quota"].toReal();
-
-    ui->emailLabel->setText(jsonResult["email"].toString());
-
-    ui->spaceProgressBar->setValue(
-        (quotaInfo["normal"].toReal()+quotaInfo["shared"].toReal())
-        *
-        100
-        /
-        quotaInfo["quota"].toReal()
-        );
-
-    QString space = QString("%1 out of %2")
-        .arg(Util::bytesToString(used))
-        .arg(Util::bytesToString(quota));
-    ui->spaceProgressBar->setFormat(space);
-
-    QString spaceDetails = QString(
-        "Normal Files: %1 / Shared Files: %2"
-        )
-            .arg(Util::bytesToString(normalFiles))
-            .arg(Util::bytesToString(sharedFiles));
-    ui->spaceDetailsLabel->setText(spaceDetails);
-
-    ui->referralLinkPlainTextEdit->setPlainText(
-        jsonResult["referral_link"].toString()
-        );
-
-    setCurrentPage(ui->accountInfoPage);
-}
-
-void MainWindow::handleShareableLink(QNetworkReply *networkReply)
-{
-    QString json = networkReply->readAll();
-
-    bool ok;
-    QVariantMap jsonResult = QtJson::Json::parse(json, ok).toMap();
-    if(!ok)
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "JSON parsing failed."
-            );
-
-        return;
-    }
-
-    QApplication::clipboard()->setText(jsonResult["url"].toString());
-
-    QMessageBox::information(
-        this,
-        "Droper",
-        QString("The shareable link \"%1\" was copied to the clipboard. Note "
-                "that this link expires after a month, more specifically on: "
-                "%2")
-                .arg(jsonResult["url"].toString())
-                .arg(jsonResult["expires"].toString())
-        );
-}
-
-void MainWindow::handleFolderCreation(QNetworkReply*)
-{
-    refresh();
-}
-
-void MainWindow::handleCopying(QNetworkReply*)
-{
-    refresh();
-}
-
-void MainWindow::handleMoving(QNetworkReply*)
-{
-    refresh();
-
-    if(!renameOperationBeingProcessed)
-    {
-        clipboard.clear();
-        pasteAction->setEnabled(false);
-    }
-    else
-    {
-        renameOperationBeingProcessed = false;
-    }
-}
-
-void MainWindow::handleDeletion(QNetworkReply*)
-{
-    refresh();
+    qApp->aboutQt();
 }

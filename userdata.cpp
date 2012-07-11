@@ -25,10 +25,6 @@
 // corresponding headers
 #include "userdata.h"
 
-UserData::UserData(
-    ) :
-    token(""),
-    secret(""),
-    uid("")
+UserData::UserData()
 {
 }
