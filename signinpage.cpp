@@ -44,6 +44,9 @@ SignInPage::SignInPage(QWidget *parent) :
 {
     // private data members initialization
     ui->setupUi(this);
+
+    // actions setup
+    setupActions();
 }
 
 SignInPage::~SignInPage()
@@ -51,26 +54,17 @@ SignInPage::~SignInPage()
     delete ui;
 }
 
-void SignInPage::on_signInPushButton_clicked()
+void SignInPage::openDropboxInABrowser()
 {
-    requestOauthRequesttoken();
+    QUrl url = Common::dropbox->apiToUrl(Dropbox::OAUTH_AUTHORIZE).toString();
+    url.addQueryItem("oauth_token", requestUserData.token);
+
+    QDesktopServices::openUrl(url);
 }
 
-void SignInPage::on_doneSigningInPushButton_clicked()
+void SignInPage::setupActions()
 {
-    if(requestUserData.token.isEmpty() || requestUserData.secret.isEmpty())
-    {
-        QMessageBox::information(
-                    this,
-                    "Droper",
-                    "You don't seem to have signed it yet. "
-                    "Sign in and try again."
-                    );
-    }
-    else
-    {
-        requestOauthAccesstoken();
-    }
+    this->addAction(ui->doneAction);
 }
 
 void SignInPage::requestOauthRequesttoken()
@@ -132,10 +126,24 @@ void SignInPage::handleOauthAccesstoken(QNetworkReply *networkReply)
     emit oauthAccesstokenHandled();
 }
 
-void SignInPage::openDropboxInABrowser()
+void SignInPage::on_signInPushButton_clicked()
 {
-    QUrl url = Common::dropbox->apiToUrl(Dropbox::OAUTH_AUTHORIZE).toString();
-    url.addQueryItem("oauth_token", requestUserData.token);
+    requestOauthRequesttoken();
+}
 
-    QDesktopServices::openUrl(url);
+void SignInPage::on_doneAction_triggered()
+{
+    if(requestUserData.token.isEmpty() || requestUserData.secret.isEmpty())
+    {
+        QMessageBox::information(
+                    this,
+                    "Droper",
+                    "You don't seem to have signed it yet. "
+                    "Sign in and try again."
+                    );
+    }
+    else
+    {
+        requestOauthAccesstoken();
+    }
 }

@@ -47,14 +47,14 @@ class SignInPage : public QWidget
 public:
     explicit SignInPage(QWidget *parent = 0);
     ~SignInPage();    
+private slots:
+    // misc
+    void openDropboxInABrowser();
+    void setupActions();
 signals:
     // signals
     void networkRequestGetNeeded(QNetworkRequest *request);
     void oauthAccesstokenHandled();
-private slots:
-    // ui slots
-    void on_signInPushButton_clicked();
-    void on_doneSigningInPushButton_clicked();
 public slots:
     // network slots
     void requestOauthRequesttoken();
@@ -63,8 +63,10 @@ public slots:
     void handleOauthRequesttoken(QNetworkReply *networkReply);
     void handleOauthAccesstoken(QNetworkReply *networkReply);
 private slots:
-    // misc
-    void openDropboxInABrowser();
+    // ui slots
+    void on_signInPushButton_clicked();
+    // action slots
+    void on_doneAction_triggered();
 
 // private data members
 private:
