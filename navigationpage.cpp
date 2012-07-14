@@ -317,6 +317,9 @@ void NavigationPage::handleMetadata(QNetworkReply *networkReply)
     // set metadata of current directory
     metadataOfCurrentDirectory = jsonResult;
 
+    // reset scroll bar
+    ui->filesAndFoldersListWidget->setCurrentRow(0);
+
     // prepare to change current directory
     ui->filesAndFoldersListWidget->clear();
 
