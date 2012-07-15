@@ -87,6 +87,44 @@ The current version isn't optimized for minimal network traffic. The use of
 WLAN networks when using Droper is recommended to avoid data transfer costs.
 
 
+Keyboard Shortcuts
+------------------
+
+Keyboard shortcuts for actions are presented in the following. Note that they
+are similar to those used in the X-Plore mobile application to make Droper
+easier to use for those who use X-Plore.
+
+For smart phones with a touch screen (S60v5 and newer) and desktop platforms:
+
+Delete          - Backspace
+Copy            - Ctrl+C
+Cut             - Ctrl+X
+Paste           - Ctrl+V
+Download        - Ctrl+D
+Properties      - Ctrl+E
+Rename          - Ctrl+R
+Upload          - Ctrl+U
+Create Folder   - Ctrl+F
+Refresh         - Ctrl+Space
+Public Link     - Ctrl+P
+Shareable Link  - Ctrl+S
+
+For smart phones without a touch screen (S60v3):
+
+Delete          - Backspace
+Copy            - 1
+Cut             - 2
+Paste           - 3
+Download        - 4
+Properties      - 5
+Rename          - 7
+Upload          - 8
+Create Folder   - 9
+Refresh         - 0
+Public Link     - *
+Shareable Link  - #
+
+
 General Notes for Developers
 ----------------------------
 
