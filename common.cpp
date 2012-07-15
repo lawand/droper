@@ -35,6 +35,6 @@
 // static shared data members
 QNetworkAccessManager *Common::networkAccessManager = new QNetworkAccessManager;
 ConsumerData *Common::consumerData = new ConsumerData;
-Dropbox *Common::dropbox = new Dropbox(1);
+Dropbox *Common::dropbox = new Dropbox(1);  // 1 is the API version
 OAuth *Common::oAuth = new OAuth;
 UserData *Common::userData = new UserData;
