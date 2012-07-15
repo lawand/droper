@@ -25,7 +25,7 @@
 #ifndef FILETRANSFERSPAGE_H
 #define FILETRANSFERSPAGE_H
 
-// base class
+// base class(es)
 #include <QWidget>
 
 // data members

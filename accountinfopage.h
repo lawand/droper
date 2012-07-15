@@ -25,7 +25,7 @@
 #ifndef ACCOUNTINFOPAGE_H
 #define ACCOUNTINFOPAGE_H
 
-// base class
+// base class(es)
 #include <QWidget>
 
 // member functions

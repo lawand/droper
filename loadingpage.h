@@ -25,7 +25,7 @@
 #ifndef LOADINGPAGE_H
 #define LOADINGPAGE_H
 
-// base class
+// base class(es)
 #include <QWidget>
 
 namespace Ui {

@@ -25,7 +25,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-// base class
+// base class(es)
 #include <QMainWindow>
 
 // member functions
