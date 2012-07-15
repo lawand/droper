@@ -2,7 +2,8 @@ Droper 0.4.5
 ------------
 
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
-modify their synced files and folders.
+modify their synced files and folders. It can also be used as a light-weight
+Dropbox client for desktop platforms like Windows and Linux.
 
 Copyright 2011, 2012 Omar Lawand Dalatieh <lawand87@gmail.com>.
 
