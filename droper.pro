@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     common.cpp \
     navigationpage.cpp \
     accountinfopage.cpp \
-    filetransferspage.cpp
+    filetransferspage.cpp \
+    customwidgets.cpp
 
 HEADERS += mainwindow.h \
     dropbox.h \
@@ -33,7 +34,8 @@ HEADERS += mainwindow.h \
     common.h \
     navigationpage.h \
     accountinfopage.h \
-    filetransferspage.h
+    filetransferspage.h \
+    customwidgets.h
 
 FORMS += mainwindow.ui \
     signinpage.ui \

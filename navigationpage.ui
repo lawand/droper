@@ -74,7 +74,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="filesAndFoldersListWidget">
+    <widget class="CustomListWidget" name="filesAndFoldersListWidget">
      <property name="contextMenuPolicy">
       <enum>Qt::ActionsContextMenu</enum>
      </property>
@@ -197,6 +197,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomListWidget</class>
+   <extends>QListWidget</extends>
+   <header>customwidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="main.qrc"/>
  </resources>

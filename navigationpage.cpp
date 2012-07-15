@@ -183,11 +183,138 @@ void NavigationPage::setupActions()
 
     this->addAction(ui->accountInfoAction);
     this->addAction(ui->fileTransfersAction);
+
+    // rename actions to include keyboard shortcut
+    if(!Util::s60v3())
+    {
+        ui->deleteAction->setText(ui->deleteAction->text() + " [Backspace]");
+        ui->copyAction->setText(ui->copyAction->text() + " [Ctrl+C]");
+        ui->cutAction->setText(ui->cutAction->text() + " [Ctrl+X]");
+        ui->pasteAction->setText(ui->pasteAction->text() + " [Ctrl+V]");
+        ui->downloadAction->setText(ui->downloadAction->text() + " [Ctrl+D]");
+        ui->propertiesAction->setText(
+            ui->propertiesAction->text() + " [Ctrl+E]"
+            );
+        ui->renameAction->setText(ui->renameAction->text() + " [Ctrl+R]");
+        ui->uploadAction->setText(ui->uploadAction->text() + " [Ctrl+U]");
+        ui->createFolderAction->setText(
+            ui->createFolderAction->text() + " [Ctrl+F]"
+            );
+        ui->refreshAction->setText(ui->refreshAction->text() + " [Ctrl+Space]");
+        ui->publicLinkAction->setText(
+            ui->publicLinkAction->text() + " [Ctrl+P]"
+            );
+        ui->shareableLinkAction->setText(
+            ui->shareableLinkAction->text() + " [Ctrl+S]"
+            );
+    }
+    else
+    {
+        ui->deleteAction->setText(ui->deleteAction->text() + " [Backspace]");
+        ui->copyAction->setText(ui->copyAction->text() + " [1]");
+        ui->cutAction->setText(ui->cutAction->text() + " [2]");
+        ui->pasteAction->setText(ui->pasteAction->text() + " [3]");
+        ui->downloadAction->setText(ui->downloadAction->text() + " [4]");
+        ui->propertiesAction->setText(
+            ui->propertiesAction->text() + " [5]"
+            );
+        ui->renameAction->setText(ui->renameAction->text() + " [7]");
+        ui->uploadAction->setText(ui->uploadAction->text() + " [8]");
+        ui->createFolderAction->setText(
+            ui->createFolderAction->text() + " [9]"
+            );
+        ui->refreshAction->setText(ui->refreshAction->text() + " [0]");
+        ui->publicLinkAction->setText(
+            ui->publicLinkAction->text() + " [*]"
+            );
+        ui->shareableLinkAction->setText(
+            ui->shareableLinkAction->text() + " [#]"
+            );
+    }
 }
 
 void NavigationPage::keyPressEvent(QKeyEvent *event)
 {
-    if(Util::s60v3())
+    if(! Util::s60v3())
+    {
+        switch(event->modifiers())
+        {
+        case Qt::ControlModifier:
+            switch(event->key())
+            {
+            case Qt::Key_C:
+                ui->copyAction->trigger();
+                break;
+
+            case Qt::Key_X:
+                ui->cutAction->trigger();
+                break;
+
+            case Qt::Key_V:
+                ui->pasteAction->trigger();
+                break;
+
+            case Qt::Key_D:
+                ui->downloadAction->trigger();
+                break;
+
+            case Qt::Key_E:
+                ui->propertiesAction->trigger();
+                break;
+
+            case Qt::Key_R:
+                ui->renameAction->trigger();
+                break;
+
+            case Qt::Key_U:
+                ui->uploadAction->trigger();
+                break;
+
+            case Qt::Key_F:
+                ui->createFolderAction->trigger();
+                break;
+
+            case Qt::Key_Space:
+                ui->refreshAction->trigger();
+                break;
+
+            case Qt::Key_P:
+                ui->publicLinkAction->trigger();
+                break;
+
+            case Qt::Key_S:
+                ui->shareableLinkAction->trigger();
+                break;
+
+            default:
+                QWidget::keyPressEvent(event);
+                break;
+            }
+            break;
+
+        default:
+            switch(event->key())
+            {
+            case Qt::Key_Right:
+                ui->navigateAction->trigger();
+                break;
+
+            case Qt::Key_Left:
+                ui->upAction->trigger();
+                break;
+
+            case Qt::Key_Backspace:
+                ui->deleteAction->trigger();
+                break;
+
+            default:
+                QWidget::keyPressEvent(event);
+                break;
+            }
+            break;
+        }
+    }
+    else
     {
         switch(event->key())
         {
@@ -197,6 +324,54 @@ void NavigationPage::keyPressEvent(QKeyEvent *event)
 
         case Qt::Key_Left:
             ui->upAction->trigger();
+            break;
+
+        case Qt::Key_Backspace:
+            ui->deleteAction->trigger();
+            break;
+
+        case Qt::Key_1:
+            ui->copyAction->trigger();
+            break;
+
+        case Qt::Key_2:
+            ui->cutAction->trigger();
+            break;
+
+        case Qt::Key_3:
+            ui->pasteAction->trigger();
+            break;
+
+        case Qt::Key_4:
+            ui->downloadAction->trigger();
+            break;
+
+        case Qt::Key_5:
+            ui->propertiesAction->trigger();
+            break;
+
+        case Qt::Key_7:
+            ui->renameAction->trigger();
+            break;
+
+        case Qt::Key_8:
+            ui->uploadAction->trigger();
+            break;
+
+        case Qt::Key_9:
+            ui->createFolderAction->trigger();
+            break;
+
+        case Qt::Key_0:
+            ui->refreshAction->trigger();
+            break;
+
+        case Qt::Key_Asterisk:
+            ui->publicLinkAction->trigger();
+            break;
+
+        case Qt::Key_NumberSign:
+            ui->shareableLinkAction->trigger();
             break;
 
         default:
