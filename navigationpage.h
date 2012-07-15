@@ -25,7 +25,7 @@
 #ifndef NAVIGATIONPAGE_H
 #define NAVIGATIONPAGE_H
 
-// base class
+// base class(es)
 #include <QWidget>
 
 // member functions

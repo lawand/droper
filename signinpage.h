@@ -25,7 +25,7 @@
 #ifndef SIGNINPAGE_H
 #define SIGNINPAGE_H
 
-// base class
+// base class(es)
 #include <QWidget>
 
 // member functions

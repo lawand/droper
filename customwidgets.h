@@ -25,7 +25,7 @@
 #ifndef CUSTOMWIDGETS_H
 #define CUSTOMWIDGETS_H
 
-// base class
+// base class(es)
 #include <QListWidget>
 
 class CustomListWidget : public QListWidget
