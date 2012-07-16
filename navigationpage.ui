@@ -112,6 +112,12 @@
         <iconset resource="main.qrc">
          <normaloff>:/resources/actions/up.png</normaloff>:/resources/actions/up.png</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
@@ -128,6 +134,12 @@
        <property name="icon">
         <iconset resource="main.qrc">
          <normaloff>:/resources/actions/refresh.png</normaloff>:/resources/actions/refresh.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -146,6 +158,12 @@
         <iconset resource="main.qrc">
          <normaloff>:/resources/actions/paste.png</normaloff>:/resources/actions/paste.png</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
@@ -163,6 +181,12 @@
         <iconset resource="main.qrc">
          <normaloff>:/resources/actions/create-folder.png</normaloff>:/resources/actions/create-folder.png</iconset>
        </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
       </widget>
      </item>
      <item>
@@ -179,6 +203,12 @@
        <property name="icon">
         <iconset resource="main.qrc">
          <normaloff>:/resources/actions/upload.png</normaloff>:/resources/actions/upload.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
        </property>
       </widget>
      </item>

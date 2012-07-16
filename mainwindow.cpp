@@ -133,6 +133,14 @@ MainWindow::MainWindow(QWidget *parent) :
     // actions setup
     setupActions();
     ui->menubar->addActions(this->actions());
+
+#ifdef Q_OS_SYMBIAN
+    // optimize layout for mobile phones
+    if(!Util::s60v3())
+    {
+        ui->centralwidget->layout()->setMargin(0);
+    }
+#endif
 }
 
 MainWindow::~MainWindow()

@@ -69,6 +69,19 @@ NavigationPage::NavigationPage(QWidget *parent) :
 
     // actions setup
     setupActions();
+
+#ifdef Q_OS_SYMBIAN
+    // optimize layout for mobile phones
+    if(!Util::s60v3())
+    {
+        layout()->setMargin(0);
+        ui->upToolButton->setIconSize(QSize(30, 30));
+        ui->refreshToolButton->setIconSize(QSize(30, 30));
+        ui->pasteToolButton->setIconSize(QSize(30, 30));
+        ui->createFolderToolButton->setIconSize(QSize(30, 30));
+        ui->uploadToolButton->setIconSize(QSize(30, 30));
+    }
+#endif
 }
 
 NavigationPage::~NavigationPage()
