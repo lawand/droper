@@ -86,7 +86,6 @@ private slots:
     void on_renameAction_triggered();
     void on_deleteAction_triggered();
     void on_downloadAction_triggered();
-    void on_publicLinkAction_triggered();
     void on_shareableLinkAction_triggered();
     void on_propertiesAction_triggered();
     void on_upAction_triggered();

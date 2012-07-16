@@ -54,7 +54,6 @@ void CustomListWidget::keyPressEvent(QKeyEvent *event)
             case Qt::Key_U:
             case Qt::Key_F:
             case Qt::Key_Space:
-            case Qt::Key_P:
             case Qt::Key_S:
                 QWidget::keyPressEvent(event);
                 break;
@@ -97,7 +96,6 @@ void CustomListWidget::keyPressEvent(QKeyEvent *event)
         case Qt::Key_8:
         case Qt::Key_9:
         case Qt::Key_0:
-        case Qt::Key_Asterisk:
         case Qt::Key_NumberSign:
             QWidget::keyPressEvent(event);
             break;

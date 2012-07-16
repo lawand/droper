@@ -151,7 +151,6 @@ void NavigationPage::setupActions()
     contextMenuActions.append(ui->renameAction);
     contextMenuActions.append(ui->deleteAction);
     contextMenuActions.append(ui->downloadAction);
-    contextMenuActions.append(ui->publicLinkAction);
     contextMenuActions.append(ui->shareableLinkAction);
     contextMenuActions.append(ui->propertiesAction);
     ui->filesAndFoldersListWidget->addActions(contextMenuActions);
@@ -201,9 +200,6 @@ void NavigationPage::setupActions()
             ui->createFolderAction->text() + " [Ctrl+F]"
             );
         ui->refreshAction->setText(ui->refreshAction->text() + " [Ctrl+Space]");
-        ui->publicLinkAction->setText(
-            ui->publicLinkAction->text() + " [Ctrl+P]"
-            );
         ui->shareableLinkAction->setText(
             ui->shareableLinkAction->text() + " [Ctrl+S]"
             );
@@ -224,9 +220,6 @@ void NavigationPage::setupActions()
             ui->createFolderAction->text() + " [9]"
             );
         ui->refreshAction->setText(ui->refreshAction->text() + " [0]");
-        ui->publicLinkAction->setText(
-            ui->publicLinkAction->text() + " [*]"
-            );
         ui->shareableLinkAction->setText(
             ui->shareableLinkAction->text() + " [#]"
             );
@@ -276,10 +269,6 @@ void NavigationPage::keyPressEvent(QKeyEvent *event)
 
             case Qt::Key_Space:
                 ui->refreshAction->trigger();
-                break;
-
-            case Qt::Key_P:
-                ui->publicLinkAction->trigger();
                 break;
 
             case Qt::Key_S:
@@ -364,10 +353,6 @@ void NavigationPage::keyPressEvent(QKeyEvent *event)
 
         case Qt::Key_0:
             ui->refreshAction->trigger();
-            break;
-
-        case Qt::Key_Asterisk:
-            ui->publicLinkAction->trigger();
             break;
 
         case Qt::Key_NumberSign:
@@ -799,59 +784,6 @@ void NavigationPage::on_downloadAction_triggered()
         currentItem->data(Qt::UserRole).toMap();
 
     emit downloadRequested(map);
-}
-
-void NavigationPage::on_publicLinkAction_triggered()
-{
-    // make sure an item is selected
-    if( ui->filesAndFoldersListWidget->selectedItems().isEmpty() )
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "No item selected. Select one and try again."
-            );
-        return;
-    }
-
-    // get raw info
-    QListWidgetItem* currentItem =
-        ui->filesAndFoldersListWidget->currentItem();
-    QVariantMap map =
-        currentItem->data(Qt::UserRole).toMap();
-
-    QString path = map["path"].toString();
-
-    if( !path.startsWith("/Public/") || map["is_dir"].toBool() == true)
-    {
-        QMessageBox::information(
-            this,
-            "Droper",
-            "Can only get public links to files inside the public folder."
-            );
-    }
-    else
-    {
-        QString pathWithPublicAsRoot = path;
-        pathWithPublicAsRoot.remove(0, 8);
-        QString percentEncodedPathWithPublicAsRoot =
-                pathWithPublicAsRoot.toUtf8().toPercentEncoding("", "~");
-
-        QString publicLink = QString(
-            "http://dl.dropbox.com/u/%1/%2"
-            )
-            .arg(Common::userData->uid)
-            .arg(percentEncodedPathWithPublicAsRoot);
-
-        QApplication::clipboard()->setText(publicLink);
-
-        QMessageBox::information(
-            this,
-            "Droper",
-            QString("The public link \"%1\" was copied to the clipboard.")
-                    .arg(publicLink)
-            );
-    }
 }
 
 void NavigationPage::on_shareableLinkAction_triggered()

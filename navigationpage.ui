@@ -135,11 +135,6 @@
     <string>Shareable Link</string>
    </property>
   </action>
-  <action name="publicLinkAction">
-   <property name="text">
-    <string>Public Link</string>
-   </property>
-  </action>
   <action name="copyAction">
    <property name="text">
     <string>Copy</string>
