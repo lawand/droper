@@ -33,6 +33,7 @@
 #include <QMessageBox>
 #include <QNetworkRequest>
 #include <QMenu>
+#include <QDesktopWidget>
 #include "common.h"
 #include "dropbox.h"
 #include "oauth.h"
@@ -143,10 +144,14 @@ void FileTransfersPage::setDownloadState(FileTransfersPage::State state)
 
     case TRANSFERRING:
         ui->downloadInfoLabel->setText(
-            QString("%1 (%2) to %3")
-                .arg(downloadFileName)
-                .arg(downloadFileSize)
-                .arg(downloadFolderName)
+            this->fontMetrics().elidedText(
+                QString("%1 (%2) to %3")
+                    .arg(downloadFileName)
+                    .arg(downloadFileSize)
+                    .arg(downloadFolderName),
+                Qt::ElideMiddle,
+                QApplication::desktop()->screenGeometry().width() - 10
+                )
             );
         ui->downloadProgressBar->setValue(0);
         ui->downloadProgressBar->setFormat("%p% Downloading");
@@ -234,10 +239,14 @@ void FileTransfersPage::setUploadState(FileTransfersPage::State state)
     case TRANSFERRING:
         {
             ui->uploadInfoLabel->setText(
-                QString("%1 (%2) to %3")
-                    .arg(uploadFileName)
-                    .arg(uploadFileSize)
-                    .arg(uploadFolderName)
+                this->fontMetrics().elidedText(
+                    QString("%1 (%2) to %3")
+                        .arg(uploadFileName)
+                        .arg(uploadFileSize)
+                        .arg(uploadFolderName),
+                    Qt::ElideMiddle,
+                    QApplication::desktop()->screenGeometry().width() - 10
+                    )
                 );
             ui->uploadProgressBar->setValue(0);
             ui->uploadProgressBar->setFormat("%p% Uploading");
