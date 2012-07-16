@@ -250,3 +250,6 @@ The Silk Icon Set by Mark James is used by Droper.
 
 Thanks to all Dropbox Forums members for helping with development.
 
+Thanks for the following people for help with testing Droper:
+    - Balogh Dávid (hipphappsero@vipmail.hu)
+
