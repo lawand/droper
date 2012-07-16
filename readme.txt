@@ -117,7 +117,6 @@ Rename          - Ctrl+R
 Upload          - Ctrl+U
 Create Folder   - Ctrl+F
 Refresh         - Ctrl+Space
-Public Link     - Ctrl+P
 Shareable Link  - Ctrl+S
 
 For smart phones without a touch screen (S60v3):
@@ -132,7 +131,6 @@ Rename          - 7
 Upload          - 8
 Create Folder   - 9
 Refresh         - 0
-Public Link     - *
 Shareable Link  - #
 
 
