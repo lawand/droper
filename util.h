@@ -31,7 +31,7 @@
 class Util
 {
 public:
-    static QString bytesToString(int bytes);
+    static QString bytesToString(qlonglong bytes);
     static bool s60v3();
 };
 

@@ -104,20 +104,15 @@ void AccountInfoPage::handleAccountInfo(QNetworkReply *networkReply)
     }
 
     QVariantMap quotaInfo = jsonResult["quota_info"].toMap();
-    qreal normalFiles = quotaInfo["normal"].toReal();
-    qreal sharedFiles = quotaInfo["shared"].toReal();
-    qreal used = quotaInfo["normal"].toReal() + quotaInfo["shared"].toReal();
-    qreal quota = quotaInfo["quota"].toReal();
+    qlonglong normalFiles = quotaInfo["normal"].toLongLong();
+    qlonglong sharedFiles = quotaInfo["shared"].toLongLong();
+    qlonglong used = quotaInfo["normal"].toLongLong() +
+        quotaInfo["shared"].toLongLong();
+    qlonglong quota = quotaInfo["quota"].toLongLong();
 
     ui->emailLabel->setText(jsonResult["email"].toString());
 
-    ui->spaceProgressBar->setValue(
-        (quotaInfo["normal"].toReal()+quotaInfo["shared"].toReal())
-        *
-        100
-        /
-        quotaInfo["quota"].toReal()
-        );
+    ui->spaceProgressBar->setValue( (normalFiles + sharedFiles) * 100 / quota );
 
     QString space = QString("%1 out of %2")
         .arg(Util::bytesToString(used))

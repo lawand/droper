@@ -28,7 +28,7 @@
 // implementation-specific
 #include <QSysInfo>
 
-QString Util::bytesToString(int bytes)
+QString Util::bytesToString(qlonglong bytes)
 {
     qreal size = (qreal)bytes;
     QString unit;
