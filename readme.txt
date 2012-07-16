@@ -139,8 +139,6 @@ General Notes for Developers
 
 Droper is a C++/Qt4 application.
 
-Droper can only be compiled for and is only tested with Symbian.
-
 Droper version numbers follow this scheme: Major.Minor.Patch (e.g 0.8.2).
 Released versions (which are git-tagged) always have an even patch number
 (starting with 0.3.4) for example: 1.7.2 not 1.7.1 or 1.7.3. Odd patch numbers
