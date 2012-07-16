@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
     application.setOrganizationName("lawand");
-    application.setApplicationName("droper0.5.0");
+    application.setApplicationName("droper0.5.1");
 
     // load user data
     QSettings settings;
