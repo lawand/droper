@@ -154,6 +154,21 @@ Translating Droper
 ------------------
 
 You can contribute to Droper by translating it to your native language.
+
+Here is how you can do it:
+    Get the source code of Droper.
+    Add this line to droper.pro: "TRANSLATIONS += droper_XX.ts" where XX is the
+ISO 639-1 two-letter code for the language you want to translate Droper to. For
+more info about this, search the Internet for "ISO 639-1".
+    Execute lupdate to generate droper_XX.ts like this: "lupdate droper.pro".
+    Open droper_XX.ts with Qt Linguist and add the translation then save it.
+    Contact the maintainer(s) of Droper and send them the droper_XX.ts file.
+    Know that you might be required to update the translation in the future
+when new translatable phrases are added to Droper.
+
+If you didn't understand any of the previous steps, you can contact the
+maintainer(s) of Droper for help.
+
 If you interested, please contact the maintainer(s) of Droper.
 
 
