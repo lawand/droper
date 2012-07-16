@@ -42,6 +42,7 @@
 #include <QSettings>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QToolButton>
 #include "common.h"
 #include "dropbox.h"
 #include "oauth.h"
@@ -171,13 +172,22 @@ void NavigationPage::setupActions()
         QAction *folderMenuAction = new QAction("Folder", this);
         folderMenuAction->setMenu(folderMenu);
         this->addAction(folderMenuAction);
+
+        // hide tool buttons
+        delete ui->upToolButton;
+        delete ui->refreshToolButton;
+        delete ui->pasteToolButton;
+        delete ui->createFolderToolButton;
+        delete ui->uploadToolButton;
     }
     else
     {
-        QToolBar *toolBar = new QToolBar(this);
-        toolBar->addActions(folderActions);
-        toolBar->setIconSize(QSize(24, 24));
-        layout()->addWidget(toolBar);
+        // set default tool button actions
+        ui->upToolButton->setDefaultAction(ui->upAction);
+        ui->refreshToolButton->setDefaultAction(ui->refreshAction);
+        ui->pasteToolButton->setDefaultAction(ui->pasteAction);
+        ui->createFolderToolButton->setDefaultAction(ui->createFolderAction);
+        ui->uploadToolButton->setDefaultAction(ui->uploadAction);
     }
 
     this->addAction(ui->accountInfoAction);
