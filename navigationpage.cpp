@@ -209,6 +209,7 @@ void NavigationPage::setupActions()
     // rename actions to include keyboard shortcut
     if(!Util::s60v3())
     {
+#ifndef Q_OS_SYMBIAN
         ui->deleteAction->setText(ui->deleteAction->text() + " [Backspace]");
         ui->copyAction->setText(ui->copyAction->text() + " [Ctrl+C]");
         ui->cutAction->setText(ui->cutAction->text() + " [Ctrl+X]");
@@ -226,6 +227,7 @@ void NavigationPage::setupActions()
         ui->shareableLinkAction->setText(
             ui->shareableLinkAction->text() + " [Ctrl+S]"
             );
+#endif
     }
     else
     {
