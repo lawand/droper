@@ -1,4 +1,4 @@
-Droper 0.4.5
+Droper 0.5.0
 ------------
 
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
@@ -13,38 +13,45 @@ http://coinonedge.com/droper/
 Changelog
 ---------
 
-0.4.5
-*Under Development*
+0.5.0 (2012-07-16)
+-Rewrote the GUI from scratch to fix kinetic scrolling and enable single
+tapping for opening folders on Symbian touch devices and restore desktop
+support, and generally made the GUI easier to use.
+-Added keypad shortcuts for S60v3 (Symbian non-touch) devices and keyboard
+shortcuts for desktop platforms.
+-Allowed switching between different application versions without losing
+settings (including login).
+-Fixed miscellaneous bugs.
 
 0.4.4 (2012-03-30)
-Added an option for shareable links.
-Made some GUI updates and fixed some bugs.
+-Added an option for shareable links.
+-Made some GUI updates and fixed some bugs.
 
 0.4.2 (2012-03-18)
-Changed upload method to allow larger file sizes.
-Switched to version 1 of the Dropbox API.
-Made some GUI updated and fixed some bugs.
+-Changed upload method to allow larger file sizes.
+-Switched to version 1 of the Dropbox API.
+-Made some GUI updated and fixed some bugs.
 
 0.4.0 (2011-08-30)
-Rewritten the UI to support S60v3 devices (non-touch devices), better integrate
-with Symbian and stabilize kinetic scrolling, but stop supporting desktop
-platforms.
-Added an option to get the Dropbox referral link.
-Added an option to get public links to files in the public folder.
+-Rewritten the UI to support S60v3 devices (non-touch devices), better
+integrate with Symbian and stabilize kinetic scrolling, but stop supporting
+desktop platforms.
+-Added an option to get the Dropbox referral link.
+-Added an option to get public links to files in the public folder.
 
 0.3.4 (2011-08-11)
-Updated the readme file.
+-Updated the readme file.
 
 0.3.1 (2011-04-14)
-Added an option to upload files, made lots of GUI enhancements including an
+-Added an option to upload files, made lots of GUI enhancements including an
 experimental kinetic scrolling feature for Symbian, added an option to view
 file properties which include the date of last modification.
 
 0.2.1 (2011-03-03)
-Added Symbian support.
+-Added Symbian support.
 
 0.1 (2011-02-21)
-Initial version.
+-Initial version.
 
 
 Installation Notes

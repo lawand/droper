@@ -634,10 +634,8 @@ void MainWindow::on_aboutAction_triggered()
     messageBox.setWindowTitle("Droper");
 
     messageBox.setText(
-        "<b>Droper v0.4.5</b> - "
+        "<b>Droper v0.5.0</b> - "
         "<a href=\"http://www.dropbox.com/\">Dropbox</a> Client"
-        "<br>"
-        "(unstable testing version)"
         );
 
     messageBox.setInformativeText(
