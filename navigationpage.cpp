@@ -584,11 +584,9 @@ void NavigationPage::handleShares(QNetworkReply *networkReply)
     QMessageBox::information(
         this,
         "Droper",
-        QString("The shareable link \"%1\" was copied to the clipboard. Note "
-                "that this link expires after about a month, more specifically "
-                "on: %2")
+        QString("The shareable link to this item \"%1\" was copied to the "
+                "clipboard.")
                 .arg(jsonResult["url"].toString())
-                .arg(jsonResult["expires"].toString())
         );
 }
 
