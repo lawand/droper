@@ -641,7 +641,8 @@ void MainWindow::on_aboutAction_triggered()
         );
 
     messageBox.setInformativeText(
-        "Copyright 2011, 2012 Omar Lawand Dalatieh <br><br>"
+        "Copyright 2011, 2012 Omar Lawand Dalatieh [lawand87@gmail.com]"
+        "<br><br>"
 
         "Licensed under the GNU GPLv3 license <br><br>"
 
