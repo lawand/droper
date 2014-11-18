@@ -31,8 +31,15 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+#ifdef Q_WS_MAEMO_5
+    // make it easier to find the config file in maemo
+    application.setOrganizationName("droper");
+    application.setApplicationName("droper0.5.2");
+#else
     application.setOrganizationName("lawand");
     application.setApplicationName("droper0.5.2");
+#endif
 
     // load user data
     QSettings settings;
@@ -53,7 +60,12 @@ int main(int argc, char *argv[])
     }
 
     MainWindow mainWindow;
+
+#if defined(Q_WS_S60)
     mainWindow.showMaximized();
+#else
+    mainWindow.show();
+#endif
 
     int exitCode = application.exec();
 

@@ -53,6 +53,12 @@ FileTransfersPage::FileTransfersPage(QWidget *parent) :
     // initialize the state
     setDownloadState(INITIAL);
     setUploadState(INITIAL);
+
+    // maemo-related
+#ifdef Q_WS_MAEMO_5
+    this->setAttribute(Qt::WA_Maemo5StackedWindow);
+#endif
+
 }
 
 FileTransfersPage::~FileTransfersPage()

@@ -1,0 +1,14 @@
+Source: droper
+Section: user/hidden
+Priority: optional
+Maintainer: lawand <lawand87@gmail.com>
+Build-Depends: debhelper (>= 5), libqt4-dev
+Standards-Version: 3.7.3
+Homepage: <http://coinonedge.com/droper>
+
+Package: droper
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Simple Dropbox client.
+ Simple Dropbox client.
+XB-Maemo-Display-Name: droper

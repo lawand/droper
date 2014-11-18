@@ -1,0 +1,38 @@
+This package was debianized by lawand <lawand87@gmail.com> on
+Sun, 02 Nov 2015 23:10:47 +0100.
+
+It was downloaded from <http://coinonedge.com/droper>
+
+Upstream Author(s):
+
+    Omar Lawand Dalatieh <lawand87@gmail.com>
+
+Copyright:
+
+    <Copyright (C) 2014 Omar Lawand Dalatieh>
+
+License:
+
+    Droper is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Droper is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL-3'.
+
+The Debian packaging is (C) 2014, lawand <lawand87@gmail.com> and
+is licensed under the GPL, see above.
+
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

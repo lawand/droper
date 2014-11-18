@@ -141,6 +141,12 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->centralwidget->layout()->setMargin(0);
     }
 #endif
+
+    // maemo-related
+#ifdef Q_WS_MAEMO_5
+    this->setAttribute(Qt::WA_Maemo5AutoOrientation, true);
+    this->setAttribute(Qt::WA_Maemo5StackedWindow);
+#endif
 }
 
 MainWindow::~MainWindow()

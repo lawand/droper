@@ -31,10 +31,16 @@
      </item>
      <item>
       <widget class="QLabel" name="currentFolderIconLabel">
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
-         <width>16</width>
-         <height>16</height>
+         <width>32</width>
+         <height>32</height>
         </size>
        </property>
        <property name="pixmap">
@@ -75,6 +81,11 @@
    </item>
    <item>
     <widget class="CustomListWidget" name="filesAndFoldersListWidget">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
      <property name="contextMenuPolicy">
       <enum>Qt::ActionsContextMenu</enum>
      </property>
@@ -114,8 +125,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>46</width>
+         <height>46</height>
         </size>
        </property>
       </widget>
@@ -137,8 +148,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>46</width>
+         <height>46</height>
         </size>
        </property>
       </widget>
@@ -160,8 +171,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>46</width>
+         <height>46</height>
         </size>
        </property>
       </widget>
@@ -183,8 +194,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>46</width>
+         <height>46</height>
         </size>
        </property>
       </widget>
@@ -206,8 +217,8 @@
        </property>
        <property name="iconSize">
         <size>
-         <width>28</width>
-         <height>28</height>
+         <width>46</width>
+         <height>46</height>
         </size>
        </property>
       </widget>

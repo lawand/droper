@@ -67,3 +67,11 @@ symbian {
         custom_platform_dependencies_deployment.pkg_prerules += pkg_custom_platform_dependencies
         DEPLOYMENT += custom_platform_dependencies_deployment
     }
+
+OTHER_FILES += \
+    qtc_packaging/debian_fremantle/rules \
+    qtc_packaging/debian_fremantle/README \
+    qtc_packaging/debian_fremantle/copyright \
+    qtc_packaging/debian_fremantle/control \
+    qtc_packaging/debian_fremantle/compat \
+    qtc_packaging/debian_fremantle/changelog

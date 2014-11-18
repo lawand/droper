@@ -46,6 +46,9 @@
        <property name="text">
         <string>E-Mail:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
      <item>
@@ -107,6 +110,9 @@
        </property>
        <property name="text">
         <string>Used Space:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
