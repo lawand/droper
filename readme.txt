@@ -1,4 +1,4 @@
-Droper 0.5.2
+Droper 0.5.2maemo
 ------------
 
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
@@ -12,6 +12,9 @@ http://coinonedge.com/droper/
 
 Changelog
 ---------
+
+0.5.2maemo (2014-11-18)
+-Made some minor UI updates to make the UI work better on Maemo.
 
 0.5.2 (2014-11-18)
 -Made minor changes.

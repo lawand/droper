@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
 #ifdef Q_WS_MAEMO_5
     // make it easier to find the config file in maemo
     application.setOrganizationName("droper");
-    application.setApplicationName("droper0.5.2");
+    application.setApplicationName("droper0.5.2maemo");
 #else
     application.setOrganizationName("lawand");
-    application.setApplicationName("droper0.5.2");
+    application.setApplicationName("droper0.5.2maemo");
 #endif
 
     // load user data
