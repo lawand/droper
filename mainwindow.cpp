@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright 2011, 2012 Omar Lawand Dalatieh.
+** Copyright 2011, 2012, 2013, 2014 Omar Lawand Dalatieh.
 **
 ** This file is part of Droper.
 **
@@ -641,7 +641,8 @@ void MainWindow::on_aboutAction_triggered()
         );
 
     messageBox.setInformativeText(
-        "Copyright 2011, 2012 Omar Lawand Dalatieh [lawand87@gmail.com]"
+        "Copyright 2011, 2012 , 2013, 2014 "
+        "Omar Lawand Dalatieh [lawand87@gmail.com]"
         "<br><br>"
 
         "Licensed under the GNU GPLv3 license <br><br>"
