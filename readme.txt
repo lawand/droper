@@ -1,4 +1,4 @@
-Droper 0.5.1
+Droper 0.5.2
 ------------
 
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
@@ -13,8 +13,8 @@ http://coinonedge.com/droper/
 Changelog
 ---------
 
-0.5.1
-*Under Development*
+0.5.2 (2014-11-18)
+-Made minor changes.
 
 0.5.0 (2012-07-16)
 -Rewrote the GUI from scratch to fix kinetic scrolling and enable single
