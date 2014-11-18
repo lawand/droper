@@ -201,8 +201,8 @@ Copying file.
 All trademarks are property of their respective owners.
 
 This application uses a third party library named "qt-json". For more info, see
-the qt-json Copyright Notice section below. You can also checkout the following URL:
-https://github.com/ereilin/qt-json
+the qt-json Copyright Notice section below. You can also checkout the following
+URL: https://github.com/ereilin/qt-json
 
 This application uses a third party library named "QsKineticScroller". For more
 info, see the QsKineticScroller Copyright Notice section below.
