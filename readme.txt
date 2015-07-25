@@ -1,4 +1,4 @@
-Droper 0.5.2
+Droper 0.6.0
 ------------
 
 Droper is a Symbian Dropbox client that allows Dropbox users to access and
@@ -12,6 +12,11 @@ http://coinonedge.com/droper/
 
 Changelog
 ---------
+
+0.6.0 (2015-07-26)
+-Fixed the "SSL handshake failed" error for devices with OpenSSL versions that
+support TLS.
+-Added a bug reporting note.
 
 0.5.2 (2014-11-18)
 -Made minor changes.
