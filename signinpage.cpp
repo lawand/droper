@@ -131,6 +131,21 @@ void SignInPage::on_signInPushButton_clicked()
     requestOauthRequesttoken();
 }
 
+void SignInPage::on_reportBugsPushButton_clicked()
+{
+    QMessageBox::information(
+                this,
+                "Droper",
+                "This version should fix the SSL handshake error, otherwise,"
+                " try updating your phone's software and the Qt libraries to "
+                "the latest versions, and feel free to let me know by e-mail "
+                "(at lawand87@gmail.com) if you are still experiencing "
+                "problems."
+                "\n"
+                "Lawand."
+                );
+}
+
 void SignInPage::on_doneAction_triggered()
 {
     if(requestUserData.token.isEmpty() || requestUserData.secret.isEmpty())

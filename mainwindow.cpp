@@ -35,6 +35,7 @@
 #include <QSettings>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QSslConfiguration>
 #include "common.h"
 #include "dropbox.h"
 #include "filetransferspage.h"
@@ -165,6 +166,11 @@ void MainWindow::getNetworkRequest(QNetworkRequest *networkRequest)
         break;
     }
 
+    // fix Symbian SSL Handshake failures by forcing TlsV1 as the SSL protocol
+    QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::TlsV1);
+    networkRequest->setSslConfiguration(config);
+
     QNetworkReply *networkReply = Common::networkAccessManager->get(
         *networkRequest
         );
@@ -199,6 +205,11 @@ void MainWindow::putNetworkRequest(
         setCurrentPage(ui->loadingPage);
         break;
     }
+
+    // fix Symbian SSL Handshake failures by forcing TlsV1 as the SSL protocol
+    QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::TlsV1);
+    networkRequest->setSslConfiguration(config);
 
     QNetworkReply *networkReply = Common::networkAccessManager->put(
         *networkRequest,

@@ -65,6 +65,7 @@ public slots:
 private slots:
     // ui slots
     void on_signInPushButton_clicked();
+    void on_reportBugsPushButton_clicked();
     // action slots
     void on_doneAction_triggered();
 
