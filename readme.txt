@@ -13,6 +13,10 @@ http://coinonedge.com/droper/
 Changelog
 ---------
 
+0.6.2 (2015-09-12)
+-Added an option to copy the sign in URL to the clipboard.
+-Moved the done action to a button next to the sign in button.
+
 0.6.0 (2015-07-26)
 -Fixed the "SSL handshake failed" error for devices with OpenSSL versions that
 support TLS.
