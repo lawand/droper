@@ -83,7 +83,6 @@ void SignInPage::copySignInUrl()
 
 void SignInPage::setupActions()
 {
-    this->addAction(ui->doneAction);
     this->addAction(ui->copySignInUrlAction);
 }
 
@@ -158,22 +157,7 @@ void SignInPage::on_signInPushButton_clicked()
     requestOauthRequesttoken();
 }
 
-void SignInPage::on_reportBugsPushButton_clicked()
-{
-    QMessageBox::information(
-                this,
-                "Droper",
-                "This version should fix the SSL handshake error, otherwise,"
-                " try updating your phone's software and the Qt libraries to "
-                "the latest versions, and feel free to let me know by e-mail "
-                "(at lawand87@gmail.com) if you are still experiencing "
-                "problems."
-                "\n"
-                "Lawand."
-                );
-}
-
-void SignInPage::on_doneAction_triggered()
+void SignInPage::on_donePushButton_clicked()
 {
     if(requestUserData.token.isEmpty() || requestUserData.secret.isEmpty())
     {
@@ -188,6 +172,21 @@ void SignInPage::on_doneAction_triggered()
     {
         requestOauthAccesstoken();
     }
+}
+
+void SignInPage::on_reportBugsPushButton_clicked()
+{
+    QMessageBox::information(
+                this,
+                "Droper",
+                "This version should fix the SSL handshake error, otherwise,"
+                " try updating your phone's software and the Qt libraries to "
+                "the latest versions, and feel free to let me know by e-mail "
+                "(at lawand87@gmail.com) if you are still experiencing "
+                "problems."
+                "\n"
+                "Lawand."
+                );
 }
 
 void SignInPage::on_copySignInUrlAction_triggered()

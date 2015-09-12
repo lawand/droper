@@ -124,6 +124,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="donePushButton">
+       <property name="text">
+        <string>Done</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -144,7 +151,7 @@
       <enum>Qt::NoContextMenu</enum>
      </property>
      <property name="text">
-      <string>After clicking this button, a web browser will open. Link Droper with your Dropbox account and then choose Done.</string>
+      <string>After clicking this button, a web browser will open. Link Droper with your Dropbox account and then click Done.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -250,11 +257,6 @@
   <action name="copySignInUrlAction">
    <property name="text">
     <string>Copy Sign In URL</string>
-   </property>
-  </action>
-  <action name="doneAction">
-   <property name="text">
-    <string>Done</string>
    </property>
   </action>
  </widget>

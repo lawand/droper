@@ -66,9 +66,9 @@ public slots:
 private slots:
     // ui slots
     void on_signInPushButton_clicked();
+    void on_donePushButton_clicked();
     void on_reportBugsPushButton_clicked();
     // action slots
-    void on_doneAction_triggered();
     void on_copySignInUrlAction_triggered();
 
 // private data members
