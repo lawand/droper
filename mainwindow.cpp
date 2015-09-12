@@ -128,6 +128,9 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(addItemToFilesAndFoldersListWidget(QVariantMap))
         );
 
+    // set initial page
+    setCurrentPage(ui->signInPage);
+
     // initial sign in attempt
     attemptSignIn();
 
