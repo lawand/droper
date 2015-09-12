@@ -50,6 +50,7 @@ public:
 private slots:
     // misc
     void openDropboxInABrowser();
+    void copySignInUrl();
     void setupActions();
 signals:
     // signals
@@ -68,11 +69,13 @@ private slots:
     void on_reportBugsPushButton_clicked();
     // action slots
     void on_doneAction_triggered();
+    void on_copySignInUrlAction_triggered();
 
 // private data members
 private:
     Ui::SignInPage *ui;
     UserData requestUserData;
+    bool shouldOnlyCopySignInUrl;
 };
 
 #endif // SIGNINPAGE_H

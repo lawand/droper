@@ -247,6 +247,11 @@
     </widget>
    </item>
   </layout>
+  <action name="copySignInUrlAction">
+   <property name="text">
+    <string>Copy Sign In URL</string>
+   </property>
+  </action>
   <action name="doneAction">
    <property name="text">
     <string>Done</string>

@@ -33,14 +33,15 @@
 // implementation-specific
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QClipboard>
 #include "dropbox.h"
 #include "oauth.h"
 #include "userdata.h"
 
 SignInPage::SignInPage(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SignInPage)
-
+    ui(new Ui::SignInPage),
+    shouldOnlyCopySignInUrl(false)
 {
     // private data members initialization
     ui->setupUi(this);
@@ -62,9 +63,28 @@ void SignInPage::openDropboxInABrowser()
     QDesktopServices::openUrl(url);
 }
 
+void SignInPage::copySignInUrl()
+{
+    QUrl url = Common::dropbox->apiToUrl(Dropbox::OAUTH_AUTHORIZE).toString();
+    url.addQueryItem("oauth_token", requestUserData.token);
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(url.toString());
+
+    QMessageBox::information(
+                this,
+                "Droper",
+                "The Sign In URL has been copied to the clipboard."
+                );
+
+    // reset shouldOnlyCopySignInUrl
+    shouldOnlyCopySignInUrl = false;
+}
+
 void SignInPage::setupActions()
 {
     this->addAction(ui->doneAction);
+    this->addAction(ui->copySignInUrlAction);
 }
 
 void SignInPage::requestOauthRequesttoken()
@@ -111,7 +131,14 @@ void SignInPage::handleOauthRequesttoken(QNetworkReply *networkReply)
     requestUserData.token = reply.split("&").at(1).split("=").at(1);
     requestUserData.secret = reply.split("&").at(0).split("=").at(1);
 
-    openDropboxInABrowser();
+    if(shouldOnlyCopySignInUrl)
+    {
+        copySignInUrl();
+    }
+    else
+    {
+        openDropboxInABrowser();
+    }
 }
 
 void SignInPage::handleOauthAccesstoken(QNetworkReply *networkReply)
@@ -161,4 +188,11 @@ void SignInPage::on_doneAction_triggered()
     {
         requestOauthAccesstoken();
     }
+}
+
+void SignInPage::on_copySignInUrlAction_triggered()
+{
+    shouldOnlyCopySignInUrl = true;
+
+    requestOauthRequesttoken();
 }
