@@ -7,8 +7,6 @@ Dropbox client for desktop platforms like Windows and Linux.
 
 Copyright 2011, 2012, 2013, 2014 Omar Lawand Dalatieh <lawand87@gmail.com>.
 
-http://coinonedge.com/droper/
-
 
 Changelog
 ---------
