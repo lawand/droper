@@ -78,7 +78,6 @@ and Symbian^3 devices are those equipped with a touch screen.
 Qt 4.7.3 should be installed before Droper can be used. On S60v5 and
 Symbian^3 devices, Qt 4.7.3 gets automatically downloaded and installed when
 installing Droper but on S60v3 devices you have to install Qt 4.7.3 manually.
-You can get Qt 4.7.3 here: http://coinonedge.com/qt-symbian-installer/
 
 
 General Usage Tips
